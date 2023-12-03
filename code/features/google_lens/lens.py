@@ -22,3 +22,6 @@ def search_images(image_url):
        print("Link: ", result["link"])
        print("Thumbnail: ", result["thumbnail"])
        print("---")
+
+
+search_images('')
