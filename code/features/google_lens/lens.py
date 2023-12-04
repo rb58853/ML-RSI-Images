@@ -1,27 +1,5 @@
-import requests
-import json
+from googlelens import GoogleLens
 
-def search_images(image_url):
-   """Searches for similar images."""
-   params = {
-       "engine": "google_lens",
-       "url": image_url
-   }
-
-   response = requests.get("https://serpapi.com/search", params=params)
-   data = response.json()
-
-   for result in data["knowledge_graph"]:
-       print("Title: ", result["title"])
-       print("Link: ", result["link"])
-       print("Thumbnail: ", result["thumbnail"])
-       print("---")
-
-   for result in data["visual_matches"]:
-       print("Title: ", result["title"])
-       print("Link: ", result["link"])
-       print("Thumbnail: ", result["thumbnail"])
-       print("---")
-
-
-search_images('')
+lens = GoogleLens()
+search_result = lens.search_by_file("/home/raul/Storage/Computation Sience/Tesis/images_RIS-ML-Conv-NLP/code/features/google_lens/norris.jpg")
+print(search_result)
