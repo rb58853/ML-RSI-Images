@@ -142,12 +142,10 @@ class BLIP(IModel):
             BLIP.MODEL = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large").to("cuda")
         else:
             from transformers import BlipProcessor, BlipForConditionalGeneration
-            # from transformers import AutoProcessor, AutoModel
             BLIP.PROCESSOR = BlipProcessor.from_pretrained(dir + 'processor')
             BLIP.MODEL = BlipForConditionalGeneration.from_pretrained(dir + 'model').to("cuda")
     
     def save(dir = '/content/gdrive/My Drive/image_caption_models/BLIP/'):
-        # torch.save(BLIP.MODEL.state_dict(), dir_model)
         BLIP.MODEL.save_pretrained(dir + "model")
         BLIP.PROCESSOR.save_pretrained(dir + "processor")
     
@@ -162,14 +160,14 @@ class BLIP(IModel):
     
     def all_captions(image, raw_image, segmentation = 'box', min_area = 0, min_box_area = 0):
         '''
-            ### INPUTS:\n
+            #### INPUTS:\n
             - `image`: imagen cargada con cv2 \n
             - `raw_image`: imagen cargada con PIL.Image\n
             - `segmentation`: tipo de segmentacion que se va a utilizar para seleccionar imagenes (`'box'` o `'mask'`)\n
             - `min_area`: area minima en pixeles de tamaño que puede puede tener las imagenes segmentadas \n
             - `min_box_area`: area minima en pixeles de tamaño que puede puede tener un cuadro que contiene una imagen segmentada \n
 
-            ### OUTPUTS: \n
+            #### OUTPUTS: \n
             - `list` = `[`lista con cada una de las descripciones de las imagenes segmentadas agregada al a descripcion principal`]`
         '''
 
@@ -198,7 +196,7 @@ class BLIP2(IModel):
     
     ### Funciones:
     - `import_model`: 
-        importa el modelo de BLIP, asignando valores a `MODEL`, `PROCESSOR` y `DEVICE`.
+        importa el modelo de BLIP2, asignando valores a `MODEL`, `PROCESSOR` y `DEVICE`.
     - `caption`: 
         recibe una imagen y devuelve una descipcion en lenguaje natural, en formato de texto. 
     - `all_captions`: 
@@ -222,12 +220,15 @@ class BLIP2(IModel):
             BLIP2.MODEL.to(BLIP2.DEVICE)
         else:
             from transformers import AutoProcessor, Blip2ForConditionalGeneration
-            BLIP2.PROCESSOR = AutoProcessor.from_pretrained("Salesforce/blip2-opt-2.7b")
-            BLIP2.MODEL = torch.load(dir + 'model.pt')
+            BLIP2.PROCESSOR = AutoProcessor.from_pretrained(dir+'processor')
+            BLIP2.MODEL = Blip2ForConditionalGeneration.from_pretrained(dir + 'model', torch_dtype=torch.float16)
             BLIP2.DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
             BLIP2.MODEL.to(BLIP2.DEVICE)
-   
-    #Se cambio blip por caption
+    
+    def save(dir = '/content/gdrive/My Drive/image_caption_models/BLIP2/'):
+        BLIP2.MODEL.save_pretrained(dir + "model")
+        BLIP2.PROCESSOR.save_pretrained(dir + "processor")
+
     def caption (image):
         inputs = BLIP2.PROCESSOR(image, return_tensors="pt").to(BLIP2.DEVICE, torch.float16)
         generated_ids = BLIP2.MODEL.generate(**inputs, max_new_tokens=20)
@@ -236,15 +237,15 @@ class BLIP2(IModel):
     
     def all_captions(image, raw_image, segmentation = 'box', min_area = 0, min_box_area = 0):
         '''
-            ### INPUTS:\n
+            #### INPUTS:\n
             - `image`: imagen cargada con cv2 \n
             - `raw_image`: imagen cargada con PIL.Image\n
             - `segmentation`: tipo de segmentacion que se va a utilizar para seleccionar imagenes (`'box'` o `'mask'`)\n
             - `min_area`: area minima en pixeles de tamaño que puede puede tener las imagenes segmentadas \n
             - `min_box_area`: area minima en pixeles de tamaño que puede puede tener un cuadro que contiene una imagen segmentada \n
 
-            ### OUTPUTS: \n
-            - `list` = `[`lista con cada una de las descripciones de las imagenes segmentadas agregada al a descripcion principal`]`
+            #### OUTPUTS: \n
+            - `list` = `[`lista con cada una de las descripciones de las imagenes segmentadas agregadas a la descripcion principal`]`
         '''
 
         origin = str(BLIP2.caption(raw_image))
