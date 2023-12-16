@@ -141,18 +141,16 @@ class BLIP(IModel):
             BLIP.PROCESSOR = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
             BLIP.MODEL = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large").to("cuda")
         else:
-            # from transformers import BlipProcessor, BlipForConditionalGeneration
-            from transformers import AutoProcessor, AutoModel
-            BLIP.PROCESSOR = AutoProcessor.from_pretrained(dir + 'processor')
-            BLIP.MODEL = AutoModel.from_pretrained(dir + 'model')
+            from transformers import BlipProcessor, BlipForConditionalGeneration
+            # from transformers import AutoProcessor, AutoModel
+            BLIP.PROCESSOR = BlipProcessor.from_pretrained(dir + 'processor')
+            BLIP.MODEL = BlipForConditionalGeneration.from_pretrained(dir + 'model').to("cuda")
     
     def save(dir = '/content/gdrive/My Drive/image_caption_models/BLIP/'):
         # torch.save(BLIP.MODEL.state_dict(), dir_model)
         BLIP.MODEL.save_pretrained(dir + "model")
         BLIP.PROCESSOR.save_pretrained(dir + "processor")
-
     
-    #Se cambio blip por caption
     def caption (image):
         inputs = BLIP.PROCESSOR(image, return_tensors="pt").to("cuda")
         out = BLIP.MODEL.generate(**inputs)
