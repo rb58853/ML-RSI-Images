@@ -5,8 +5,10 @@ class CaptionParser(Parser):
     tokens = CaptionLexer.tokens
     start = 'text'  
     precedence = (
-        ('nonassoc',  'WITH', 'IS', 'IN', 'ON', 'OF', 'AND', 'NOUN', 'VERB', 'ADJ', 'NUM'),
-        ('left',  ',')
+        ('right', 'IS', 'IN', 'ON', 'OF', 'NOUN', 'VERB', 'ADJ', 'NUM', 'AND', 'WITH',','),
+        # ('left',  'AND'),
+        # ('left',  'WITH')
+        
         # ('left',  '.')
         )
 
@@ -15,7 +17,8 @@ class CaptionParser(Parser):
         self.sintagmas = []
 
     def add_token(self,token):
-        self.sintagmas.append(token)
+        if token not in self.sintagmas:
+            self.sintagmas.append(token)
 
     def error(self, token):
         
@@ -98,7 +101,12 @@ class CaptionParser(Parser):
     def nouns(self,p):
         return [p[0]]+p[2]
     
+    # @_('noun AND verbal')
+    # def nouns(self,p):
+    #     return [p[0],p[2]]
+    
 #endregion
+    
     @_('nouns VERB')
     def verbal_list(self, p): 
         result = []
@@ -107,6 +115,21 @@ class CaptionParser(Parser):
             result.append(' '.join([noun, p.VERB]))
             self.add_token(' '.join([noun, p.VERB]))
         return result
+    
+    @_('verbal AND verbal')
+    def verbal_list(self, p): 
+        return [p[0],p[2]]
+    @_('verbal "," verbal')
+    def verbal_list(self, p): 
+        return [p[0],p[2]]
+    
+    @_('verbal "," verbal_list')
+    def verbal_list(self, p): 
+        return [p[0]]+p[2]
+    
+    @_('verbal AND verbal_list')
+    def verbal_list(self, p): 
+        return [p[0]]+p[2]
     
     @_('noun VERB')
     def verbal(self, p): 
@@ -147,6 +170,28 @@ class CaptionParser(Parser):
         self.add_token(phrase)
         return phrase
     
+    @_('noun WITH nominal')
+    def sintagma(self, p): 
+        phrase = ' '.join([p[0], p[1], p[2]])
+        self.add_token(phrase)
+        return phrase
+    
+    
+    @_('noun WITH verbal')
+    def sintagma(self, p): 
+        phrase = ' '.join([p[0], p[1], p[2]])
+        self.add_token(phrase)
+        return phrase
+   
+    @_('noun WITH verbal_list')
+    def sintagma(self, p): 
+        result = []
+        verbals: list = p.verbal_list
+        for verbal in verbals:
+            result.append(' '.join([p[0], p[1], verbal]))
+            self.add_token(' '.join([p[0], p[1], verbal]))
+        return result
+    
     @_('noun WITH nouns')
     def sintagma(self, p):
         result = []
@@ -156,7 +201,14 @@ class CaptionParser(Parser):
             self.add_token(' '.join([p[0], p[1], noun]))
         return result
     
+
     @_('noun OF noun')
+    def sintagma(self, p): 
+        phrase = ' '.join([p[0], p[1], p[2]])
+        self.add_token(phrase)
+        return phrase
+    
+    @_('sintagma AND sintagma')
     def sintagma(self, p): 
         phrase = ' '.join([p[0], p[1], p[2]])
         self.add_token(phrase)

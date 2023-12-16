@@ -1,9 +1,10 @@
 from sly import Lexer
-from tokens.utils import is_noun, is_verb, is_num, is_adj
+from tokens.utils import is_noun, is_verb, is_num, is_adj, tokenize
 
 class CaptionLexer(Lexer):
     def __init__(self) -> None:
         super().__init__()
+        self.category:dict[str:str] = {}
 
     tokens = {
         WITH, IS, IN, ON, OF, AND, NOUN, VERB, ADJ, NUM
@@ -28,19 +29,19 @@ class CaptionLexer(Lexer):
             token.type = token.value.upper()
             return token
 
-        if is_noun(token.value):
+        if self.category[token.value] == "NOUN":
             token.type = "NOUN"
             return token
         
-        if is_verb(token.value):
+        if self.category[token.value] == "VERB":
             token.type = "VERB"
             return token
         
-        if is_num(token.value):
+        if self.category[token.value] == "NUM":
             token.type = "NUM"
             return token
         
-        if is_adj(token.value):
+        if self.category[token.value] == "ADJ":
             token.type = "ADJ"
             return token
 
@@ -48,4 +49,10 @@ class CaptionLexer(Lexer):
         #ignora lo que considere error
         pass    
 
+    def tokenize(self, text, lineno=1, index=0):
+        tokens = tokenize(text)
+        for value, key in zip(tokens.values(), tokens.keys()):
+            self.category[key] = value
+            
+        return super().tokenize(text, lineno, index)
   
