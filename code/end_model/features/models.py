@@ -141,7 +141,7 @@ class BLIP(IModel):
             BLIP.PROCESSOR = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
             BLIP.MODEL = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large").to("cuda")
         else:
-            from transformers import AutoProcessor, Blip2ForConditionalGeneration
+            from transformers import BlipProcessor, BlipForConditionalGeneration
             BLIP.PROCESSOR = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
             BLIP.MODEL = torch.load('/content/gdrive/My Drive/image_caption_models/BLIP/model.pt')
     
