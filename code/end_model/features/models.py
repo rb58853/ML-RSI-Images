@@ -7,6 +7,8 @@ import cv2
 class IModel:
     def import_model():
         pass
+    def save(dir):
+        pass
 
 class SAM(IModel):
     '''
@@ -22,10 +24,6 @@ class SAM(IModel):
         print("Torchvision version:", torchvision.__version__)
         print("CUDA is available:", torch.cuda.is_available())
         import sys
-        # !{sys.executable} -m pip install opencv-python matplotlib
-        # !{sys.executable} -m pip install 'git+https://github.com/facebookresearch/segment-anything.git'
-        # !wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
-        
         
         import sys
         sys.path.append("..")
@@ -143,8 +141,17 @@ class BLIP(IModel):
             BLIP.PROCESSOR = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
             BLIP.MODEL = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large").to("cuda")
         else:
-            pass #TODO importar el modelo desde drive
+            from transformers import AutoProcessor, Blip2ForConditionalGeneration
+            BLIP.PROCESSOR = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
+            BLIP.MODEL = torch.load('/content/gdrive/My Drive/image_caption_models/BLIP/model.pt')
+    
+    def save(dir = '/content/gdrive/My Drive/image_caption_models/BLIP/'):
+        dir_model = dir + "model.pt"
+        dir_processor = dir + "processor.pt"
+        torch.save(BLIP.MODEL.state_dict(), dir_model)
+        BLIP.PROCESSOR.save_pretrained(dir_processor)
 
+    
     #Se cambio blip por caption
     def caption (image):
         inputs = BLIP.PROCESSOR(image, return_tensors="pt").to("cuda")
@@ -211,21 +218,23 @@ class BLIP2(IModel):
         '''
         if not local:
             from transformers import AutoProcessor, Blip2ForConditionalGeneration
-            import torch
             BLIP2.PROCESSOR = AutoProcessor.from_pretrained("Salesforce/blip2-opt-2.7b")
             BLIP2.MODEL = Blip2ForConditionalGeneration.from_pretrained("Salesforce/blip2-opt-2.7b", torch_dtype=torch.float16)
             BLIP2.DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
             BLIP2.MODEL.to(BLIP2.DEVICE)
         else:
-            pass #TODO importar el modelo desde drive
-
+            from transformers import AutoProcessor, Blip2ForConditionalGeneration
+            BLIP2.PROCESSOR = AutoProcessor.from_pretrained("Salesforce/blip2-opt-2.7b")
+            BLIP2.MODEL = torch.load('/content/gdrive/My Drive/image_caption_models/BLIP2/model.pt')
+            BLIP2.DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+            BLIP2.MODEL.to(BLIP2.DEVICE)
+   
     #Se cambio blip por caption
     def caption (image):
         inputs = BLIP2.PROCESSOR(image, return_tensors="pt").to(BLIP2.DEVICE, torch.float16)
         generated_ids = BLIP2.MODEL.generate(**inputs, max_new_tokens=20)
         generated_text = BLIP2.PROCESSOR.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
         return generated_text
-
     
     def all_captions(image, raw_image, segmentation = 'box', min_area = 0, min_box_area = 0):
         '''
