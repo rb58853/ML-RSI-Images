@@ -132,7 +132,7 @@ class BLIP(IModel):
     PROCESSOR = None
     MODEL = None
 
-    def import_model(local = False):
+    def import_model(local = False, dir = '/content/gdrive/My Drive/image_caption_models/BLIP/'):
         '''
             Carga el modelo desde la biblioteca transformers en caso de `local = False` 
         '''
@@ -141,13 +141,14 @@ class BLIP(IModel):
             BLIP.PROCESSOR = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
             BLIP.MODEL = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large").to("cuda")
         else:
-            from transformers import BlipProcessor, BlipForConditionalGeneration
-            BLIP.PROCESSOR = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
-            BLIP.MODEL = torch.load('/content/gdrive/My Drive/image_caption_models/BLIP/model.pt')
+            # from transformers import BlipProcessor, BlipForConditionalGeneration
+            from transformers import AutoProcessor
+            BLIP.PROCESSOR = AutoProcessor.from_pretrained(dir + 'processor')
+            BLIP.MODEL = torch.load( dir + 'model.pt')
     
     def save(dir = '/content/gdrive/My Drive/image_caption_models/BLIP/'):
         dir_model = dir + "model.pt"
-        dir_processor = dir + "processor.pt"
+        dir_processor = dir + "processor"
         torch.save(BLIP.MODEL.state_dict(), dir_model)
         BLIP.PROCESSOR.save_pretrained(dir_processor)
 
@@ -212,7 +213,7 @@ class BLIP2(IModel):
     MODEL = None
     DEVICE = None
 
-    def import_model(local = False):
+    def import_model(local = False, dir = "/content/gdrive/My Drive/image_caption_models/BLIP2/"):
         '''
             Carga el modelo desde la biblioteca transformers en caso de `local = False` 
         '''
@@ -225,7 +226,7 @@ class BLIP2(IModel):
         else:
             from transformers import AutoProcessor, Blip2ForConditionalGeneration
             BLIP2.PROCESSOR = AutoProcessor.from_pretrained("Salesforce/blip2-opt-2.7b")
-            BLIP2.MODEL = torch.load('/content/gdrive/My Drive/image_caption_models/BLIP2/model.pt')
+            BLIP2.MODEL = torch.load(dir + 'model.pt')
             BLIP2.DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
             BLIP2.MODEL.to(BLIP2.DEVICE)
    
