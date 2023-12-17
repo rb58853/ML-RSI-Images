@@ -1,5 +1,5 @@
 from sly import Parser
-from tokens.lexer import CaptionLexer
+from tokenization.tokens.lexer import CaptionLexer
 
 class CaptionParser(Parser):
     tokens = CaptionLexer.tokens

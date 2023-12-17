@@ -20,14 +20,3 @@ def is_adj(text):
 def tokenize(text):
     doc = nlp(text)
     return {token.text:token.pos_ for token in doc}
-    # for token in doc:
-    #     token[token.text] = token.pos_
-    #     # print (f'{token.text} ({token.pos_ })')
-
-
-tokenize('a cat with a tail and eyes closed')
-# print(is_noun('dog'))
-# print(is_noun('tall'))
-# print(is_verb('eat'))
-# print(is_verb('sleeping'))
-# print(is_verb('cat'))

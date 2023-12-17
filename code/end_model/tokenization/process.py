@@ -1,4 +1,4 @@
-from gramatic.parser import CaptionLexer,CaptionParser
+from tokenization.gramatic.parser import CaptionLexer,CaptionParser
 
 def get_keys(caption):
     captions = caption.split(".")

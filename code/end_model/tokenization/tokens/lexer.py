@@ -1,5 +1,5 @@
 from sly import Lexer
-from tokens.utils import is_noun, is_verb, is_num, is_adj, tokenize
+from tokenization.tokens.utils import tokenize
 
 class CaptionLexer(Lexer):
     def __init__(self) -> None:
@@ -29,7 +29,7 @@ class CaptionLexer(Lexer):
             token.type = token.value.upper()
             return token
 
-        if self.category[token.value] == "NOUN":
+        if self.category[token.value] == "NOUN" or self.category[token.value] == 'PROPN':
             token.type = "NOUN"
             return token
         
