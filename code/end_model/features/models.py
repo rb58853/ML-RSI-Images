@@ -229,8 +229,9 @@ class BLIP2(IModel):
         BLIP2.MODEL.save_pretrained(dir + "model")
         BLIP2.PROCESSOR.save_pretrained(dir + "processor")
 
-    def caption (image):
-        inputs = BLIP2.PROCESSOR(image, return_tensors="pt").to(BLIP2.DEVICE, torch.float16)
+    def caption (image, prompt = "Describe the image in detail"):
+        inputs = BLIP2.PROCESSOR(image, text=prompt, return_tensors="pt").to(BLIP2.DEVICE, torch.float16)
+        # inputs = BLIP2.PROCESSOR(image, return_tensors="pt").to(BLIP2.DEVICE, torch.float16)
         generated_ids = BLIP2.MODEL.generate(**inputs, max_new_tokens=20)
         generated_text = BLIP2.PROCESSOR.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
         return generated_text
