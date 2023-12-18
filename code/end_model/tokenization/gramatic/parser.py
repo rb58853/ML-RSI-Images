@@ -5,8 +5,8 @@ class CaptionParser(Parser):
     tokens = CaptionLexer.tokens
     start = 'text'  
     precedence = (
-        ('right', 'IS', 'IN', 'ON', 'OF', 'NOUN', 'VERB', 'ADJ', 'NUM', 'AND', 'WITH',','),
-        # ('left',  'AND'),
+        ('left', 'IS', 'IN', 'ON', 'OF', 'NOUN', 'VERB', 'NUM', 'AND', 'WITH',',','ADJ'),
+        # ('left',  'ADJ', 'NOUN'),
         # ('left',  'WITH')
         
         # ('left',  '.')
@@ -24,7 +24,7 @@ class CaptionParser(Parser):
         
         pass
     
-    @_(   
+    @_( 'adj',  
         'noun',
         'nouns',
         'verbal',
@@ -62,18 +62,43 @@ class CaptionParser(Parser):
         return phrase
     
     @_('ADJ noun')
-    def noun(self, p): 
+    def noun(self, p):
         phrase =' '.join([p.ADJ, p.noun])
         self.add_token(phrase)
         return phrase
     
+    @_('NUM ADJ noun')
+    def noun(self, p):
+        phrase =' '.join([p.NUM, p.ADJ, p.noun])
+        self.add_token(phrase)
+        return phrase
+    
+    @_('adj noun')
+    def nouns(self, p):
+        if isinstance(p[0], list):
+            result = [' '.join([', '.join(p[0]), p[1]])]
+
+            for adj in p[0]:
+                phrase =' '.join([adj, p.noun])
+                result.append(phrase)
+
+            for token in result:
+                self.add_token(token)
+            return result        
+
+        else:
+            phrase =' '.join([p.adj, p.noun])
+            self.add_token(phrase)
+            return [phrase]
+    
+
     @_('NOUN noun')
     def noun(self, p): 
         phrase =' '.join([p[0], p[1]])
         self.add_token(phrase)
         return phrase
     
-    @_('noun IS ADJ')
+    @_('noun IS adj')
     def noun(self,p):
         phrase = ' '.join([p.ADJ, p.noun])
         self.add_token(phrase)
@@ -101,9 +126,37 @@ class CaptionParser(Parser):
     def nouns(self,p):
         return [p[0]]+p[2]
     
-    # @_('noun AND verbal')
-    # def nouns(self,p):
-    #     return [p[0],p[2]]
+    @_('NUM ADJ')
+    def adj(self,p):
+        #ADJ
+        return ' '.join([p[0],p[1]])
+
+    @_('ADJ')
+    def adj(self,p):
+        #ADJ
+        return p[0]
+    
+    @_('noun AND adj')
+    def adj(self,p):
+        #beauty and black
+        if isinstance(p[0],list) and isinstance(p[2],list): return [p[0]]+p[2]
+        if isinstance(p[0],list) and not isinstance(p[2],list): return [p[0]]+[p[2]]
+
+    @_('adj AND adj')
+    def adj(self,p):
+        #beauty and tall
+        if isinstance(p[0],list) and isinstance(p[2],list): return p[0]+p[2]
+        if isinstance(p[0],list) and not isinstance(p[2],list): return p[0]+[p[2]]
+        if not isinstance(p[0],list) and isinstance(p[2],list): return [p[0]]+p[2]
+        if not isinstance(p[0],list) and not isinstance(p[2],list): return [p[0]]+[p[2]]
+    
+    @_('adj "," adj')
+    def adj(self,p):
+        #beauty, tall
+        if isinstance(p[0],list) and isinstance(p[2],list): return p[0]+p[2]
+        if not isinstance(p[0],list) and isinstance(p[2],list): return [p[0]]+p[2]
+        if isinstance(p[0],list) and not isinstance(p[2],list): return p[0]+[p[2]]
+        if not isinstance(p[0],list) and not isinstance(p[2],list): return [p[0]]+[p[2]]
     
 #endregion
     
@@ -143,6 +196,58 @@ class CaptionParser(Parser):
         self.add_token(phrase)
         return phrase
     
+    @_('noun on nouns')
+    def nominal(self, p): 
+        result = []
+        for noun in p[2]:
+            phrase = ' '.join([p[0], p[1], noun])
+            result.append(phrase)
+
+        for token in result:    
+            self.add_token(token)
+        
+        return result
+    
+    @_('nouns on nouns')
+    def nominal(self, p): 
+        result = []
+        for noun1 in p[0]:
+            for noun2 in p[2]:
+                phrase = ' '.join([noun1, p[1], noun2])
+                result.append(phrase)
+        for token in result:    
+            self.add_token(token)
+        return result
+    
+    @_('verbal on adj noun')
+    def nominal(self, p): 
+        phrase = ' '.join([p[0], p[1], p.noun])
+        self.add_token(phrase)
+        return phrase
+    
+    @_('verbal on nouns')
+    def nominal(self, p): 
+        result = []
+        for noun in p[2]:
+            phrase = ' '.join([p[0], p[1], noun])
+            result.append(phrase)
+
+        for token in result:    
+            self.add_token(token)
+        
+        return result
+    
+    @_('verbal_list on nouns')
+    def nominal(self, p): 
+        result = []
+        for verbal in p[0]:
+            for noun in p[2]:
+                phrase = ' '.join([verbal, p[1], noun])
+                result.append(phrase)
+        for token in result:    
+            self.add_token(token)
+        return result
+
     @_('noun IS on noun')
     def nominal(self,p):
         phrase = ' '.join([p[0], p[2], p[3]])
@@ -256,8 +361,8 @@ class CaptionParser(Parser):
             result.append(' '.join([verbal,'with', p[4] ]))
             noun = " ".join(verbal.split(" ")[:-1])
             result.append(' '.join([noun,'with', p[4] ]))
-            for token in result:
-                self.add_token(token)
+        for token in result:
+            self.add_token(token)
         return result
     
     @_('verbal on noun WITH noun')

@@ -20,3 +20,8 @@ def is_adj(text):
 def tokenize(text):
     doc = nlp(text)
     return {token.text:token.pos_ for token in doc}
+
+test = 'a black and white pillow'
+tokens = tokenize(test)
+for token in tokens:
+    print(f'{token}:{tokens[token]}')
