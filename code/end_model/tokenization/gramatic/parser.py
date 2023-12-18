@@ -5,11 +5,16 @@ class CaptionParser(Parser):
     tokens = CaptionLexer.tokens
     start = 'text'  
     precedence = (
+        ('right', 'IS', 'IN', 'ON', 'OF', 'NOUN', 'VERB', 'NUM', 'AND', 'WITH',',','ADJ'),
+        )
+    
+    def right_precedence(self):
+        CaptionParser.precedence = (
+        ('right', 'IS', 'IN', 'ON', 'OF', 'NOUN', 'VERB', 'NUM', 'AND', 'WITH',',','ADJ'),
+        )
+    def left_precedence(self):
+        CaptionParser.precedence = (
         ('left', 'IS', 'IN', 'ON', 'OF', 'NOUN', 'VERB', 'NUM', 'AND', 'WITH',',','ADJ'),
-        # ('left',  'ADJ', 'NOUN'),
-        # ('left',  'WITH')
-        
-        # ('left',  '.')
         )
 
     def __init__(self) -> None:
