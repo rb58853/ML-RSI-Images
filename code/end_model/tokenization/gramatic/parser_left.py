@@ -1,22 +1,13 @@
 from sly import Parser
 from tokenization.tokens.lexer import CaptionLexer
 
-class CaptionParser(Parser):
+class CaptionParserLeft(Parser):
     tokens = CaptionLexer.tokens
     start = 'text'  
     precedence = (
-        ('right', 'IS', 'IN', 'ON', 'OF', 'NOUN', 'VERB', 'NUM', 'AND', 'WITH',',','ADJ'),
-        )
-    
-    def right_precedence():
-        CaptionParser.precedence = (
-        ('right', 'IS', 'IN', 'ON', 'OF', 'NOUN', 'VERB', 'NUM', 'AND', 'WITH',',','ADJ'),
-        )
-    def left_precedence():
-        CaptionParser.precedence = (
         ('left', 'IS', 'IN', 'ON', 'OF', 'NOUN', 'VERB', 'NUM', 'AND', 'WITH',',','ADJ'),
         )
-
+    
     def __init__(self) -> None:
         super().__init__()
         self.sintagmas = []
