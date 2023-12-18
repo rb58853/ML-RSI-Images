@@ -155,6 +155,24 @@ class CaptionParser(Parser):
         self.add_token(phrase)
         return phrase
     
+    @_('nouns on noun')
+    def nominal_list(self, p):
+        result = []
+        nouns: list = p.nouns
+        for noun in nouns:
+            result.append(' '.join( [noun, p[1], p[2]]))
+            self.add_token(' '.join([noun, p[1], p[2]]))
+        return result
+
+    @_('nouns IS on noun')
+    def nominal_list(self, p):
+        result = []
+        nouns: list = p.nouns
+        for noun in nouns:
+            result.append(' '.join( [noun, p[2], p[3]]))
+            self.add_token(' '.join([noun, p[2], p[3]]))
+        return result
+
     @_('verbal_list on noun')
     def sintagma_list(self, p):
         result = []
@@ -176,13 +194,21 @@ class CaptionParser(Parser):
         self.add_token(phrase)
         return phrase
     
-    
     @_('noun WITH verbal')
     def sintagma(self, p): 
         phrase = ' '.join([p[0], p[1], p[2]])
         self.add_token(phrase)
         return phrase
    
+    @_('noun WITH nouns')
+    def sintagma(self, p): 
+        result = []
+        nouns: list = p.nouns
+        for noun in nouns:
+            result.append(' '.join([p[0], p[1], noun]))
+            self.add_token(' '.join([p[0], p[1], noun]))
+        return result
+    
     @_('noun WITH verbal_list')
     def sintagma(self, p): 
         result = []
@@ -192,15 +218,14 @@ class CaptionParser(Parser):
             self.add_token(' '.join([p[0], p[1], verbal]))
         return result
     
-    @_('noun WITH nouns')
-    def sintagma(self, p):
+    @_('nouns WITH verbal_list')
+    def sintagma(self, p): 
         result = []
-        nouns: list = p.nouns
-        for noun in nouns:
-            result.append(' '.join([p[0], p[1], noun]))
-            self.add_token(' '.join([p[0], p[1], noun]))
+        verbals: list = p.verbal_list
+        for verbal in verbals:
+            result.append(' '.join([p[0], p[1], verbal]))
+            self.add_token(' '.join([p[0], p[1], verbal]))
         return result
-    
 
     @_('noun OF noun')
     def sintagma(self, p): 
@@ -219,3 +244,18 @@ class CaptionParser(Parser):
         phrase = ' '.join([p[0], p[1]])
         self.add_token(phrase)
         return phrase   
+    
+    @_('verbal_list on noun WITH noun')
+    def sintagma_list(self, p):
+        # verbal_list on noun es tambien un sintagma, cuando pasa por aqui no parsea el sintagma, luego hay que agregar ese token desde aqui
+        result = []
+        verbals: list = p.verbal_list
+        for verbal in verbals:
+            result.append(' '.join([verbal, p[1], p[2]]))
+            result.append(' '.join([verbal, p[1], p[2],'with', p[4] ]))
+            result.append(' '.join([verbal,'with', p[4] ]))
+            noun = " ".join(verbal.split(" ")[:-1])
+            result.append(' '.join([noun,'with', p[4] ]))
+            for token in result:
+                self.add_token(token)
+        return result
