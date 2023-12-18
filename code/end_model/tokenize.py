@@ -1,4 +1,4 @@
 from tokenization.process import get_keys
 
-def tokenize(caption):
+def start(caption):
     return get_keys(caption)
