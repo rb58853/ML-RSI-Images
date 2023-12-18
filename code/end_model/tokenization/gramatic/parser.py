@@ -259,3 +259,17 @@ class CaptionParser(Parser):
             for token in result:
                 self.add_token(token)
         return result
+    
+    @_('verbal on noun WITH noun')
+    def sintagma_list(self, p):
+        # verbal on noun es tambien un sintagma, cuando pasa por aqui no parsea el sintagma, luego hay que agregar ese token desde aqui
+        result = []
+        verbal: list = p.verbal
+        result.append(' '.join([verbal, p[1], p[2]]))
+        result.append(' '.join([verbal, p[1], p[2],'with', p[4] ]))
+        result.append(' '.join([verbal,'with', p[4] ]))
+        noun = " ".join(verbal.split(" ")[:-1])
+        result.append(' '.join([noun,'with', p[4] ]))
+        for token in result:
+            self.add_token(token)
+        return result
