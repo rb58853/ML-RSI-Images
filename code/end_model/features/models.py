@@ -132,7 +132,7 @@ class BLIP(IModel):
     PROCESSOR = None
     MODEL = None
 
-    def import_model(local = False, dir = '/content/gdrive/My Drive/image_caption_models/BLIP/'):
+    def import_model(local = False, dir = '/content/gdrive/My Drive/Images-RI-ML/image_caption_models/BLIP/'):
         '''
             Carga el modelo desde la biblioteca transformers en caso de `local = False` 
         '''
@@ -145,7 +145,7 @@ class BLIP(IModel):
             BLIP.PROCESSOR = BlipProcessor.from_pretrained(dir + 'processor')
             BLIP.MODEL = BlipForConditionalGeneration.from_pretrained(dir + 'model').to("cuda")
     
-    def save(dir = '/content/gdrive/My Drive/image_caption_models/BLIP/'):
+    def save(dir = '/content/gdrive/My Drive/Images-RI-ML/image_caption_models/BLIP/'):
         BLIP.MODEL.save_pretrained(dir + "model")
         BLIP.PROCESSOR.save_pretrained(dir + "processor")
     
@@ -208,7 +208,7 @@ class BLIP2(IModel):
     MODEL = None
     DEVICE = None
 
-    def import_model(local = False, dir = "/content/gdrive/My Drive/image_caption_models/BLIP2/"):
+    def import_model(local = False, dir = "/content/gdrive/My Drive/Images-RI-ML/image_caption_models/BLIP2/"):
         '''
             Carga el modelo desde la biblioteca transformers en caso de `local = False` 
         '''
@@ -225,7 +225,7 @@ class BLIP2(IModel):
             BLIP2.DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
             BLIP2.MODEL.to(BLIP2.DEVICE)
     
-    def save(dir = '/content/gdrive/My Drive/image_caption_models/BLIP2/'):
+    def save(dir = '/content/gdrive/My Drive/Images-RI-ML/image_caption_models/BLIP2/'):
         BLIP2.MODEL.save_pretrained(dir + "model")
         BLIP2.PROCESSOR.save_pretrained(dir + "processor")
 
