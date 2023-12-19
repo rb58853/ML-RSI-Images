@@ -135,24 +135,34 @@ class CaptionParserLeft(Parser):
     @_('noun AND adj')
     def adj(self,p):
         #beauty and black
-        if isinstance(p[0],list) and isinstance(p[2],list): return [p[0]]+p[2]
-        if isinstance(p[0],list) and not isinstance(p[2],list): return [p[0]]+[p[2]]
+        if  isinstance(p[2],list):
+            return [p[0]]+p[2]
+        if not isinstance(p[2],list): 
+            return [p[0]]+[p[2]]
 
     @_('adj AND adj')
     def adj(self,p):
         #beauty and tall
-        if isinstance(p[0],list) and isinstance(p[2],list): return p[0]+p[2]
-        if isinstance(p[0],list) and not isinstance(p[2],list): return p[0]+[p[2]]
-        if not isinstance(p[0],list) and isinstance(p[2],list): return [p[0]]+p[2]
-        if not isinstance(p[0],list) and not isinstance(p[2],list): return [p[0]]+[p[2]]
+        if isinstance(p[0],list) and isinstance(p[2],list): 
+            return p[0]+p[2]
+        if isinstance(p[0],list) and not isinstance(p[2],list): 
+            return p[0]+[p[2]]
+        if not isinstance(p[0],list) and isinstance(p[2],list): 
+            return [p[0]]+p[2]
+        if not isinstance(p[0],list) and not isinstance(p[2],list): 
+            return [p[0]]+[p[2]]
     
     @_('adj "," adj')
     def adj(self,p):
         #beauty, tall
-        if isinstance(p[0],list) and isinstance(p[2],list): return p[0]+p[2]
-        if not isinstance(p[0],list) and isinstance(p[2],list): return [p[0]]+p[2]
-        if isinstance(p[0],list) and not isinstance(p[2],list): return p[0]+[p[2]]
-        if not isinstance(p[0],list) and not isinstance(p[2],list): return [p[0]]+[p[2]]
+        if isinstance(p[0],list) and isinstance(p[2],list): 
+            return p[0]+p[2]
+        if not isinstance(p[0],list) and isinstance(p[2],list): 
+            return [p[0]]+p[2]
+        if isinstance(p[0],list) and not isinstance(p[2],list): 
+            return p[0]+[p[2]]
+        if not isinstance(p[0],list) and not isinstance(p[2],list): 
+            return [p[0]]+[p[2]]
     
 #endregion
     
