@@ -215,7 +215,8 @@ class BLIP2(IModel):
         if not local:
             from transformers import AutoProcessor, Blip2ForConditionalGeneration
             BLIP2.PROCESSOR = AutoProcessor.from_pretrained("Salesforce/blip2-opt-2.7b")
-            BLIP2.MODEL = Blip2ForConditionalGeneration.from_pretrained("Salesforce/blip2-opt-2.7b", torch_dtype=torch.float16)
+            BLIP2.MODEL = Blip2ForConditionalGeneration.from_pretrained("ybelkada/blip2-opt-2.7b-fp16-sharded", torch_dtype=torch.float16)
+            # BLIP2.MODEL = Blip2ForConditionalGeneration.from_pretrained("Salesforce/blip2-opt-2.7b", torch_dtype=torch.float16)
             BLIP2.DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
             BLIP2.MODEL.to(BLIP2.DEVICE)
         else:
