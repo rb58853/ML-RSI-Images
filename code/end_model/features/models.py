@@ -149,7 +149,7 @@ class BLIP(IModel):
         BLIP.MODEL.save_pretrained(dir + "model")
         BLIP.PROCESSOR.save_pretrained(dir + "processor")
     
-    def caption (image):
+    def caption (image, max_tokens = 50, prompt = ""):
         inputs = BLIP.PROCESSOR(image, return_tensors="pt").to("cuda")
         out = BLIP.MODEL.generate(**inputs)
         result = BLIP.PROCESSOR.decode(out[0], skip_special_tokens=True)
@@ -225,26 +225,16 @@ class BLIP2(IModel):
             BLIP2.MODEL = Blip2ForConditionalGeneration.from_pretrained("rb58853/blip2-clip-sam", torch_dtype=torch.float16)
             BLIP2.DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
             BLIP2.MODEL.to(BLIP2.DEVICE)
-
-
-            # from peft import PeftModel, PeftConfig
-            # BLIP2.PROCESSOR = AutoProcessor.from_pretrained("Salesforce/blip2-opt-2.7b")
-            # peft_model_id = "rb58853/blip2-clip-sam"
-            # config = PeftConfig.from_pretrained(peft_model_id)
-            # BLIP2.MODEL = Blip2ForConditionalGeneration.from_pretrained(config.base_model_name_or_path, torch_dtype=torch.float16,  device_map="auto")
-            # BLIP2.MODEL = PeftModel.from_pretrained(BLIP2.MODEL, peft_model_id)
-            # BLIP2.DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-            # BLIP2.MODEL.to(BLIP2.DEVICE)
     
     def save(dir = '/content/gdrive/My Drive/Images-RI-ML/image_caption_models/BLIP2/'):
         BLIP2.MODEL.save_pretrained(dir + "model")
         BLIP2.PROCESSOR.save_pretrained(dir + "processor")
 
-    def caption (image, prompt = "Describe the image in detail"):
+    def caption (image, max_tokens = 50 , prompt = "Describe the image in detail"):
         # inputs = BLIP2.PROCESSOR(image, text=prompt, return_tensors="pt").to(BLIP2.DEVICE, torch.float16)
         # generated_ids = BLIP2.MODEL.generate(**inputs)
         inputs = BLIP2.PROCESSOR(image, return_tensors="pt").to(BLIP2.DEVICE, torch.float16)
-        generated_ids = BLIP2.MODEL.generate(**inputs, max_new_tokens=20)
+        generated_ids = BLIP2.MODEL.generate(**inputs, max_new_tokens=max_tokens )
         generated_text = BLIP2.PROCESSOR.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
         return generated_text
     
