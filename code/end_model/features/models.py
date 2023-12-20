@@ -230,7 +230,7 @@ class BLIP2(IModel):
         BLIP2.MODEL.save_pretrained(dir + "model")
         BLIP2.PROCESSOR.save_pretrained(dir + "processor")
 
-    def caption (image, max_tokens = 50 , prompt = "Describe the image in detail"):
+    def caption (image, max_tokens = 20 , prompt = "Describe the image in detail"):
         # inputs = BLIP2.PROCESSOR(image, text=prompt, return_tensors="pt").to(BLIP2.DEVICE, torch.float16)
         # generated_ids = BLIP2.MODEL.generate(**inputs)
         inputs = BLIP2.PROCESSOR(image, return_tensors="pt").to(BLIP2.DEVICE, torch.float16)

@@ -164,6 +164,14 @@ class CaptionParser(Parser):
         if not isinstance(p[0],list) and not isinstance(p[2],list): return [p[0]]+[p[2]]
     
 #endregion
+    @_('nouns IS VERB')
+    def verbal_list(self, p): 
+        result = []
+        nouns: str = p.nouns
+        for noun in nouns:
+            result.append(' '.join([noun, p.VERB]))
+            self.add_token(' '.join([noun, p.VERB]))
+        return result
     
     @_('nouns VERB')
     def verbal_list(self, p): 
@@ -189,6 +197,12 @@ class CaptionParser(Parser):
     def verbal_list(self, p): 
         return [p[0]]+p[2]
     
+    @_('noun IS VERB')
+    def verbal(self, p): 
+        phrase = ' '.join([p[0], p[2]])
+        self.add_token(phrase)
+        return phrase    
+
     @_('noun VERB')
     def verbal(self, p): 
         phrase = ' '.join([p[0], p[1]])
