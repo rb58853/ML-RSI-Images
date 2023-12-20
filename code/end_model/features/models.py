@@ -219,16 +219,22 @@ class BLIP2(IModel):
             BLIP2.DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
             BLIP2.MODEL.to(BLIP2.DEVICE)
         else:
-            from transformers import Blip2ForConditionalGeneration, AutoProcessor
-            from peft import PeftModel, PeftConfig
+            from transformers import AutoProcessor, Blip2ForConditionalGeneration
+            # BLIP2.PROCESSOR = AutoProcessor.from_pretrained(dir+'processor')
             BLIP2.PROCESSOR = AutoProcessor.from_pretrained("Salesforce/blip2-opt-2.7b")
-            
-            peft_model_id = "rb58853/blip2-clip-sam"
-            config = PeftConfig.from_pretrained(peft_model_id)
-            BLIP2.MODEL = Blip2ForConditionalGeneration.from_pretrained(config.base_model_name_or_path, torch_dtype=torch.float16,  device_map="auto")
-            BLIP2.MODEL = PeftModel.from_pretrained(BLIP2.MODEL, peft_model_id)
+            BLIP2.MODEL = Blip2ForConditionalGeneration.from_pretrained("rb58853/blip2-clip-sam", torch_dtype=torch.float16)
             BLIP2.DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
             BLIP2.MODEL.to(BLIP2.DEVICE)
+
+
+            # from peft import PeftModel, PeftConfig
+            # BLIP2.PROCESSOR = AutoProcessor.from_pretrained("Salesforce/blip2-opt-2.7b")
+            # peft_model_id = "rb58853/blip2-clip-sam"
+            # config = PeftConfig.from_pretrained(peft_model_id)
+            # BLIP2.MODEL = Blip2ForConditionalGeneration.from_pretrained(config.base_model_name_or_path, torch_dtype=torch.float16,  device_map="auto")
+            # BLIP2.MODEL = PeftModel.from_pretrained(BLIP2.MODEL, peft_model_id)
+            # BLIP2.DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+            # BLIP2.MODEL.to(BLIP2.DEVICE)
     
     def save(dir = '/content/gdrive/My Drive/Images-RI-ML/image_caption_models/BLIP2/'):
         BLIP2.MODEL.save_pretrained(dir + "model")
