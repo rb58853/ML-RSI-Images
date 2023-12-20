@@ -132,11 +132,11 @@ class BLIP(IModel):
     PROCESSOR = None
     MODEL = None
 
-    def import_model(local = False, dir = '/content/gdrive/My Drive/Images-RI-ML/image_caption_models/BLIP/'):
+    def import_model(own = False, dir = '/content/gdrive/My Drive/Images-RI-ML/image_caption_models/BLIP/'):
         '''
-            Carga el modelo desde la biblioteca transformers en caso de `local = False` 
+            Carga el modelo desde la biblioteca transformers en caso de `own = False` 
         '''
-        if not local:
+        if not own:
             from transformers import BlipProcessor, BlipForConditionalGeneration
             BLIP.PROCESSOR = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
             BLIP.MODEL = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large").to("cuda")
@@ -208,21 +208,25 @@ class BLIP2(IModel):
     MODEL = None
     DEVICE = None
 
-    def import_model(local = False, dir = "/content/gdrive/My Drive/Images-RI-ML/image_caption_models/BLIP2/"):
+    def import_model(own = False, dir = "/content/gdrive/My Drive/Images-RI-ML/image_caption_models/BLIP2/"):
         '''
-            Carga el modelo desde la biblioteca transformers en caso de `local = False` 
+            Carga el modelo desde la biblioteca transformers en caso de `own = False` 
         '''
-        if not local:
+        if not own:
             from transformers import AutoProcessor, Blip2ForConditionalGeneration
             BLIP2.PROCESSOR = AutoProcessor.from_pretrained("Salesforce/blip2-opt-2.7b")
-            BLIP2.MODEL = Blip2ForConditionalGeneration.from_pretrained("ybelkada/blip2-opt-2.7b-fp16-sharded", torch_dtype=torch.float16)
-            # BLIP2.MODEL = Blip2ForConditionalGeneration.from_pretrained("Salesforce/blip2-opt-2.7b", torch_dtype=torch.float16)
+            BLIP2.MODEL = Blip2ForConditionalGeneration.from_pretrained("Salesforce/blip2-opt-2.7b", torch_dtype=torch.float16)
             BLIP2.DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
             BLIP2.MODEL.to(BLIP2.DEVICE)
         else:
-            from transformers import AutoProcessor, Blip2ForConditionalGeneration
-            BLIP2.PROCESSOR = AutoProcessor.from_pretrained(dir+'processor')
-            BLIP2.MODEL = Blip2ForConditionalGeneration.from_pretrained(dir + 'model', torch_dtype=torch.float16)
+            from transformers import Blip2ForConditionalGeneration, AutoProcessor
+            from peft import PeftModel, PeftConfig
+            BLIP2.PROCESSOR = AutoProcessor.from_pretrained("Salesforce/blip2-opt-2.7b")
+            
+            peft_model_id = "rb58853/blip2-clip-sam"
+            config = PeftConfig.from_pretrained(peft_model_id)
+            BLIP2.MODEL = Blip2ForConditionalGeneration.from_pretrained(config.base_model_name_or_path, torch_dtype=torch.float16,  device_map="auto")
+            BLIP2.MODEL = PeftModel.from_pretrained(BLIP2.MODEL, peft_model_id)
             BLIP2.DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
             BLIP2.MODEL.to(BLIP2.DEVICE)
     
