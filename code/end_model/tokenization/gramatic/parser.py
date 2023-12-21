@@ -5,18 +5,9 @@ class CaptionParser(Parser):
     tokens = CaptionLexer.tokens
     start = 'text'  
     precedence = (
-        ('right', 'IS', 'IN', 'ON', 'OF', 'NOUN', 'VERB', 'NUM', 'AND', 'WITH',',','ADJ'),
+        ('right', 'IN', 'ON', 'OF', 'NOUN', 'VERB', 'NUM', 'AND', 'WITH',',','ADJ'),
         )
     
-    def right_precedence():
-        CaptionParser.precedence = (
-        ('right', 'IS', 'IN', 'ON', 'OF', 'NOUN', 'VERB', 'NUM', 'AND', 'WITH',',','ADJ'),
-        )
-    def left_precedence():
-        CaptionParser.precedence = (
-        ('left', 'IS', 'IN', 'ON', 'OF', 'NOUN', 'VERB', 'NUM', 'AND', 'WITH',',','ADJ'),
-        )
-
     def __init__(self) -> None:
         super().__init__()
         self.sintagmas = []
@@ -96,6 +87,24 @@ class CaptionParser(Parser):
             self.add_token(phrase)
             return [phrase]
     
+    @_('noun adj')
+    def nouns(self, p):
+        if isinstance(p[0], list):
+            result = [' '.join([', '.join(p[1]), p[0]])]
+
+            for adj in p[1]:
+                phrase =' '.join([adj, p.noun])
+                result.append(phrase)
+
+            for token in result:
+                self.add_token(token)
+            return result        
+
+        else:
+            phrase =' '.join([p.adj, p.noun])
+            self.add_token(phrase)
+            return [phrase]
+    
 
     @_('NOUN noun')
     def noun(self, p): 
@@ -103,17 +112,17 @@ class CaptionParser(Parser):
         self.add_token(phrase)
         return phrase
     
-    @_('noun IS adj')
-    def noun(self,p):
-        phrase = ' '.join([p.ADJ, p.noun])
-        self.add_token(phrase)
-        return phrase
+    # @_('noun IS adj')
+    # def noun(self,p):
+    #     phrase = ' '.join([p.ADJ, p.noun])
+    #     self.add_token(phrase)
+    #     return phrase
     
-    @_('noun IS NOUN')
-    def noun(self,p):
-        phrase = ' '.join([p[2], p[0]])
-        self.add_token(phrase)
-        return phrase
+    # @_('noun IS NOUN')
+    # def noun(self,p):
+    #     phrase = ' '.join([p[2], p[0]])
+    #     self.add_token(phrase)
+    #     return phrase
     
     @_('noun "," noun')
     def nouns(self,p):
@@ -164,15 +173,6 @@ class CaptionParser(Parser):
         if not isinstance(p[0],list) and not isinstance(p[2],list): return [p[0]]+[p[2]]
     
 #endregion
-    @_('nouns IS VERB')
-    def verbal_list(self, p): 
-        result = []
-        nouns: str = p.nouns
-        for noun in nouns:
-            result.append(' '.join([noun, p.VERB]))
-            self.add_token(' '.join([noun, p.VERB]))
-        return result
-    
     @_('nouns VERB')
     def verbal_list(self, p): 
         result = []
@@ -197,12 +197,6 @@ class CaptionParser(Parser):
     def verbal_list(self, p): 
         return [p[0]]+p[2]
     
-    @_('noun IS VERB')
-    def verbal(self, p): 
-        phrase = ' '.join([p[0], p[2]])
-        self.add_token(phrase)
-        return phrase    
-
     @_('noun VERB')
     def verbal(self, p): 
         phrase = ' '.join([p[0], p[1]])
@@ -267,11 +261,11 @@ class CaptionParser(Parser):
             self.add_token(token)
         return result
 
-    @_('noun IS on noun')
-    def nominal(self,p):
-        phrase = ' '.join([p[0], p[2], p[3]])
-        self.add_token(phrase)
-        return phrase
+    # @_('noun IS on noun')
+    # def nominal(self,p):
+    #     phrase = ' '.join([p[0], p[2], p[3]])
+    #     self.add_token(phrase)
+    #     return phrase
    
     @_('verbal on noun')
     def sintagma(self, p): 
@@ -288,14 +282,14 @@ class CaptionParser(Parser):
             self.add_token(' '.join([noun, p[1], p[2]]))
         return result
 
-    @_('nouns IS on noun')
-    def nominal_list(self, p):
-        result = []
-        nouns: list = p.nouns
-        for noun in nouns:
-            result.append(' '.join( [noun, p[2], p[3]]))
-            self.add_token(' '.join([noun, p[2], p[3]]))
-        return result
+    # @_('nouns IS on noun')
+    # def nominal_list(self, p):
+    #     result = []
+    #     nouns: list = p.nouns
+    #     for noun in nouns:
+    #         result.append(' '.join( [noun, p[2], p[3]]))
+    #         self.add_token(' '.join([noun, p[2], p[3]]))
+    #     return result
 
     @_('verbal_list on noun')
     def sintagma_list(self, p):

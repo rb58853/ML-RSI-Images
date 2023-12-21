@@ -7,7 +7,7 @@ class CaptionLexer(Lexer):
         self.category:dict[str:str] = {}
 
     tokens = {
-        WITH, IS, IN, ON, OF, AND, NOUN, VERB, ADJ, NUM
+        WITH, IN, ON, OF, AND, NOUN, VERB, ADJ, NUM
     }
 
     literals = { ',', '.' }
