@@ -34,7 +34,7 @@ class SAM:
             stability_score_thresh=0.92,
             crop_n_layers=1,
             crop_n_points_downscale_factor=2,
-            min_mask_region_area=100,  # Requires open-cv to run post-processing
+            min_mask_region_area= 20*20,  # Requires open-cv to run post-processing
         )
 
     def mask_image(mask, raw_image, bbox):
