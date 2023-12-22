@@ -96,16 +96,18 @@ class ProcessImages:
         result = {}
         indexs = {}
         index = 0
+
         for embedding in embeddings:
             similarity = self.clip.calculate_similarity(embedding, image_embedding)
             result[similarity] = embedding
             indexs[similarity] = index
             index +=1
 
-        result = dict(sorted(result.items()))
+        result = dict(sorted(result.items(),reverse=True))
+        
         if print_:
             for key in result:
-                print(f'{key}: {indexs[key]}')
+                print(f'index_{indexs[key]}: {key}')
         
         return result
 
