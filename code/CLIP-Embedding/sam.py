@@ -1,7 +1,6 @@
 from PIL import Image
-from imodel import IModel
 
-class SAM(IModel):
+class SAM:
     '''
     ## SAM
     ### Funciones
@@ -58,19 +57,20 @@ class SAM(IModel):
         x,y,w,h =  bbox[0],bbox[1],bbox[2],bbox[3]
         return image[y:y+h, x:x+w]
     
-    def all_areas_from_image(image, raw_image, min_area = 0, min_box_area = 0):
+    def all_areas_from_image(image, raw_image = None, min_area = 0, min_box_area = 0, use_mask_as_return = False):
         """
         ### INPUTS:\n
         `image`: imagen cargada con cv2 \n
         `raw_image`: imagen cargada con PIL.Image \n
         `min_area`: area minima en pixeles de tamaño que puede puede tener las imagenes segmentadas \n
         `min_box_area`: area minima en pixeles de tamaño que puede puede tener un cuadro que contiene una imagen segmentada \n
+        `use_mask_as_return`: usa las mascaras con fondo transparente como parte del resultado de la funcion
 
         ### OUTPUTS: \n
         `dict` = \n
         `{` \n
           `'box'`: imagenes(cuadro comprendido en segmentacion), \n
-          `'mask'`: imagenes(solo segmentacion fondo transparente) \n
+          `'mask'`: imagenes(solo segmentacion fondo transparente) Lista vacia si no se usa \n
         `}` \n
         """
         masks = SAM.MASK_GENERATOR.generate(image)
@@ -82,10 +82,14 @@ class SAM(IModel):
             box_area = h * w
             if box_area >= min_box_area:
                 images_box.append(box_im)
-            if mask['area'] >= min_area:
-                images_mask.append(SAM.mask_image(mask['segmentation'], raw_image, mask['bbox']))
+            
+            if use_mask_as_return:
+                if mask['area'] >= min_area:
+                    images_mask.append(SAM.mask_image(mask['segmentation'], raw_image, mask['bbox']))
+        
         return {'box':images_box, 'mask':images_mask}
 
+    # [obsolete]
     def all_masks_from_sam(image, min_area = 0, min_box_area = 0):
         masks = SAM.MASK_GENERATOR.generate(image)
         _masks = [mask for mask in masks]
