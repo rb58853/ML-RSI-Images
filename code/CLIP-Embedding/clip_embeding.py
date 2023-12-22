@@ -81,11 +81,12 @@ class ProcessImages:
 
     def get_embedding_segmentations(self, image_path):
         self.segmentations = self.get_segmentation_images(image_path)
+        return self.clip.get_image_embedding(self.segmentations)
         return [self.clip.get_image_embedding(image) for image in self.segmentations]
     
-    def full_embeddings_from_image(self, image_path):
-        image = self.load_pil_image(image_path)
-        return [self.clip.get_image_embedding(image)]+ self.get_embedding_segmentations(image_path)
+    # def full_embeddings_from_image(self, image_path):
+    #     image = self.load_pil_image(image_path)
+    #     return [self.clip.get_image_embedding(image)]+ self.get_embedding_segmentations(image_path)
 
     def load_pil_image(self,image_path):
         image = Image.open(image_path).convert("RGB")
@@ -99,8 +100,10 @@ class ProcessImages:
         return image
     
     def ranking(self, image_path, print_ = True):
-        embeddings = self.full_embeddings_from_image(image_path)
-        image_embedding = embeddings[0]
+        embeddings = self.get_embedding_segmentations(image_path)
+        
+        image = self.load_pil_image(image_path)
+        image_embedding = self.clip.get_image_embedding(image)
 
         result = {}
         indexs = {}
@@ -120,17 +123,17 @@ class ProcessImages:
         
         return result
     
-    def unranked_list_segmentations(self, image_path):
-        embeddings = self.full_embeddings_from_image(image_path)
-        image_embedding = embeddings[0]
+    # def unranked_list_segmentations(self, image_path):
+    #     embeddings = self.full_embeddings_from_image(image_path)
+    #     image_embedding = embeddings[0]
 
-        result = {}
+    #     result = {}
 
-        for embedding in embeddings:
-            similarity = self.clip.calculate_similarity(embedding[0], image_embedding[0])
-            result[similarity] = embedding
+    #     for embedding in embeddings:
+    #         similarity = self.clip.calculate_similarity(embedding[0], image_embedding[0])
+    #         result[similarity] = embedding
 
-        return result
+    #     return result
 
 
 
