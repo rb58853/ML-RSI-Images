@@ -137,7 +137,7 @@ class ProcessImages:
         if len(self.segmentations) == 0:
             self.segmentations = self.get_segmentation_images(image_path)
         
-        index = 1
+        index = 0
         for im in self.segmentations:
             plt.figure(figsize=(2,2))
             plt.title(f'index_{index}')
