@@ -79,13 +79,14 @@ class ProcessImages:
         return [self.clip.get_image_embedding(image)]+ self.get_embedding_segmentations(image_path)
 
     def load_pil_image(self,image_path):
-        return Image.open(image_path).convert("RGB")
+        image = Image.open(image_path).convert("RGB")
+        weigth, heigth = image.size
+        self.AREA = (weigth * heigth)/ProcessImages.IMAGE_PARTITION
+        return image
         
     def load_cv2_image(self,image_path):
         image = cv2.imread(image_path)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        weigth, heigth = image.size
-        self.AREA = (weigth * heigth)/ProcessImages.IMAGE_PARTITION
         return image
     
     def ranking(self, image_path, print_ = True):
