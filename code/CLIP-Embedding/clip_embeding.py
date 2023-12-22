@@ -120,6 +120,20 @@ class ProcessImages:
         
         return result
     
+    def unranked_list_segmentations(self, image_path):
+        embeddings = self.full_embeddings_from_image(image_path)
+        image_embedding = embeddings[0]
+
+        result = {}
+
+        for embedding in embeddings:
+            similarity = self.clip.calculate_similarity(embedding[0], image_embedding[0])
+            result[similarity] = embedding
+
+        return result
+
+
+
     def show_images(self, image_path = None):
         if len(self.segmentations) == 0:
             self.segmentations = self.get_segmentation_images(image_path)
