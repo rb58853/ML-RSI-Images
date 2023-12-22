@@ -63,6 +63,7 @@ class ProcessImages:
     def __init__(self) -> None:
         self.clip = ClipEmbedding()
         self.sam = SAM
+        self.sam.import_model()
         self.AREA = 20*20
 
     def get_segmentation_images(self, image_path):
