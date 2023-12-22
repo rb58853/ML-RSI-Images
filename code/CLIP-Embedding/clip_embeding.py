@@ -54,11 +54,6 @@ class ClipEmbedding():
         # return pooler_output
 
     def calculate_similarity(self, vec1, vec2):
-        if  isinstance(vec1, list) and len(vec1) == 1:
-            vec1 = vec1[0]
-        if  isinstance(vec2, list) and len(vec2) == 1:
-            vec2 = vec2[0]
-        
         vec1 = vec1.cpu().detach().numpy()
         vec2 = vec2.cpu().detach().numpy()
         return 1 - cosine(vec1, vec2)
@@ -111,7 +106,7 @@ class ProcessImages:
         index = 0
 
         for embedding in embeddings:
-            similarity = self.clip.calculate_similarity(embedding[0], image_embedding[0])
+            similarity = self.clip.calculate_similarity(embedding, image_embedding[0])
             result[similarity] = embedding
             indexs[similarity] = index
             index +=1
