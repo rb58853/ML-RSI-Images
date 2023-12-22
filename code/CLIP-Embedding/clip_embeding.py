@@ -33,8 +33,10 @@ class ClipEmbedding():
     
     def get_text_embedding(self,text):
         image =  Image.new('RGB', (10, 10), color = (0, 0, 0))
+        if not isinstance(text, list):
+            text = [text]
         encoded_text = self.processor(
-            text = [text],
+            text = text,
             images = image,
             padding=True,
             # truncation=True,
@@ -52,8 +54,8 @@ class ClipEmbedding():
         # return pooler_output
 
     def calculate_similarity(self, vec1, vec2):
-        vec1 = vec1.cpu().detach().numpy()[0]
-        vec2 = vec2.cpu().detach().numpy()[0]
+        vec1 = vec1.cpu().detach().numpy()
+        vec2 = vec2.cpu().detach().numpy()
         return 1 - cosine(vec1, vec2)
 
 
@@ -121,10 +123,8 @@ class ProcessImages:
         index = 1
         for im in self.segmentations:
             plt.figure(figsize=(2,2))
-            plt.title(index)
+            plt.title(f'index_{index}')
             plt.imshow(im)
             plt.axis('off')
             plt.show()
             index+=1
-
-
