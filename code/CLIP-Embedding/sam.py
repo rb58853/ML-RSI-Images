@@ -88,7 +88,7 @@ class SAM:
                 if mask['area'] >= min_area:
                     images_mask.append(SAM.mask_image(mask['segmentation'], raw_image, mask['bbox']))
         
-        return {'box':images_box, 'mask':images_mask}
+        return {'box':images_box, 'mask':images_mask, 'full': images_box + images_mask}
 
     # [obsolete]
     def all_masks_from_sam(image, min_area = 0, min_box_area = 0):
