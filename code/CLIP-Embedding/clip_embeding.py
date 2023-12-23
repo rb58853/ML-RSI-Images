@@ -69,13 +69,17 @@ class ProcessImages:
         self.AREA = 20*20
         self.segmentations = []
 
-    def get_segmentation_images(self, image_path):
+    def get_segmentation_images(self, image_path, segmentation = None):
         self.segmentations = []
         image = self.load_cv2_image(image_path)
-        return self.sam.all_areas_from_image(image,min_box_area = self.AREA, min_area = self.AREA/2)[ProcessImages.SEGMENTATION]
+        raw_image =self.load_pil_image(image_path)
+        segm = ProcessImages.segmentation
+        if segmentation is not None:
+            segm = segmentation
+        return self.sam.all_areas_from_image(image, raw_image = raw_image, min_box_area = self.AREA, min_area = self.AREA/2, use_mask_as_return = segm == 'mask')[segm]
 
-    def get_embedding_segmentations(self, image_path):
-        self.segmentations = self.get_segmentation_images(image_path)
+    def get_embedding_segmentations(self, image_path, segmentation = None):
+        self.segmentations = self.get_segmentation_images(image_path, segmentation = segmentation)
         return self.clip.get_image_embedding(self.segmentations)
         return [self.clip.get_image_embedding(image) for image in self.segmentations]
     
@@ -133,9 +137,9 @@ class ProcessImages:
 
 
 
-    def show_images(self, image_path = None):
+    def show_images(self, image_path = None, segmentation = None):
         if len(self.segmentations) == 0:
-            self.segmentations = self.get_segmentation_images(image_path)
+            self.segmentations = self.get_segmentation_images(image_path, segmentation= segmentation)
         
         index = 0
         for im in self.segmentations:
