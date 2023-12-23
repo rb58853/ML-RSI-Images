@@ -73,7 +73,7 @@ class ProcessImages:
         self.segmentations = []
         image = self.load_cv2_image(image_path)
         raw_image =self.load_pil_image(image_path)
-        segm = ProcessImages.segmentation
+        segm = ProcessImages.SEGMENTATION
         if segmentation is not None:
             segm = segmentation
         return self.sam.all_areas_from_image(image, raw_image = raw_image, min_box_area = self.AREA, min_area = self.AREA/2, use_mask_as_return = segm == 'mask')[segm]
