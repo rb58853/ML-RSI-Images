@@ -5,8 +5,12 @@ from transformers import CLIPProcessor, CLIPModel
 from sam import SAM
 import cv2
 import matplotlib.pyplot as plt
+from scipy.spatial import distance
 
 class ClipEmbedding():
+    EUCLIDEAN_POW_UMBRAL = 1 #Elevar a la potencia la distancia euclieana
+    EUCLIDEAN_DIV_UMBRAL = 10 #dividir la distancia euclideana.
+
     def __init__(self) -> None:
         self.model, self.processor, self.device = self.get_model()
         
@@ -47,16 +51,30 @@ class ClipEmbedding():
         text_embeds = outputs['text_embeds']
         return text_embeds
 
-        # text_embedding_as_np = text_embeds.cpu().detach().numpy()
-        # return text_embedding_as_np
+    def process_text_and_get_pos(text):
+        #procesar el texto y sacarle la posicion
+        return None
+    
+    def get_text_vector(self, texts):
+        embeddings = self.get_text_embedding(texts)
+        return [(embedding, self.process_text_and_get_pos(text)) for embedding, text in zip(embeddings, texts)]
 
-        # pooler_output = outputs['text_model_output']['pooler_output']
-        # return pooler_output
-
-    def calculate_similarity(self, vec1, vec2):
+    def cosine_similarity(self, vec1, vec2):
         vec1 = vec1.cpu().detach().numpy()
         vec2 = vec2.cpu().detach().numpy()
         return 1 - cosine(vec1, vec2)
+    
+    def euclidean_similarity(self, vec1, vec2):
+        if vec1 is None or vec2 is None:
+            return 0
+        return 1 - distance.euclidean(vec1, vec2)
+   
+    def calculate_similarity(self, vec1, vec2):
+        cosine_similarity = self.cosine_similarity(vec1[0], vec2[0])
+        euclidean_similarity = self.euclidean_similarity(vec1[1], vec2[1])
+        euclindean_umbral = pow(euclidean_similarity, ClipEmbedding.EUCLIDEAN_POW_UMBRAL)/ ClipEmbedding.EUCLIDEAN_DIV_UMBRAL
+        
+        return cosine_similarity * (1 + euclindean_umbral) 
 
 class ProcessImages:
     IMAGE_PARTITION = 80 #tamaño mínimo(en píxeles) de un cuadro de segmentación = tamaño(imagen)/IMAGE_PARTITION
@@ -76,17 +94,25 @@ class ProcessImages:
         segm = ProcessImages.SEGMENTATION
         if segmentation is not None:
             segm = segmentation
-        return self.sam.all_areas_from_image(image, raw_image = raw_image, min_box_area = self.AREA, min_area = self.AREA/2, use_mask_as_return = segm == 'mask')[segm]
+
+        self.segmentations = self.sam.all_areas_from_image(
+            image= image, 
+            raw_image = raw_image, 
+            min_box_area = self.AREA, 
+            min_area = self.AREA/2, 
+            use_mask_as_return = segm == 'mask' or segm == 'full')
+        
+        return {'images': self.segmentations[segm], 
+                'pos': self.segmentations[f'{segm}_pos']}
 
     def get_embedding_segmentations(self, image_path, segmentation = None):
-        self.segmentations = self.get_segmentation_images(image_path, segmentation = segmentation)
-        return self.clip.get_image_embedding(self.segmentations)
-        return [self.clip.get_image_embedding(image) for image in self.segmentations]
-    
-    # def full_embeddings_from_image(self, image_path):
-    #     image = self.load_pil_image(image_path)
-    #     return [self.clip.get_image_embedding(image)]+ self.get_embedding_segmentations(image_path)
+        segmentations = self.get_segmentation_images(image_path, segmentation = segmentation)
+        embeddings = self.clip.get_image_embedding(segmentations['images'])
+        positions = segmentations['pos']
 
+        return [(embedding, pos) for embedding, pos in zip(embeddings, positions)]
+        # return [self.clip.get_image_embedding(image) for image in self.segmentations]
+    
     def load_pil_image(self,image_path):
         image = Image.open(image_path).convert("RGB")
         weigth, heigth = image.size
@@ -104,6 +130,7 @@ class ProcessImages:
         
         image = self.load_pil_image(image_path)
         image_embedding = self.clip.get_image_embedding(image)
+        image_embedding = (image_embedding[0], None)
 
         result = {}
         indexs = {}
@@ -123,28 +150,18 @@ class ProcessImages:
         
         return result
     
-    # def unranked_list_segmentations(self, image_path):
-    #     embeddings = self.full_embeddings_from_image(image_path)
-    #     image_embedding = embeddings[0]
-
-    #     result = {}
-
-    #     for embedding in embeddings:
-    #         similarity = self.clip.calculate_similarity(embedding[0], image_embedding[0])
-    #         result[similarity] = embedding
-
-    #     return result
-
-
-
     def show_images(self, image_path = None, segmentation = None):
         if len(self.segmentations) == 0:
             self.segmentations = self.get_segmentation_images(image_path, segmentation= segmentation)
         
+        segm = ProcessImages.SEGMENTATION
+        if segmentation is not None:
+            segm = segmentation
+
         index = 0
-        for im in self.segmentations:
+        for im in self.segmentations[segm]:
             plt.figure(figsize=(2,2))
-            plt.title(f'index_{index}')
+            plt.title(f'index_{index} | pos: {self.segmentations[f"{segm}_pos"]}')
             plt.imshow(im)
             plt.axis('off')
             plt.show()
