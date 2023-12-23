@@ -51,7 +51,7 @@ class ClipEmbedding():
         text_embeds = outputs['text_embeds']
         return text_embeds
 
-    def process_text_and_get_pos(text):
+    def process_text_and_get_pos(self, text):
         #procesar el texto y sacarle la posicion
         return None
     
