@@ -161,7 +161,7 @@ class ProcessImages:
         index = 0
         for im in self.segmentations[segm]:
             plt.figure(figsize=(2,2))
-            plt.title(f'index_{index} | pos: {self.segmentations[f"{segm}_pos"]}')
+            plt.title(f'index_{index} | pos: {self.segmentations[f"{segm}_pos"][index]}')
             plt.imshow(im)
             plt.axis('off')
             plt.show()
