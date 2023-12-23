@@ -99,8 +99,8 @@ class ProcessImages:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         return image
     
-    def ranking(self, image_path, print_ = True):
-        embeddings = self.get_embedding_segmentations(image_path)
+    def ranking(self, image_path, segmentation = None, print_ = True):
+        embeddings = self.get_embedding_segmentations(image_path, segmentation)
         
         image = self.load_pil_image(image_path)
         image_embedding = self.clip.get_image_embedding(image)
