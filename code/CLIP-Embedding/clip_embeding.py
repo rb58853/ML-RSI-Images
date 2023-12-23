@@ -6,6 +6,7 @@ from sam import SAM
 import cv2
 import matplotlib.pyplot as plt
 from scipy.spatial import distance
+import math
 
 class ClipEmbedding():
     EUCLIDEAN_POW_UMBRAL = 1 #Elevar a la potencia la distancia euclieana
@@ -67,7 +68,7 @@ class ClipEmbedding():
     def euclidean_similarity(self, vec1, vec2):
         if vec1 is None or vec2 is None:
             return 0
-        return 1 - distance.euclidean(vec1, vec2)
+        return math.sqrt(2) - distance.euclidean(vec1, vec2)
    
     def calculate_similarity(self, vec1, vec2):
         cosine_similarity = self.cosine_similarity(vec1[0], vec2[0])
@@ -137,7 +138,7 @@ class ProcessImages:
         index = 0
 
         for embedding in embeddings:
-            similarity = self.clip.calculate_similarity(embedding, image_embedding[0])
+            similarity = self.clip.calculate_similarity(embedding, image_embedding)
             result[similarity] = embedding
             indexs[similarity] = index
             index +=1

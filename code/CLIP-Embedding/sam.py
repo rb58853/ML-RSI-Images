@@ -60,7 +60,7 @@ class SAM:
     
     def get_center(bbox, higth_len, weigth_len):
         x,y,w,h =  bbox[0],bbox[1],bbox[2],bbox[3]
-        return [((y+h)/2)/higth_len, ((x+w)/2)/weigth_len]
+        return [(x+w/2)/weigth_len, (y+h/2)/higth_len]
 
     
     def all_areas_from_image(image, raw_image = None, min_area = 0, min_box_area = 0, use_mask_as_return = False):
