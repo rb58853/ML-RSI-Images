@@ -59,9 +59,9 @@ class SAM:
         x,y,w,h =  bbox[0],bbox[1],bbox[2],bbox[3]
         return image[y:y+h, x:x+w]
     
-    def get_center(bbox, higth_len, weigth_len):
+    def get_limits(bbox):
         x,y,w,h =  bbox[0],bbox[1],bbox[2],bbox[3]
-        return [(x+w/2)/weigth_len, (y+h/2)/higth_len]
+        return [x, x+w, y, y+h]
 
     
     def all_areas_from_image(image, raw_image = None, min_area = 0, min_box_area = 0, use_mask_as_return = False):
@@ -82,9 +82,7 @@ class SAM:
         """
         masks = SAM.MASK_GENERATOR.generate(image)
         images_box= []
-        images_box_positions= []
         images_mask= []
-        images_mask_positions= []
         
         higth_len, weigth_len, c = image.shape
 
@@ -93,13 +91,17 @@ class SAM:
             h, w, c = box_im.shape
             box_area = h * w
             if box_area >= min_box_area:
-                images_box.append(ImageEmbedding(box_im, SAM.get_center(mask['bbox'], higth_len, weigth_len)))
+                image_emb = ImageEmbedding(box_im, SAM.get_center(mask['bbox'], higth_len, weigth_len))
+                image_emb.set_limits(SAM.get_limits(mask['bbox']))
+                images_box.append(image_emb)
             
             if use_mask_as_return:
                 if mask['area'] >= min_area:
-                    image = SAM.mask_image(mask['segmentation'], raw_image, mask['bbox'])
+                    image_pixels = SAM.mask_image(mask['segmentation'], raw_image, mask['bbox'])
                     pos = SAM.get_center(mask['bbox'],higth_len, weigth_len)
-                    images_mask.append(ImageEmbedding(image, pos))
+                    image_emb = ImageEmbedding(image_pixels, pos)
+                    image_emb.set_limits(SAM.get_limits(mask['bbox']))
+                    images_mask.append(image_emb)
         
         return {'box':images_box, 'mask':images_mask}
 
