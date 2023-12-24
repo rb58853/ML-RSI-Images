@@ -1,7 +1,13 @@
+from enviroment import is_installed_lib
+
 from enviroment import ImageEmbeddingEnv as env
 from enviroment import MatPlotLib as Color
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
+
+if is_installed_lib('torch'):
+    from clip_embeding import ClipEmbedding
+    clip = ClipEmbedding()
 
 class ImageEmbedding:
     def __init__(self, image, position) -> None:
@@ -19,10 +25,18 @@ class ImageEmbedding:
             'in':[],    
         }
         self.items = (self.embledding, self.position, self.neighbords)
+        self.similarity_with_origin = None
+        if image is not None:
+            self.set_embedding()
 
     def __getitem__(self, index):
        return self.items[index]
     
+    def set_embedding(self):
+        if self.image is None:
+            raise Exception("Image is None")
+        self.embledding = self.clip.get_image_embedding(self.image)[0]
+
     def set_embedding(self, embedding):
         self.embledding = embedding
 
@@ -188,7 +202,8 @@ class ImageEmbedding:
     
 class ImageFeature:
     def __init__(self) -> None:
-        self.images:list(ImageEmbedding) = []
+        self.images:list[ImageEmbedding] = []
+        self.ranking:dict[ImageEmbedding:float] = {}
 
     def from_list(self, list_images):
         self.images = []
@@ -196,10 +211,10 @@ class ImageFeature:
         for feature in list_images:
             image = ImageEmbedding(None, feature[1])    
             image.set_embedding(feature[0])
-            image.set_id(self.len())
+            image.set_id(self.__len__())
             self.images.append(image)
         
-        for i, feature in zip(range(self.len()),list_images):
+        for i, feature in zip(range(self.__len__()),list_images):
             image = self.images[i]
             for neigh in feature[2][0]: image.neighbords['left'].append(self.convert_to_neighbord(neigh))
             for neigh in feature[2][1]: image.neighbords['right'].append(self.convert_to_neighbord(neigh))
@@ -207,11 +222,14 @@ class ImageFeature:
             for neigh in feature[2][3]: image.neighbords['buttom'].append(self.convert_to_neighbord(neigh))
             for neigh in feature[2][4]: image.neighbords['in'].append(self.convert_to_neighbord(neigh))
 
+    def clear(self):
+        self.images = []
+
     def to_list(self):
         return [image.to_list() for image in self.images]
     
     def add_image(self, image:ImageEmbedding):
-        image.set_id(self.len())
+        image.set_id(self.__len__())
         self.images.append(image)
 
     def get_image_from_id(self, id):
@@ -220,14 +238,14 @@ class ImageFeature:
     def convert_to_neighbord(self, neigh):
         return (self.get_image_from_id(neigh[0]), neigh[1])
     
-    def len(self):
+    def __len__(self):
         return len(self.images)
     
     def set_neighbords(self):
         for image in self.images:
             image.set_neighbords(self.images)
 
-    def __getitem__(self, index):
+    def __getitem__(self, index)-> ImageEmbedding:
        return self.images[index]
     
     def plot_regions(self):
@@ -238,6 +256,9 @@ class ImageFeature:
             image.plot_region(ax)
         plt.show()
 
+    def set_ranking(self, ranking):
+        self.ranking = ranking
+        
 class ImagesDataset:
     def __init__(self) -> None:
         self.features:list(ImageFeature) =[]

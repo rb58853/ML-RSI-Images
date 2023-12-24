@@ -1,3 +1,12 @@
+import importlib
+
+def is_installed_lib(name):
+   try:
+       importlib.import_module(name)
+       return True
+   except ImportError:
+       return False
+   
 class ImageEmbeddingEnv:
     ''' 
     ## ImageEmbeddingEnv

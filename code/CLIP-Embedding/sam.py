@@ -1,4 +1,5 @@
 from PIL import Image
+from image_embedding import ImageEmbedding
 import torch
 
 class SAM:
@@ -92,21 +93,15 @@ class SAM:
             h, w, c = box_im.shape
             box_area = h * w
             if box_area >= min_box_area:
-                images_box.append(box_im)
-                images_box_positions.append(SAM.get_center(mask['bbox'], higth_len, weigth_len))
+                images_box.append(ImageEmbedding(box_im, SAM.get_center(mask['bbox'], higth_len, weigth_len)))
             
             if use_mask_as_return:
                 if mask['area'] >= min_area:
-                    images_mask.append(SAM.mask_image(mask['segmentation'], raw_image, mask['bbox']))
-                    images_box_positions.append(SAM.get_center(mask['bbox'],higth_len, weigth_len))
+                    image = SAM.mask_image(mask['segmentation'], raw_image, mask['bbox'])
+                    pos = SAM.get_center(mask['bbox'],higth_len, weigth_len)
+                    images_mask.append(ImageEmbedding(image, pos))
         
-        return {'box':images_box, 
-                'mask':images_mask, 
-                'full': images_box + images_mask, 
-                'box_pos': images_box_positions, 
-                'mask_pos': images_mask_positions, 
-                'full_pos': images_box_positions + images_mask_positions
-                }
+        return {'box':images_box, 'mask':images_mask}
 
     # [obsolete]
     def all_masks_from_sam(image, min_area = 0, min_box_area = 0):
