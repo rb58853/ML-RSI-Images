@@ -3,6 +3,7 @@ import math
 class ImageEmbedding:
     def __init__(self, image, position) -> None:
         self.image = image
+        self.image_path = None
         self.embledding = None
         self.position = position
         self.id = 0
@@ -14,7 +15,11 @@ class ImageEmbedding:
             'buttom':[],    
             'in':[],    
         }
+        self.items = (self.embledding, self.position, self.neighbords)
 
+    def __getitem__(self, index):
+       return self.items[index]
+    
     def set_embedding(self, embedding):
         self.embledding = embedding
 
@@ -24,6 +29,7 @@ class ImageEmbedding:
     
     def set_id(self, index):
         self.id = index 
+
 
     def set_as_neigh(self, image):
         y_dist = 0
@@ -38,9 +44,11 @@ class ImageEmbedding:
             if image.right <= self.right and image.left < self.left:
                 left = True
                 x_dist =  max(self.left - image.right, 0)
-                # x_dist =  abs(self.left - image.right)
-                y_x_dist = abs(self.left - image.left) #lo que se sale por la parte izquierda
-                # y_x_dist = abs(self.right - image.right)
+
+                y_x_out = abs(self.left - image.left) #lo que se sale por la parte izquierda
+                y_x_slide = abs(self.right - image.right) #Desplazamiento 
+                y_x_dist = min(y_x_slide, y_x_out) #Minimo entre lo que se dsplaza y lo que sale de los limites
+                # y_x_dist = abs(self.right - image.right) #desplazamiento
             else:
                 in_x = image.left >= self.left and image.right <= self.right 
 
@@ -49,9 +57,10 @@ class ImageEmbedding:
             if image.left >= self.left and image.right > self.right:
                 right = True
                 x_dist =  max(image.left - self.right, 0)
-                # x_dist =  abs(self.right - image.left)
-                y_x_dist = abs(image.right - self.right) #lo que se sale por la parte derecha
-                # y_x_dist = abs(image.left - self.left) #left de el menos el left mio
+                
+                y_x_out = abs(image.right - self.right) #lo que se sale por la parte derecha
+                y_x_slide = abs(image.left - self.left) #Desplazamiento 
+                y_x_dist = min(y_x_slide, y_x_out) #Minimo entre lo que se dsplaza y lo que sale de los limites
             else:
                 in_x = image.left >= self.left and image.right <= self.right    
 
@@ -59,11 +68,11 @@ class ImageEmbedding:
             #On top of self
             if image.top < self.top and image.buttom <= self.buttom:
                 top = True
-
                 y_dist =  max(self.top - image.buttom,0)
-                # y_dist =  abs(self.top - image.buttom)
-                x_y_dist = abs(image.buttom - self.buttom)# + abs(self.top - image.top) #Lo que se sale por debajo + lo que falta por arriba
-                # x_y_dist = abs(self.buttom - image.buttom) #El limite bajo mio - limite bajo de el
+                
+                x_y_out = abs(image.buttom - self.buttom)#Lo que se sale por debajo
+                x_y_slide = abs(self.top - image.top) #Desplzamiento
+                x_y_dist = min(x_y_out, x_y_slide) 
             else:
                 in_y = image.top >= self.top and image.buttom <= self.buttom
 
@@ -72,9 +81,10 @@ class ImageEmbedding:
             if image.buttom > self.buttom and image.top >= self.top:
                 buttom = True
                 y_dist =  max(image.top - self.buttom, 0)
-                x_y_dist = abs(self.top - image.top)# + abs(image.buttom - self.buttom) #lo que se sale por encima + lo que falta por debajo
-                # y_dist =  abs(self.buttom - image.top)
-                # x_y_dist = abs(self.top - image.top)
+      
+                x_y_out = abs(image.buttom - self.buttom) #Lo que se sale por debajo
+                x_y_slide = abs(self.top - image.top) #Desplzamiento
+                x_y_dist = min(x_y_out, x_y_slide) 
             else:
                 in_y = image.top >= self.top and image.buttom <= self.buttom
         
@@ -148,7 +158,7 @@ class ImageEmbedding:
     
 class ImageFeature:
     def __init__(self) -> None:
-        self.images:list[ImageEmbedding] = []
+        self.images:list(ImageEmbedding) = []
 
     def from_list(self, list_images):
         self.images = []
@@ -186,4 +196,17 @@ class ImageFeature:
     def set_neighbords(self):
         for image in self.images:
             image.set_neighbords(self.images)
-            
+
+    def __getitem__(self, index):
+       return self.images[index]
+
+class ImagesDataset:
+    def __init__(self) -> None:
+        self.features:list(ImageFeature) =[]
+        pass
+
+    def save_to_path(file):
+        pass
+
+    def load_from_path(file):
+        pass

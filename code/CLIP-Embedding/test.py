@@ -25,6 +25,8 @@ temp = images.to_list()
 new_images = ImageFeature()
 new_images.from_list(temp)
 
+print(images[0][0])
+
 for image, new_images in zip(images.images, new_images.images):
     # print(image.info())
     print(f'\n\t\t#### {image} ####')
