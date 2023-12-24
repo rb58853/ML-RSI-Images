@@ -37,9 +37,6 @@ class ImageEmbedding:
             raise Exception("Image is None")
         self.embedding = self.clip.get_image_embedding(self.image)[0]
 
-    def set_embedding(self, embedding):
-        self.embedding = embedding
-
     def set_limits(self, limits):
         '''Set in order: left, rigth, top, buttom'''
         self.left, self.right, self.top, self.buttom = limits
