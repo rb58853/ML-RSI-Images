@@ -34,7 +34,7 @@ class ProcessImages:
         if segmentation is not None:
             segm = segmentation
 
-        images += self.sam.all_areas_from_image(
+        images = self.sam.all_areas_from_image(
             image= image, 
             raw_image = raw_image, 
             min_box_area = self.AREA, 
