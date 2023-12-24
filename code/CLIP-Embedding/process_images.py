@@ -83,7 +83,7 @@ class ProcessImages:
         
         for image in self.image_features:
             plt.figure(figsize=(2,2))
-            plt.title(f'{image}-{image.position}')
+            plt.title(f'{image}\npos: {image.position}\nsimilarity: {self.image_features.get_rank(image)}')
             plt.imshow(image.image)
             plt.axis('off')
             plt.show()

@@ -204,6 +204,12 @@ class ImageFeature:
         self.images:list[ImageEmbedding] = []
         self.ranking:dict[ImageEmbedding:float] = {}
 
+    def get_rank(self, image:ImageEmbedding):
+        try:
+            return self.ranking[image]
+        except:
+            return None
+        
     def from_list(self, list_images):
         self.images = []
 
