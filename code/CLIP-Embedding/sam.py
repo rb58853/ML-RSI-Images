@@ -59,6 +59,11 @@ class SAM:
         x,y,w,h =  bbox[0],bbox[1],bbox[2],bbox[3]
         return image[y:y+h, x:x+w]
     
+    def get_center(bbox, higth_len, weigth_len):
+        x,y,w,h =  bbox[0],bbox[1],bbox[2],bbox[3]
+        return [(x+w/2)/weigth_len, (y+h/2)/higth_len]
+
+    
     def get_limits(bbox):
         x,y,w,h =  bbox[0],bbox[1],bbox[2],bbox[3]
         return [x, x+w, y, y+h]
@@ -104,6 +109,7 @@ class SAM:
                     images_mask.append(image_emb)
         
         return {'box':images_box, 'mask':images_mask}
+
 
     # [obsolete]
     def all_masks_from_sam(image, min_area = 0, min_box_area = 0):
