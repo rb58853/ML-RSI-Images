@@ -65,7 +65,7 @@ class ProcessImages:
         
         result = {}
         for image in images:
-            similarity = clip.calculate_similarity(image, image_origin)
+            similarity = clip.cosine_similarity(image[0], image_origin[0])
             result[similarity] = image
 
         result = dict(sorted(result.items(),reverse=True))
