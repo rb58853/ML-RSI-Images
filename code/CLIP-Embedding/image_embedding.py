@@ -176,7 +176,7 @@ class ImageEmbedding:
         height = y2 - y1
 
         color = Color.get_color()
-        ax.text(self.position[0], self.position[1], str(self), ha='center', va='center')
+        ax.text(self.position[0], self.position[1], str(self), ha='center', va='center', color=color)
         # Añadir el rectángulo a los ejes
         ax.add_patch(Rectangle((x1, y1), width, height, fill=False, edgecolor=color))
 

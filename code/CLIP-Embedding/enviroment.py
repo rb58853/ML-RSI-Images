@@ -1,5 +1,3 @@
-from matplotlib import colors as mcolors
-
 class ImageEmbeddingEnv:
     ''' 
     ## ImageEmbeddingEnv
