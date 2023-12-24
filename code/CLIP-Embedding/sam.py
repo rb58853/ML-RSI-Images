@@ -65,7 +65,7 @@ class SAM:
     
     def get_limits(bbox):
         x,y,w,h =  bbox[0],bbox[1],bbox[2],bbox[3]
-        return (x, x+w, y, y+h)
+        return [x, x+w, y, y+h]
 
     
     def all_areas_from_image(image, raw_image = None, min_area = 0, min_box_area = 0, use_mask_as_return = False):
@@ -86,9 +86,7 @@ class SAM:
         """
         masks = SAM.MASK_GENERATOR.generate(image)
         images_box= []
-        images_box_positions= []
         images_mask= []
-        images_mask_positions= []
         
         higth_len, weigth_len, c = image.shape
 
