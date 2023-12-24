@@ -189,7 +189,7 @@ class ImageEmbedding:
         height = y2 - y1
 
         color = Color.get_color()
-        ax.text(self.position[0], self.position[1], str(self), ha='center', va='center', color=color)
+        ax.text(self.position[0], self.position[1], str(self.id), ha='center', va='center', color=color)
         # Añadir el rectángulo a los ejes
         ax.add_patch(Rectangle((x1, y1), width, height, fill=False, edgecolor=color))
 
@@ -257,11 +257,11 @@ class ImageFeature:
         fig, ax = plt.subplots()
         ax.invert_yaxis()
 
-        # Mostrar la imagen en los ejes
-        ax.imshow(self.images[0].image, extent=[0, 1, 0, 1])
-        # Establecer los límites de los ejes
-        ax.set_xlim([0, 1])
-        ax.set_ylim([0, 1])
+        # # Mostrar la imagen en los ejes
+        # ax.imshow(self.images[0].image, extent=[0, 1, 0, 1])
+        # # Establecer los límites de los ejes
+        # ax.set_xlim([0, 1])
+        # ax.set_ylim([0, 1])
         
         for image in self.images:
             if image == self.images[0]:continue #la primera imagen es la original
