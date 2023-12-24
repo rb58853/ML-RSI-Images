@@ -8,8 +8,11 @@ image_2 = ImageEmbedding(None, (0.4,0.5))
 image_2.set_limits((0.2,0.6,0.4,0.6))
 image_3 = ImageEmbedding(None, (0.8,0.4))
 image_3.set_limits((0.7,0.9,0.2,0.6))
+
 image_4 = ImageEmbedding(None, (0.55,0.8))
 image_4.set_limits((0.2,0.9,0.7,0.9))
+# image_4.set_limits((0.2,0.9,0.7,0.9))
+
 
 images = ImageFeature()
 images.add_image(image_0)
@@ -19,19 +22,15 @@ images.add_image(image_3)
 images.add_image(image_4)
 
 images.set_neighbords()
-
+images.plot_regions()
 
 temp = images.to_list()
 new_images = ImageFeature()
 new_images.from_list(temp)
 
-print(images[0][0])
-
 for image, new_images in zip(images.images, new_images.images):
     # print(image.info())
-    print(f'\n\t\t#### {image} ####')
-    print('_____BASE_____')
+    print(f'\t___ {image} ___'.upper())
     image.print_neighbords()
-    print('\n _____NEW_____')
-    new_images.print_neighbords()
-    print('------------------------------------------\n')
+    print('------------------------------------------')
+

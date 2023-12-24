@@ -1,4 +1,7 @@
-import math
+from enviroment import ImageEmbeddingEnv as env
+from enviroment import MatPlotLib as Color
+import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
 
 class ImageEmbedding:
     def __init__(self, image, position) -> None:
@@ -29,7 +32,6 @@ class ImageEmbedding:
     
     def set_id(self, index):
         self.id = index 
-
 
     def set_as_neigh(self, image):
         y_dist = 0
@@ -96,12 +98,16 @@ class ImageEmbedding:
         if buttom: y = 'buttom'
 
         if x is not None:
-            self.neighbords[x].append((image, self.calculate_x_distance(x_dist, x_y_dist)))
+            near = self.calculate_x_distance(x_dist, x_y_dist)
+            if near > 0:
+                self.neighbords[x].append((image, near))
         if y is not None:
-            self.neighbords[y].append((image, self.calculate_y_distance(y_x_dist, y_dist)))
-        
+            near = self.calculate_y_distance(y_x_dist, y_dist)
+            if near > 0:
+                self.neighbords[y].append((image, near))
+
         if in_x and in_y:
-            self.neighbords['in'] = (image, 0)
+            self.neighbords['in'] = (image, env.max_similarity())
 
     def set_neighbords(self, images_list):
         for image in images_list:
@@ -110,10 +116,22 @@ class ImageEmbedding:
 
     def calculate_x_distance(self, x_dist, y_dist):
         #Definir la funcion como deb ser
+        x = pow(x_dist,env.PRIMARY_POW)
+        y = pow(y_dist,env.SECUNDARY_POW)
+        if x+y >= env.MAX_DISTANCE:
+            return -1
+        return (env.MAX_DISTANCE-(x + y))/env.POS_UMBRAL
+
         return(x_dist, y_dist)
 
     def calculate_y_distance(self, x_dist, y_dist):
         #Definir la funcion como deb ser
+        x = pow(x_dist,env.SECUNDARY_POW)
+        y = pow(y_dist,env.PRIMARY_POW)
+        if x+y >= env.MAX_DISTANCE:
+            return -1
+        return (env.MAX_DISTANCE-(x + y))/env.POS_UMBRAL
+        
         return(x_dist, y_dist)
     
     def neight_to_list(self,key):
@@ -148,8 +166,20 @@ class ImageEmbedding:
             if len(self.neighbords[key]) > 0:
                 print(f'{key}:')
             for neigh in value:
-                print(f'\t{neigh}')
+                print(f'    ⦿ {neigh}')
     
+    def plot_region(self,ax):
+        x1, y1 = self.left, self.buttom
+        x2, y2 = self.right, self.top
+        # Calcular la anchura y altura del rectángulo
+        width = x2 - x1
+        height = y2 - y1
+
+        color = Color.get_color()
+        ax.text(self.position[0], self.position[1], str(self), ha='center', va='center')
+        # Añadir el rectángulo a los ejes
+        ax.add_patch(Rectangle((x1, y1), width, height, fill=False, edgecolor=color))
+
     def __str__(self) -> str:
         return f'image {self.id}'
     
@@ -199,6 +229,14 @@ class ImageFeature:
 
     def __getitem__(self, index):
        return self.images[index]
+    
+    def plot_regions(self):
+        fig, ax = plt.subplots()
+        ax.invert_yaxis()
+        
+        for image in self.images:
+            image.plot_region(ax)
+        plt.show()
 
 class ImagesDataset:
     def __init__(self) -> None:
