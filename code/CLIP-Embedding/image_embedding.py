@@ -258,6 +258,7 @@ class ImageFeature:
         ax.invert_yaxis()
         
         for image in self.images:
+            if image == self.images[0]:continue #la primera imagen es la original
             image.plot_region(ax)
         plt.show()
 
