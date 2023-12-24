@@ -13,7 +13,7 @@ class ImageEmbedding:
     def __init__(self, image, position) -> None:
         self.image = image
         self.image_path = None
-        self.embledding = None
+        self.embedding = None
         self.position = position
         self.id = 0
         self.left, self.right, self.top, self.buttom = (0,0,0,0)
@@ -24,9 +24,9 @@ class ImageEmbedding:
             'buttom':[],    
             'in':[],    
         }
-        self.items = (self.embledding, self.position, self.neighbords)
+        self.items = (self.embedding, self.position, self.neighbords)
         self.similarity_with_origin = None
-        if image is not None:
+        if self.image is not None:
             self.set_embedding()
 
     def __getitem__(self, index):
@@ -35,10 +35,10 @@ class ImageEmbedding:
     def set_embedding(self):
         if self.image is None:
             raise Exception("Image is None")
-        self.embledding = self.clip.get_image_embedding(self.image)[0]
+        self.embedding = self.clip.get_image_embedding(self.image)[0]
 
     def set_embedding(self, embedding):
-        self.embledding = embedding
+        self.embedding = embedding
 
     def set_limits(self, limits):
         '''Set in order: left, rigth, top, buttom'''
@@ -153,7 +153,7 @@ class ImageEmbedding:
 
     def to_list(self):
         return [
-            self.embledding,
+            self.embedding,
             self.position,
             (   #Neighbords
                 self.neight_to_list('left'), 
