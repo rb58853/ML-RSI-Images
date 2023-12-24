@@ -96,7 +96,7 @@ class SAM:
             box_area = h * w
             if box_area >= min_box_area:
                 image = ImageEmbedding(box_im, SAM.get_center(mask['bbox'], higth_len, weigth_len))
-                image.set_limits(SAM.get_limits(mask['bbox']))
+                # image.set_limits(SAM.get_limits(mask['bbox']))
                 images_box.append(image)
             
             if use_mask_as_return:
@@ -104,7 +104,8 @@ class SAM:
                     image_pixels = SAM.mask_image(mask['segmentation'], raw_image, mask['bbox'])
                     pos = SAM.get_center(mask['bbox'],higth_len, weigth_len)
                     image = ImageEmbedding(image_pixels, pos)
-                    image.set_limits(SAM.get_limits(mask['bbox']))
+
+                    # image.set_limits(SAM.get_limits(mask['bbox']))
                     images_mask.append(image)
         
         return {'box':images_box, 'mask':images_mask}
