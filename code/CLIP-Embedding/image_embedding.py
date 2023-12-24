@@ -17,6 +17,7 @@ class ImageEmbedding:
         self.position = position
         self.id = 0
         self.left, self.right, self.top, self.buttom = (0,0,0,0)
+        self.items = [self.embedding, self.position, self.neighbords]
         self.neighbords = {
             'left':[],    
             'right':[],    
@@ -28,7 +29,6 @@ class ImageEmbedding:
         if self.image is not None:
             self.set_embedding()
 
-        self.items = [self.embedding, self.position, self.neighbords]
 
     def __getitem__(self, index):
        return self.items[index]
