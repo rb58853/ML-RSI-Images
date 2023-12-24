@@ -64,9 +64,9 @@ class SAM:
         return [(x+w/2)/weigth_len, (y+h/2)/higth_len]
 
     
-    def get_limits(bbox):
+    def get_limits(bbox, higth_len, weigth_len):
         x,y,w,h =  bbox[0],bbox[1],bbox[2],bbox[3]
-        return [x, x+w, y, y+h]
+        return [x/weigth_len, (x+w)/weigth_len, y/higth_len, (y+h)/higth_len]
 
     
     def all_areas_from_image(image, raw_image = None, min_area = 0, min_box_area = 0, use_mask_as_return = False):
@@ -97,7 +97,7 @@ class SAM:
             box_area = h * w
             if box_area >= min_box_area:
                 image_emb = ImageEmbedding(box_im, SAM.get_center(mask['bbox'], higth_len, weigth_len))
-                image_emb.set_limits(SAM.get_limits(mask['bbox']))
+                image_emb.set_limits(SAM.get_limits(mask['bbox'],higth_len,weigth_len))
                 images_box.append(image_emb)
             
             if use_mask_as_return:
@@ -105,7 +105,7 @@ class SAM:
                     image_pixels = SAM.mask_image(mask['segmentation'], raw_image, mask['bbox'])
                     pos = SAM.get_center(mask['bbox'],higth_len, weigth_len)
                     image_emb = ImageEmbedding(image_pixels, pos)
-                    image_emb.set_limits(SAM.get_limits(mask['bbox']))
+                    image_emb.set_limits(SAM.get_limits(mask['bbox'],higth_len,weigth_len))
                     images_mask.append(image_emb)
         
         return {'box':images_box, 'mask':images_mask}

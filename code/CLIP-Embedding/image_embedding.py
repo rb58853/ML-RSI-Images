@@ -256,6 +256,12 @@ class ImageFeature:
     def plot_regions(self):
         fig, ax = plt.subplots()
         ax.invert_yaxis()
+
+        # Mostrar la imagen en los ejes
+        ax.imshow(self.images[0].image, extent=[0, 1, 0, 1])
+        # Establecer los límites de los ejes
+        ax.set_xlim([0, 1])
+        ax.set_ylim([0, 1])
         
         for image in self.images:
             if image == self.images[0]:continue #la primera imagen es la original
