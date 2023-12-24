@@ -26,6 +26,7 @@ class ImageEmbedding:
         }
         self.items = (self.embedding, self.position, self.neighbords)
         self.similarity_with_origin = None
+        print(self.image)
         if self.image is not None:
             self.set_embedding()
 
@@ -33,6 +34,8 @@ class ImageEmbedding:
        return self.items[index]
     
     def set_embedding(self):
+        print("entro a set_embedding")
+
         if self.image is None:
             raise Exception("Image is None")
         self.embedding = clip.get_image_embedding(self.image)[0]
