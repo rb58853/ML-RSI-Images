@@ -34,12 +34,15 @@ class ProcessImages:
         if segmentation is not None:
             segm = segmentation
 
-        self.image_features.images += self.sam.all_areas_from_image(
+        images += self.sam.all_areas_from_image(
             image= image, 
             raw_image = raw_image, 
             min_box_area = self.AREA, 
             min_area = self.AREA/2, 
             use_mask_as_return = segm == 'mask' or segm == 'full')[segm]
+        
+        for image in images:
+            self.image_features.add_image(image)
         
         return self.image_features
 

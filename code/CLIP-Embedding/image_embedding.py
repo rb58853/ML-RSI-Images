@@ -24,21 +24,20 @@ class ImageEmbedding:
             'buttom':[],    
             'in':[],    
         }
-        self.items = (self.embedding, self.position, self.neighbords)
         self.similarity_with_origin = None
-        print(self.image)
         if self.image is not None:
             self.set_embedding()
+
+        self.items = [self.embedding, self.position, self.neighbords]
 
     def __getitem__(self, index):
        return self.items[index]
     
     def set_embedding(self):
-        print("entro a set_embedding")
-
         if self.image is None:
             raise Exception("Image is None")
         self.embedding = clip.get_image_embedding(self.image)[0]
+        self.items[0] = self.embedding
 
     def set_limits(self, limits):
         '''Set in order: left, rigth, top, buttom'''
