@@ -17,7 +17,6 @@ class ImageEmbedding:
         self.position = position
         self.id = 0
         self.left, self.right, self.top, self.buttom = (0,0,0,0)
-        self.items = [self.embedding, self.position, self.neighbords]
         self.neighbords = {
             'left':[],    
             'right':[],    
@@ -25,6 +24,7 @@ class ImageEmbedding:
             'buttom':[],    
             'in':[],    
         }
+        self.items = [self.embedding, self.position, self.neighbords]
         self.similarity_with_origin = None
         if self.image is not None:
             self.set_embedding()
