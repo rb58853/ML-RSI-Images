@@ -255,14 +255,10 @@ class ImageFeature:
     
     def plot_regions(self):
         fig, ax = plt.subplots()
-
-        # # Mostrar la imagen en los ejes
-        ax.imshow(self.images[0].image, extent=[0, 1, 0, 1])
-        # # Establecer los límites de los ejes
-        ax.set_xlim([0, 1])
-        ax.set_ylim([0, 1])
-        
         ax.invert_yaxis()
+        # Mostrar la imagen en los ejes con origin='lower'
+        ax.imshow(self.images[0].image, extent=[0, 1, 1, 0], alpha=0.5)
+        
         for image in self.images:
             if image == self.images[0]:continue #la primera imagen es la original
             image.plot_region(ax)
