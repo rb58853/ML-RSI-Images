@@ -28,10 +28,10 @@ class ClipEmbedding:
         )["pixel_values"].to(self.device)
 
         embedding = self.model.get_image_features(image_process)
-        return embedding
+        # return embedding
     
-        # embedding_as_np = embedding.cpu().detach().numpy()
-        # return embedding_as_np
+        embedding_as_np = embedding.cpu().detach().numpy()
+        return embedding_as_np
     
     def get_text_embedding(self,text):
         image =  Image.new('RGB', (10, 10), color = (0, 0, 0))
@@ -47,7 +47,10 @@ class ClipEmbedding:
 
         outputs = self.model(**encoded_text)
         text_embeds = outputs['text_embeds']
-        return text_embeds
+        # return text_embeds
+    
+        embedding_as_np = text_embeds.cpu().detach().numpy()
+        return embedding_as_np
 
     def process_text_and_get_pos(self, text):
         #procesar el texto y sacarle la posicion
