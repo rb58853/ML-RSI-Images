@@ -28,8 +28,9 @@ class Similarity:
         return cosine_similarity * (1 + euclindean_umbral)
 
     def region(text:Text, image:ImageEmbedding):
+        end_sim = 0
         for key in ['left','right', 'top', 'buttom','in']:
-            end_sim = 0
+            end_sim_region = 0
             for temp_text in text.neighbords[key]:
                 max_sim = 0
                 for temp_image in image.neighbords[key]:
@@ -39,7 +40,9 @@ class Similarity:
                         sim_dist = temp_image[1] #esta es la similitud por distancia que hay desde la imagen hacia su vecino
                         sim_for_neigh = sim_dist * similarity
                         max_sim = max(sim_for_neigh, max_sim)
-                end_sim+=max_sim
+                end_sim_region +=max_sim
+            end_sim +=end_sim_region
+        return end_sim        
  
     def calculate(text:Text, image:ImageEmbedding):
         sim = Similarity.cosine_and_pos(text, image)

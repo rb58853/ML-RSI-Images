@@ -76,7 +76,7 @@ class ImageFeature:
 
         image = self[index]
         image.plot_region(ax)
-        plt.title(f'{image}\tpos: {image.position}')
+        plt.title(f'{image}   pos: {image.position}')
         plt.show()
 
     def plot_from_image(self, image:ImageEmbedding):
@@ -84,9 +84,9 @@ class ImageFeature:
         ax.invert_yaxis()
         if self.images[0].image is not None:
             ax.imshow(self.images[0].image, extent=[0, 1, 1, 0], alpha=0.5)
-            
+
         image.plot_region(ax)
-        plt.title(f'{image}\tpos: {image.position}')
+        plt.title(f'{image}   pos: {image.position}')
         plt.show()
 
     def set_ranking(self, ranking):

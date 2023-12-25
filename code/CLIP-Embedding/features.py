@@ -252,3 +252,11 @@ class Text:
                 print(f'{key}: ',end="")
                 for item in self.neighbords[key]:
                     print(item, end=" | ")
+                print('\n')
+
+    def __str__(self) -> str:
+        return f'text: {self.text}\n\
+        pos: {self.position}'
+    
+    def __repr__(self) -> str:
+        return self.text
