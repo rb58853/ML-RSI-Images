@@ -215,12 +215,12 @@ class ImageEmbedding(Feature):
         return f'image {self.id}'
 
 class Text:
-    def __init__(self, text) -> None:
+    def __init__(self, text, position = None) -> None:
         self.text = text
         self.embedding = None
         if is_installed_lib('torch'):
             self.set_embedding() 
-        self.position = None
+        self.position = position
         self.neighbords:dict[str:Text] = {
             'left':[],    
             'right':[],    
@@ -239,3 +239,16 @@ class Text:
     def set_neighbords(self):
         raise NotImplementedError()
     
+    def set_pos(self, pos):
+        self.position = pos
+    
+    def print(self):
+        print(f'text: {self.text}')
+        print(f'pos: {self.position}')
+        keys=['left','right','top','buttom','in','near']
+        
+        for key in keys:
+            if len(self.neighbords[key]) > 0:
+                print(f'{key}: ',end="")
+                for item in self.neighbords[key]:
+                    print(item, end=" | ")

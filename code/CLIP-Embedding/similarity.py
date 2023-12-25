@@ -45,3 +45,4 @@ class Similarity:
         sim = Similarity.cosine_and_pos(text, image)
         if sim > MIN_SIMILARTY_FOR_REGIONS:
             sim *= (1+Similarity.region(text,image))
+        return sim    
