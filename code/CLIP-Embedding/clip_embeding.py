@@ -1,14 +1,8 @@
 import torch
 from PIL import Image
-from scipy.spatial.distance import cosine
 from transformers import CLIPProcessor, CLIPModel
-from scipy.spatial import distance
-import math
 
 class ClipEmbedding:
-    EUCLIDEAN_POW_UMBRAL = 1 #Elevar a la potencia la distancia euclieana
-    EUCLIDEAN_DIV_UMBRAL = 10 #dividir la distancia euclideana.
-
     def __init__(self) -> None:
         self.model, self.processor, self.device = self.get_model()
         
@@ -53,29 +47,3 @@ class ClipEmbedding:
         #si quiere usarse numpy arrays cometar el return
         embedding_as_np = text_embeds.cpu().detach().numpy()
         return embedding_as_np
-
-    def process_text_and_get_pos(self, text):
-        #procesar el texto y sacarle la posicion
-        return None
-    
-    def get_text_vector(self, texts):
-        embeddings = self.get_text_embedding(texts)
-        return [(embedding, self.process_text_and_get_pos(text)) for embedding, text in zip(embeddings, texts)]
-
-    def cosine_similarity(self, vec1, vec2):
-        #En caso de volver a usar tensores en vez de numpys hay que descomentar
-        vec1 = vec1#.cpu().detach().numpy()
-        vec2 = vec2#.cpu().detach().numpy()
-        return 1 - cosine(vec1, vec2)
-    
-    def euclidean_similarity(self, vec1, vec2):
-        if vec1 is None or vec2 is None:
-            return 0
-        return math.sqrt(2) - distance.euclidean(vec1, vec2)
-   
-    def calculate_similarity(self, vec1, vec2):
-        cosine_similarity = self.cosine_similarity(vec1[0], vec2[0])
-        euclidean_similarity = self.euclidean_similarity(vec1[1], vec2[1])
-        euclindean_umbral = pow(euclidean_similarity, ClipEmbedding.EUCLIDEAN_POW_UMBRAL)/ ClipEmbedding.EUCLIDEAN_DIV_UMBRAL
-        
-        return cosine_similarity * (1 + euclindean_umbral)

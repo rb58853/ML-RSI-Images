@@ -1,13 +1,9 @@
-import torch
 from PIL import Image
-from scipy.spatial.distance import cosine
-from transformers import CLIPProcessor, CLIPModel
 from sam import SAM
 import cv2
 import matplotlib.pyplot as plt
-from scipy.spatial import distance
-from image_embedding import ImageEmbedding, ImageFeature, clip
-from clip_embeding import ClipEmbedding
+from image_manager import ImageEmbedding, ImageFeature, clip
+from similarity import Similarity
 
 class ProcessImages:
     IMAGE_PARTITION = 80 #tamaño mínimo(en píxeles) de un cuadro de segmentación = tamaño(imagen)/IMAGE_PARTITION
@@ -29,7 +25,7 @@ class ProcessImages:
         segm = ProcessImages.SEGMENTATION
         
         self.image_features.clear()
-        self.image_features.add_image(ImageEmbedding(image, (0.5,0.5)))
+        self.image_features.add_image(ImageEmbedding(image, None))
 
         if segmentation is not None:
             segm = segmentation
@@ -65,7 +61,7 @@ class ProcessImages:
         
         result = {}
         for image in images:
-            similarity = clip.cosine_similarity(image[0], image_origin[0])
+            similarity = Similarity.cosine(image, image_origin)
             result[similarity] = image
 
         result = dict(sorted(result.items(),reverse=True))
@@ -79,7 +75,7 @@ class ProcessImages:
             segm = segmentation
         
         if len(self.image_features) == 0:
-            self.image_features = self.get_images(image_path, segmentation= segmentation)[segmentation]
+            self.image_features = self.get_images(image_path, segmentation= segmentation)[segm]
         
         for image in self.image_features:
             plt.figure(figsize=(2,2))

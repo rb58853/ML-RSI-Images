@@ -21,7 +21,7 @@ class ImageEmbeddingEnv:
     PRIMARY_POW = 1 #Elevacion a la ptencia del eje principal a la hora de calcular distancias
     SECUNDARY_POW = 0.5 #Elevacion a la ptencia del eje no principal a la hora de calcular distancias
     MAX_DISTANCE = 1 #Distancia maxima que puede haber entre dos imagenes para ser consideradas vecinas
-    POS_UMBRAL = 5
+    POS_UMBRAL = 1
 
     def max_similarity():
         return ImageEmbeddingEnv.MAX_DISTANCE/ImageEmbeddingEnv.POS_UMBRAL

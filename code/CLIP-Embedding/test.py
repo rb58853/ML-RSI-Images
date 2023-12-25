@@ -1,6 +1,8 @@
-from image_embedding import ImageEmbedding, ImageFeature
+from features import ImageEmbedding
+from image_manager import ImageFeature
 
 def test1():
+    image_origin = ImageEmbedding(None, None)
     image_0 = ImageEmbedding(None, (0.2,0.1))
     image_0.set_limits((0.1,0.3,0,0.2))
     image_1 = ImageEmbedding(None, (0.5,0.2))
@@ -16,6 +18,7 @@ def test1():
 
 
     images = ImageFeature()
+    images.add_image(image_origin)
     images.add_image(image_0)
     images.add_image(image_1)
     images.add_image(image_2)
@@ -23,17 +26,18 @@ def test1():
     images.add_image(image_4)
 
     images.set_neighbords()
-    images.plot_regions()
-
     temp = images.to_list()
     new_images = ImageFeature()
     new_images.from_list(temp)
 
     for image, new_images in zip(images.images, new_images.images):
         # print(image.info())
-        print(f'\t___ {image} ___'.upper())
         image.print_neighbords()
         print('------------------------------------------')
 
+    images.plot_regions()
+
 def test2():
     pass    
+
+test1()

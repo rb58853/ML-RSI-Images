@@ -2,14 +2,23 @@ from enviroment import is_installed_lib
 
 from enviroment import ImageEmbeddingEnv as env
 from enviroment import MatPlotLib as Color
-import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
+clip = None
 if is_installed_lib('torch'):
     from clip_embeding import ClipEmbedding
     clip = ClipEmbedding()
 
-class ImageEmbedding:
+class Feature:
+    def __init__(self) -> None:
+        self.items = []
+        self.embedding = None
+        self.position = None
+       
+    def __getitem__(self, index):
+       return self.items[index]
+    
+class ImageEmbedding(Feature):
     def __init__(self, image, position) -> None:
         self.image = image
         self.image_path = None
@@ -27,16 +36,22 @@ class ImageEmbedding:
         self.items = [self.embedding, self.position, self.neighbords]
         self.similarity_with_origin = None
         if self.image is not None:
-            self.set_embedding()
+            self.get_embedding()
 
 
     def __getitem__(self, index):
        return self.items[index]
     
-    def set_embedding(self):
+    def get_embedding(self):
+        '''Genera el embedding con un modelo, en este caso clip'''
         if self.image is None:
             raise Exception("Image is None")
         self.embedding = clip.get_image_embedding(self.image)[0]
+        self.items[0] = self.embedding
+
+    def set_embedding(self, embedding):
+        '''Setea un embedding, se usa para extraer el feature desde una lista'''
+        self.embedding = embedding
         self.items[0] = self.embedding
 
     def set_limits(self, limits):
@@ -165,7 +180,7 @@ class ImageEmbedding:
     
     def info(self):
         return f'\
-        id: {self.id}\n\
+        {self}\n\
         pos: {self.position}\n\
         left: {self.left}\n\
         right: {self.right}\n\
@@ -174,7 +189,7 @@ class ImageEmbedding:
         '
     
     def print_neighbords(self):
-        # print(f'#### {self} ####')
+        print(f'\t___ {self} ___'.upper())
         for key, value in zip(self.neighbords.keys(), self.neighbords.values()):
             if len(self.neighbords[key]) > 0:
                 print(f'{key}:')
@@ -198,83 +213,29 @@ class ImageEmbedding:
     
     def __repr__(self) -> str:
         return f'image {self.id}'
+
+class Text:
+    def __init__(self, text) -> None:
+        self.text = text
+        self.embedding = None
+        if is_installed_lib('torch'):
+            self.set_embedding() 
+        self.position = None
+        self.neighbords:dict[str:Text] = {
+            'left':[],    
+            'right':[],    
+            'top':[],    
+            'buttom':[],    
+            'in':[],
+            'near': [] #nex to. indica cercania tan solo sin posicion especifica    
+        }
+
+    def set_embedding(self):
+        self.embedding = clip.get_text_embedding(self.text)[0]
     
-class ImageFeature:
-    def __init__(self) -> None:
-        self.images:list[ImageEmbedding] = []
-        self.ranking:dict[ImageEmbedding:float] = {}
-
-    def get_rank(self, image:ImageEmbedding):
-        try:
-            return self.ranking[image]
-        except:
-            return None
-        
-    def from_list(self, list_images):
-        self.images = []
-
-        for feature in list_images:
-            image = ImageEmbedding(None, feature[1])    
-            image.set_embedding(feature[0])
-            image.set_id(self.__len__())
-            self.images.append(image)
-        
-        for i, feature in zip(range(self.__len__()),list_images):
-            image = self.images[i]
-            for neigh in feature[2][0]: image.neighbords['left'].append(self.convert_to_neighbord(neigh))
-            for neigh in feature[2][1]: image.neighbords['right'].append(self.convert_to_neighbord(neigh))
-            for neigh in feature[2][2]: image.neighbords['top'].append(self.convert_to_neighbord(neigh))
-            for neigh in feature[2][3]: image.neighbords['buttom'].append(self.convert_to_neighbord(neigh))
-            for neigh in feature[2][4]: image.neighbords['in'].append(self.convert_to_neighbord(neigh))
-
-    def clear(self):
-        self.images = []
-
-    def to_list(self):
-        return [image.to_list() for image in self.images]
-    
-    def add_image(self, image:ImageEmbedding):
-        image.set_id(self.__len__())
-        self.images.append(image)
-
-    def get_image_from_id(self, id):
-        return self.images[id]
-    
-    def convert_to_neighbord(self, neigh):
-        return (self.get_image_from_id(neigh[0]), neigh[1])
-    
-    def __len__(self):
-        return len(self.images)
+    def set_position(self):
+        raise NotImplementedError()
     
     def set_neighbords(self):
-        for image in self.images:
-            image.set_neighbords(self.images)
-
-    def __getitem__(self, index)-> ImageEmbedding:
-       return self.images[index]
+        raise NotImplementedError()
     
-    def plot_regions(self):
-        fig, ax = plt.subplots()
-        ax.invert_yaxis()
-        # Mostrar la imagen en los ejes con origin='lower'
-        if self.images[0].image is not None:
-            ax.imshow(self.images[0].image, extent=[0, 1, 1, 0], alpha=0.5)
-        
-        for image in self.images:
-            if image == self.images[0]:continue #la primera imagen es la original
-            image.plot_region(ax)
-        plt.show()
-
-    def set_ranking(self, ranking):
-        self.ranking = ranking
-        
-class ImagesDataset:
-    def __init__(self) -> None:
-        self.features:list(ImageFeature) =[]
-        pass
-
-    def save_to_path(file):
-        pass
-
-    def load_from_path(file):
-        pass
