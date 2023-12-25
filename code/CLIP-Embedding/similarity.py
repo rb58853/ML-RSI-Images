@@ -6,6 +6,7 @@ import math
 EUCLIDEAN_POW_UMBRAL = 1 #Elevar a la potencia la distancia euclieana
 EUCLIDEAN_DIV_UMBRAL = 10 #dividir la distancia euclideana.
 MIN_SIMILARTY_FOR_REGIONS = 0.2 #Si la similitud es menor que esto se considera insignificante y se deja de usar
+MIN_NICE_SIMILARITY = 0.2 #Esta es la similitud a partir de a cual puede considerarse util algo
 
 class Similarity:
     def cosine(vec1:Feature, vec2:Feature):
@@ -18,14 +19,21 @@ class Similarity:
         #calcula similitud por distancia euclineada
         if vec1.position is None or vec2.position is None:
             return 0
-        return math.sqrt(2) - distance.euclidean(vec1.position, vec2.position)
+        
+        value = math.sqrt(2) - distance.euclidean(vec1.position, vec2.position) 
+        value_umbral = pow(value, EUCLIDEAN_POW_UMBRAL)/ EUCLIDEAN_DIV_UMBRAL
+        return value_umbral
    
     def cosine_and_pos(vec1:Feature, vec2:Feature):
         cosine_similarity = Similarity.cosine(vec1, vec2)
         euclidean_similarity = Similarity.euclidean(vec1, vec2)
-        euclindean_umbral = pow(euclidean_similarity, EUCLIDEAN_POW_UMBRAL)/ EUCLIDEAN_DIV_UMBRAL
         
-        return cosine_similarity * (1 + euclindean_umbral)
+        if cosine_similarity > MIN_NICE_SIMILARITY:
+            #Si en la posicion dada esta algo parecido a lo esperado, meora el resultado
+            return cosine_similarity * (1 + euclidean_similarity)
+        else:
+            #Si en la posicion dada esta algo que no es lo esperado empeora el resultado
+            return cosine_similarity * (1 - euclidean_similarity)
 
     def region(text:Text, image:ImageEmbedding):
         end_sim = 0
