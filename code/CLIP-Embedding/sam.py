@@ -1,5 +1,5 @@
 from PIL import Image
-from image_embedding import ImageEmbedding
+from features import ImageEmbedding
 import torch
 
 class SAM:
