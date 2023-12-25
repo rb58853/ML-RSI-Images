@@ -7,6 +7,7 @@ EUCLIDEAN_POW_UMBRAL = 1 #Elevar a la potencia la distancia euclieana
 EUCLIDEAN_DIV_UMBRAL = 10 #dividir la distancia euclideana.
 MIN_SIMILARTY_FOR_REGIONS = 0.2 #Si la similitud es menor que esto se considera insignificante y se deja de usar
 MIN_NICE_SIMILARITY = 0.2 #Esta es la similitud a partir de a cual puede considerarse util algo
+USE_NEGATIVE_REGIONS = True #Define si las regiones pueden aportar efecto negativo a la similitud, en el caso de hablar de cercania entre un objeto y otro
 
 class Similarity:
     def cosine(vec1:Feature, vec2:Feature):
@@ -41,13 +42,20 @@ class Similarity:
             end_sim_region = 0
             for temp_text in text.neighbords[key]:
                 max_sim = 0
+                if USE_NEGATIVE_REGIONS:
+                    max_sim = -1
                 for temp_image in image.neighbords[key]:
                     similarity = Similarity.cosine_and_pos(temp_text, temp_image[0])
                     # similarity = Similarity.calculate(temp_text, temp_image[0]) #Esto es mejor pero hay que controlar la recursividad infinita
+                    sim_dist = temp_image[1] #esta es la similitud por distancia que hay desde la imagen hacia su vecino
                     if similarity > MIN_SIMILARTY_FOR_REGIONS:
-                        sim_dist = temp_image[1] #esta es la similitud por distancia que hay desde la imagen hacia su vecino
                         sim_for_neigh = sim_dist * similarity
                         max_sim = max(sim_for_neigh, max_sim)
+                    else:
+                        if USE_NEGATIVE_REGIONS:
+                            sim_for_neigh = sim_dist * (similarity - MIN_SIMILARTY_FOR_REGIONS)
+                            max_sim = max(sim_for_neigh, max_sim)
+
                 end_sim_region +=max_sim
             end_sim +=end_sim_region
         return end_sim        
