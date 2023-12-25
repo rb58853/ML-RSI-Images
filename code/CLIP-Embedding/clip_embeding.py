@@ -30,6 +30,7 @@ class ClipEmbedding:
         embedding = self.model.get_image_features(image_process)
         # return embedding
     
+        #si quiere usarse numpy arrays cometar el return
         embedding_as_np = embedding.cpu().detach().numpy()
         return embedding_as_np
     
@@ -49,6 +50,7 @@ class ClipEmbedding:
         text_embeds = outputs['text_embeds']
         # return text_embeds
     
+        #si quiere usarse numpy arrays cometar el return
         embedding_as_np = text_embeds.cpu().detach().numpy()
         return embedding_as_np
 
@@ -61,8 +63,9 @@ class ClipEmbedding:
         return [(embedding, self.process_text_and_get_pos(text)) for embedding, text in zip(embeddings, texts)]
 
     def cosine_similarity(self, vec1, vec2):
-        vec1 = vec1.cpu().detach().numpy()
-        vec2 = vec2.cpu().detach().numpy()
+        #En caso de volver a usar tensores en vez de numpys hay que descomentar
+        vec1 = vec1#.cpu().detach().numpy()
+        vec2 = vec2#.cpu().detach().numpy()
         return 1 - cosine(vec1, vec2)
     
     def euclidean_similarity(self, vec1, vec2):
