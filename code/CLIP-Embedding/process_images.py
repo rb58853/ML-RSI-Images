@@ -2,7 +2,8 @@ from PIL import Image
 from sam import SAM
 import cv2
 import matplotlib.pyplot as plt
-from image_manager import ImageEmbedding, ImageFeature, clip
+from image_manager import ImageEmbedding, ImageFeature
+from features import clip
 from similarity import Similarity
 
 class ProcessImages:
