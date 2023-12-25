@@ -120,7 +120,7 @@ class ImageEmbedding:
                 self.neighbords[y].append((image, near))
 
         if in_x and in_y:
-            self.neighbords['in'] = (image, env.max_similarity())
+            self.neighbords['in'].append((image, env.max_similarity()))
 
     def set_neighbords(self, images_list):
         for image in images_list:
@@ -257,7 +257,8 @@ class ImageFeature:
         fig, ax = plt.subplots()
         ax.invert_yaxis()
         # Mostrar la imagen en los ejes con origin='lower'
-        ax.imshow(self.images[0].image, extent=[0, 1, 1, 0], alpha=0.5)
+        if self.images[0].image is not None:
+            ax.imshow(self.images[0].image, extent=[0, 1, 1, 0], alpha=0.5)
         
         for image in self.images:
             if image == self.images[0]:continue #la primera imagen es la original
