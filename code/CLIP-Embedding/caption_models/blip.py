@@ -1,4 +1,6 @@
 from caption_models.imodel import IModel
+import torch
+
 class BLIP(IModel):
     '''
     ## BLIP()
