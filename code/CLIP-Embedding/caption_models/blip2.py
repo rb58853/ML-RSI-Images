@@ -1,3 +1,4 @@
+from imodel import IModel
 class BLIP2(IModel):
     '''
     ## BLIP-2
