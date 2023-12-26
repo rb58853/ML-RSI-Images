@@ -36,7 +36,7 @@ class Similarity:
             #Si en la posicion dada esta algo que no es lo esperado empeora el resultado
             return cosine_similarity * (1 - euclidean_similarity)
 
-    def region(text:Text, image:ImageEmbedding):
+    def region(text:Text, image:ImageEmbedding, print_ = False):
         end_sim = 0
         for key in ['left','right', 'top', 'buttom','in']:
             end_sim_region = 0
@@ -44,6 +44,12 @@ class Similarity:
                 max_sim = 0
                 if USE_NEGATIVE_REGIONS:
                     max_sim = -1
+
+                if print_:
+                    print(f'TEXT: {temp_text}')
+                    print(f'images in {key} region:'.upper())
+
+
                 for temp_image in image.neighbords[key]:
                     similarity = Similarity.cosine_and_pos(temp_text, temp_image[0])
                     # similarity = Similarity.calculate(temp_text, temp_image[0]) #Esto es mejor pero hay que controlar la recursividad infinita
@@ -55,8 +61,9 @@ class Similarity:
                         if USE_NEGATIVE_REGIONS:
                             sim_for_neigh = sim_dist * (similarity - MIN_SIMILARTY_FOR_REGIONS)
                             max_sim = max(sim_for_neigh, max_sim)
-                    
-                    print(f'{temp_image[0]}: {similarity}')        
+                    if print_:
+                        print(f'   ⦿ {temp_image[0]}: {similarity}')        
+                        print()
                 
                 if max_sim == -1:
                     max_sim = 0
