@@ -66,6 +66,8 @@ class Similarity:
                 
                 if max_sim == -1:
                     max_sim = 0
+                if print_:
+                    print(f'max_similarity: {max_sim}')    
                 end_sim_region +=max_sim
             end_sim +=end_sim_region
         return end_sim        
