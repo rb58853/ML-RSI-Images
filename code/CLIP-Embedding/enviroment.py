@@ -23,10 +23,11 @@ class ImageEmbeddingEnv:
     - `max_similarity()`: Devuelve la maxima similitud que se puede alcanzar en la distancia entre dos imagenes. 
     '''
     from caption_models.blip2 import BLIP2
+    from caption_models.blip import BLIP
     
     USE_MULTIPLE_CAPIONS = False
     USE_CAPION_MODEL = True
-    CAPTION_MODEL =BLIP2
+    CAPTION_MODEL =BLIP
     CAPTION_IMPORTANCE = 1
 
     PRIMARY_POW = 1.2 #Elevacion a la ptencia del eje principal a la hora de calcular distancias
