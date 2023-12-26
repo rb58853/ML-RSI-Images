@@ -109,10 +109,11 @@ class Similarity:
             sim_for_text = 0
             for image in images:
                 if image != images.origin:
-                    sim_region = Similarity.region(text,image)
+                    sim_region = Similarity.calculate(text,image)
+                    # sim_region = Similarity.region(text,image)
                     if sim_region > MIN_NICE_SIMILARITY:
                         sim_for_text = max(sim_region, sim_region)
-
+            
             acumulate += sim_for_text        
 
         if origin_sim > MIN_NICE_SIMILARITY:
