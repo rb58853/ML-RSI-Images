@@ -5,8 +5,8 @@ import math
 
 EUCLIDEAN_POW_UMBRAL = 1 #Elevar a la potencia la distancia euclieana
 EUCLIDEAN_DIV_UMBRAL = 10 #dividir la distancia euclideana.
-MIN_SIMILARTY_FOR_REGIONS = 0.2 #Si la similitud es menor que esto se considera insignificante y se deja de usar
-MIN_NICE_SIMILARITY = 0.2 #Esta es la similitud a partir de a cual puede considerarse util algo
+MIN_SIMILARTY_FOR_REGIONS = 0.26 #Si la similitud es menor que esto se considera insignificante y se deja de usar
+MIN_NICE_SIMILARITY = 0.22 #Esta es la similitud a partir de a cual puede considerarse util algo
 USE_NEGATIVE_REGIONS = True #Define si las regiones pueden aportar efecto negativo a la similitud, en el caso de hablar de cercania entre un objeto y otro
 
 class Similarity:
