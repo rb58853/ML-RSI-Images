@@ -24,7 +24,7 @@ class ProcessImages:
         segm = ProcessImages.SEGMENTATION
         
         self.image_features = []
-        self.image_features.add_image(ImageEmbedding(image, None))
+        self.image_features.append(ImageEmbedding(image, None))
 
         if segmentation is not None:
             segm = segmentation
@@ -37,7 +37,7 @@ class ProcessImages:
             use_mask_as_return = segm == 'mask' or segm == 'full')[segm]
         
         for image in images:
-            self.image_features.add_image(image)
+            self.image_features.append(image)
         
         return self.image_features
 
