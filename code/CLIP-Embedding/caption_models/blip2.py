@@ -1,4 +1,4 @@
-from imodel import IModel
+from caption_models.imodel import IModel
 class BLIP2(IModel):
     '''
     ## BLIP-2
