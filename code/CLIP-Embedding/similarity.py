@@ -29,7 +29,7 @@ class Similarity:
                 pow(caption_sim, 1/image_env.CAPTION_IMPORTANCE) #si es bueno aumenta lo bueno que eres
 
             cos = (image_sim + caption_sim)/2
-            return 1 - cos
+            return cos
 
         #En caso de volver a usar tensores en vez de numpys hay que descomentar
         vec1 = vec1.embedding #.cpu().detach().numpy()
@@ -113,7 +113,7 @@ class Similarity:
                     # sim_region = Similarity.region(text,image)
                     if sim_region > MIN_NICE_SIMILARITY:
                         sim_for_text = max(sim_region, sim_region)
-            
+
             acumulate += sim_for_text        
 
         if origin_sim > MIN_NICE_SIMILARITY:
