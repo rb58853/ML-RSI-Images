@@ -1,4 +1,7 @@
 from features import Feature, Text, ImageEmbedding
+from image_manager import ImageFeature
+from text_manager import TextFeature
+from enviroment import ImageEmbeddingEnv as image_env
 from scipy.spatial.distance import cosine
 from scipy.spatial import distance
 import math
@@ -7,10 +10,26 @@ EUCLIDEAN_POW_UMBRAL = 1 #Elevar a la potencia la distancia euclieana
 EUCLIDEAN_DIV_UMBRAL = 10 #dividir la distancia euclideana.
 MIN_SIMILARTY_FOR_REGIONS = 0.26 #Si la similitud es menor que esto se considera insignificante y se deja de usar
 MIN_NICE_SIMILARITY = 0.22 #Esta es la similitud a partir de a cual puede considerarse util algo
+MIN_NICE_SIMILARITY_ORIGIN = 0.2 #Esta es la similitud a partir de a cual puede considerarse util algo en la imagen original y texto original
 USE_NEGATIVE_REGIONS = True #Define si las regiones pueden aportar efecto negativo a la similitud, en el caso de hablar de cercania entre un objeto y otro
 
 class Similarity:
-    def cosine(vec1:Feature, vec2:Feature):
+    def cosine(vec1:Text, vec2:ImageEmbedding):
+        if vec2.caption is not None and image_env.USE_CAPION_MODEL:
+            v1 = vec1.embedding
+            v2 = vec2.embedding
+            v3 = vec2.caption.embedding
+            caption_sim = 1- cosine(v1, v3)
+            image_sim = 1- cosine(v1, v2)
+
+            if caption_sim < MIN_NICE_SIMILARITY:
+                pow(caption_sim, image_env.CAPTION_IMPORTANCE) #si es malo amenta lo malo que eres
+            else:
+                pow(caption_sim, 1/image_env.CAPTION_IMPORTANCE) #si es bueno aumenta lo bueno que eres
+
+            cos = (image_sim + caption_sim)/2
+            return 1 - cos
+
         #En caso de volver a usar tensores en vez de numpys hay que descomentar
         vec1 = vec1.embedding #.cpu().detach().numpy()
         vec2 = vec2.embedding #.cpu().detach().numpy()
@@ -25,7 +44,7 @@ class Similarity:
         value_umbral = pow(value, EUCLIDEAN_POW_UMBRAL)/ EUCLIDEAN_DIV_UMBRAL
         return value_umbral
    
-    def cosine_and_pos(vec1:Feature, vec2:Feature):
+    def cosine_and_pos(vec1:Text, vec2:ImageEmbedding):
         cosine_similarity = Similarity.cosine(vec1, vec2)
         euclidean_similarity = Similarity.euclidean(vec1, vec2)
         
@@ -70,14 +89,31 @@ class Similarity:
                     print(f'max_similarity: {max_sim}')    
                 end_sim_region += max_sim
             end_sim +=end_sim_region
-            
-            if print_:
-                print(f'end_similarity: {end_sim}')    
-            
+        
+        if print_:
+            print(f'end_similarity: {end_sim}')    
         return end_sim        
  
     def calculate(text:Text, image:ImageEmbedding, print_ = False):
         sim = Similarity.cosine_and_pos(text, image)
         if sim > MIN_SIMILARTY_FOR_REGIONS:
             sim *= (1+Similarity.region(text,image,print_))
-        return sim    
+        return sim
+
+    def full(texts:TextFeature, images: ImageFeature):
+        origin_sim = Similarity.cosine(texts.text, images.origin)
+        acumulate = 0
+        for text in texts:
+            sim_for_text = 0
+            for image in images:
+                if image != images.origin:
+                    sim_region = Similarity.region(text,image)
+                    if sim_region > MIN_NICE_SIMILARITY:
+                        sim_for_text = max(sim_region, sim_region)
+
+            acumulate += sim_for_text        
+
+        if origin_sim > MIN_NICE_SIMILARITY:
+            return acumulate + origin_sim
+        
+        return max(acumulate, origin_sim)     

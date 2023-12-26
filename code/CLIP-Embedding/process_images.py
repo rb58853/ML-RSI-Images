@@ -2,7 +2,7 @@ from PIL import Image
 from sam import SAM
 import cv2
 import matplotlib.pyplot as plt
-from image_manager import ImageEmbedding, ImageFeature
+from features import ImageEmbedding#, ImageFeature
 from features import clip
 from similarity import Similarity
 
@@ -15,7 +15,7 @@ class ProcessImages:
         self.sam.import_model()
         self.AREA = 20*20
         self.Image = None
-        self.image_features:ImageFeature = ImageFeature()
+        self.image_features:list[ImageEmbedding] = []
     
     def set_neighbords(self):
         self.image_features.set_neighbords()
@@ -25,7 +25,7 @@ class ProcessImages:
         raw_image =self.load_pil_image(image_path)
         segm = ProcessImages.SEGMENTATION
         
-        self.image_features.clear()
+        self.image_features = []
         self.image_features.add_image(ImageEmbedding(image, None))
 
         if segmentation is not None:
@@ -67,7 +67,20 @@ class ProcessImages:
 
         result = dict(sorted(result.items(),reverse=True))
         end= {value: key for key,value in zip(result.keys(), result.values())}
-        self.image_features.set_ranking(end)
+        return end
+    
+    def raking_from_images(self,images):
+        image_origin = image[0]
+        
+        result = {}
+        for image in images:
+            if image == images[0]:continue
+            
+            similarity = Similarity.cosine(image, image_origin)
+            result[similarity] = image
+
+        result = dict(sorted(result.items(),reverse=True))
+        end= {value: key for key,value in zip(result.keys(), result.values())}
         return end
     
     def show_images(self, image_path = None, segmentation = None):

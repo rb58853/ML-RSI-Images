@@ -1,13 +1,15 @@
 from enviroment import is_installed_lib
-
 from enviroment import ImageEmbeddingEnv as env
 from enviroment import MatPlotLib as Color
 from matplotlib.patches import Rectangle
+
 
 clip = None
 if is_installed_lib('torch'):
     from clip_embeding import ClipEmbedding
     clip = ClipEmbedding()
+    if env.USE_CAPION_MODEL:
+        env.CAPTION_MODEL.import_model()
 
 class Feature:
     def __init__(self) -> None:
@@ -19,13 +21,18 @@ class Feature:
        return self.items[index]
     
 class ImageEmbedding(Feature):
+
     def __init__(self, image, position) -> None:
         self.image = image
         self.image_path = None
-        self.embedding = None
-        self.caption_embedding = None
-        self.position = position
+        
         self.id = 0
+        self.embedding = None
+        self.caption = None
+        self.position = position
+        
+        self.multiple_captions = []
+        
         self.left, self.right, self.top, self.buttom = (0,0,0,0)
         self.neighbords = {
             'left':[],    
@@ -34,11 +41,23 @@ class ImageEmbedding(Feature):
             'buttom':[],    
             'in':[],    
         }
+        
         self.items = [self.embedding, self.position, self.neighbords]
+        
         self.similarity_with_origin = None
+
         if self.image is not None:
             self.get_embedding()
+            self.get_caption()
 
+    def get_caption(self):
+        '''Genera un text como caption'''
+        if self.image is None:
+            raise Exception("Image is None")
+        
+        if env.USE_CAPION_MODEL:
+            caption = Text(env.CAPTION_MODEL.caption(self.image), self.position)
+            self.caption = caption
 
     def __getitem__(self, index):
        return self.items[index]
@@ -256,8 +275,7 @@ class Text:
                 print('\n')
 
     def __str__(self) -> str:
-        return f'text: {self.text}\n\
-        pos: {self.position}'
+        return f'text: {self.text}\npos: {self.position}'
     
     def __repr__(self) -> str:
         return self.text

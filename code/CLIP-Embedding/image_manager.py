@@ -1,10 +1,20 @@
 import matplotlib.pyplot as plt
 from features import ImageEmbedding
+from process_images import ProcessImages
 
+process = ProcessImages()
 class ImageFeature:
-    def __init__(self) -> None:
+    def __init__(self, image_path = None, data_path = None) -> None:
+        self.origin:ImageEmbedding = None
         self.images:list[ImageEmbedding] = []
         self.ranking:dict[ImageEmbedding:float] = {}
+        if image_path is not None:
+            self.set_images(image_path)
+            self.set_ranking()
+            self.set_neighbords()
+
+    def set_ranking(self):
+        self.ranking = process.raking_from_images(self.images)
 
     def get_rank(self, image:ImageEmbedding):
         try:
@@ -38,7 +48,13 @@ class ImageFeature:
     def add_image(self, image:ImageEmbedding):
         image.set_id(self.__len__())
         self.images.append(image)
-
+    
+    def set_images(self, path):
+        images = process.get_images(path)
+        self.origin = images[0]
+        for image in images:
+            self.add_image(image)
+            
     def get_image_from_id(self, id):
         return self.images[id]
     

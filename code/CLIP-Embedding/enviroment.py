@@ -11,6 +11,10 @@ class ImageEmbeddingEnv:
     ''' 
     ## ImageEmbeddingEnv
     ### Variables 
+    - `USE_MULTIPLE_CAPIONS` Si esto esta activo se hara una subdivision de los captions y se buscara similitud todos contra todos(menos eficiente)
+    - `USE_CAPION_MODEL` Indica que se usara un modelo de descripciones de imagenes para usar tambien emedding de la descrpcion en la imagen al calcular similitud
+    - `CAPTION_MODEL` Este es el modelo que se usara para describir la imagen
+    - `CAPTION_IMPORTANCE` Importancia del caption, define que tan importante sera el caption de una imagen para la similitud. `=1` indica que tiene igual imporatancia que la imagen
     - `POS_UMBRAL`: Importancia dada a la distancia entre las posiciones de las imagenes, mientras menor valor mayor importancia se le da a las posiciones
     - `PRIMARY_POW`: Elevacion a la ptencia del eje principal a la hora de calcular distancias
     - `SECUNDARY_POW`: Elevacion a la ptencia del eje no principal a la hora de calcular distancias
@@ -18,6 +22,13 @@ class ImageEmbeddingEnv:
     ### Funciones
     - `max_similarity()`: Devuelve la maxima similitud que se puede alcanzar en la distancia entre dos imagenes. 
     '''
+    from caption_models.blip2 import BLIP2
+    
+    USE_MULTIPLE_CAPIONS = False
+    USE_CAPION_MODEL = False
+    CAPTION_MODEL =BLIP2
+    CAPTION_IMPORTANCE = 1
+
     PRIMARY_POW = 1.2 #Elevacion a la ptencia del eje principal a la hora de calcular distancias
     SECUNDARY_POW = 0.7 #Elevacion a la ptencia del eje no principal a la hora de calcular distancias
     MAX_DISTANCE = 1 #Distancia maxima que puede haber entre dos imagenes para ser consideradas vecinas
@@ -28,7 +39,7 @@ class ImageEmbeddingEnv:
 
 class MatPlotLib:
     INDEX = -1
-    COLORS = [ 'black', 'blue', 'red', 'green', 'blueviolet', 'cornflowerblue', 'darkblue', 'darkcyan', 'darkgreen', 'darkkhaki', 'darkmagenta', 'darkolivegreen', 'darkorange', 'darkred', 'darkseagreen', 'darkslateblue', 'darkturquoise', 'darkviolet', 'deeppink', 'deepskyblue', 'dodgerblue','forestgreen', 'fuchsia', 'green', 'greenyellow', 'hotpink', 'indianred', 'indigo', 'lawngreen', 'lemonchiffon', 'lightblue', 'lightgreen', 'lime', 'limegreen', 'magenta', 'mediumaquamarine', 'mediumblue', 'mediumpurple', 'mediumslateblue', 'mediumspringgreen', 'mediumturquoise', 'mediumvioletred', 'midnightblue', 'palegreen', 'paleturquoise','pink', 'purple', 'royalblue', 'skyblue', 'slateblue', 'tomato', 'turquoise', 'violet']
+    COLORS = [ 'black', 'blue', 'red', 'green', 'blueviolet', 'cornflowerblue', 'darkblue', 'darkcyan', 'darkgreen', 'darkkhaki', 'darkmagenta', 'darkolivegreen', 'darkorange', 'darkred', 'darkseagreen', 'darkslateblue', 'darkturquoise', 'darkviolet' 'green', 'magenta','pink', 'purple', 'royalblue', 'slateblue', 'tomato', 'turquoise', 'violet']
     
     def get_color():
         MatPlotLib.INDEX = (1+MatPlotLib.INDEX) % len(MatPlotLib.COLORS)
@@ -37,7 +48,7 @@ class MatPlotLib:
 
 class SamEnv:
     '''
-    -  `points_per_side` define el número de puntos que se utilizan para generar las máscaras. Reducir este número puede acelerar el proceso de segmentación, pero también podría resultar en máscaras menos precisas.
+    - `points_per_side` define el número de puntos que se utilizan para generar las máscaras. Reducir este número puede acelerar el proceso de segmentación, pero también podría resultar en máscaras menos precisas.
     - `pred_iou_thresh` define el umbral para la intersección sobre la unión (IOU) en las predicciones. Aumentar este valor puede resultar en menos regiones propuestas, acelerando el proceso de segmentación.
     - Aumentar `stability_score_thresh` puede resultar en menos regiones propuestas.
     - `crop_n_layers` define el número de capas en el recorte de la imagen. Reducir este número puede acelerar el proceso de segmentación, pero podría afectar negativamente la precisión del modelo.
