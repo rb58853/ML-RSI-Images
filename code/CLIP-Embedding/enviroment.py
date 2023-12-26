@@ -25,7 +25,7 @@ class ImageEmbeddingEnv:
     from caption_models.blip2 import BLIP2
     
     USE_MULTIPLE_CAPIONS = False
-    USE_CAPION_MODEL = False
+    USE_CAPION_MODEL = True
     CAPTION_MODEL =BLIP2
     CAPTION_IMPORTANCE = 1
 
