@@ -21,7 +21,6 @@ class Feature:
        return self.items[index]
     
 class ImageEmbedding(Feature):
-
     def __init__(self, image, position) -> None:
         self.image = image
         self.image_path = None

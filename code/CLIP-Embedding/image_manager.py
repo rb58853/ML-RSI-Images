@@ -19,13 +19,13 @@ class ImageFeature:
         for image in self.images:
             if image == self.origin: continue
             
-            similarity = Similarity.cosine(image, image_origin)
+            similarity = Similarity.cosine(image, self.origin)
             result[similarity] = image
 
         result = dict(sorted(result.items(),reverse=True))
         end= {value: key for key,value in zip(result.keys(), result.values())}
-        return end
-        self.ranking = process.raking_from_images(self.images)
+        self.ranking = end
+        return self.ranking
 
     def get_rank(self, image:ImageEmbedding):
         try:
