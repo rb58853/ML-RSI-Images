@@ -71,8 +71,8 @@ class Similarity:
             end_sim +=end_sim_region
         return end_sim        
  
-    def calculate(text:Text, image:ImageEmbedding):
+    def calculate(text:Text, image:ImageEmbedding, print_ = False):
         sim = Similarity.cosine_and_pos(text, image)
         if sim > MIN_SIMILARTY_FOR_REGIONS:
-            sim *= (1+Similarity.region(text,image))
+            sim *= (1+Similarity.region(text,image,print_))
         return sim    
