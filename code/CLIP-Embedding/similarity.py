@@ -68,8 +68,12 @@ class Similarity:
                     max_sim = 0
                 if print_:
                     print(f'max_similarity: {max_sim}')    
-                end_sim_region +=max_sim
+                end_sim_region += max_sim
             end_sim +=end_sim_region
+            
+            if print_:
+                print(f'end_similarity: {end_sim}')    
+            
         return end_sim        
  
     def calculate(text:Text, image:ImageEmbedding, print_ = False):
