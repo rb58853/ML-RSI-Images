@@ -3,8 +3,6 @@ from sam import SAM
 import cv2
 import matplotlib.pyplot as plt
 from features import ImageEmbedding#, ImageFeature
-from features import clip
-from similarity import Similarity
 
 class ProcessImages:
     IMAGE_PARTITION = 80 #tamaño mínimo(en píxeles) de un cuadro de segmentación = tamaño(imagen)/IMAGE_PARTITION
@@ -54,34 +52,6 @@ class ProcessImages:
         image = cv2.imread(image_path)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         return image
-    
-    def ranking(self, image_path, segmentation = None, print_ = True):
-        images = self.get_images(image_path, segmentation)
-        
-        image_origin = self.image_features[0]
-        
-        result = {}
-        for image in images:
-            similarity = Similarity.cosine(image, image_origin)
-            result[similarity] = image
-
-        result = dict(sorted(result.items(),reverse=True))
-        end= {value: key for key,value in zip(result.keys(), result.values())}
-        return end
-    
-    def raking_from_images(self,images):
-        image_origin = image[0]
-        
-        result = {}
-        for image in images:
-            if image == images[0]:continue
-            
-            similarity = Similarity.cosine(image, image_origin)
-            result[similarity] = image
-
-        result = dict(sorted(result.items(),reverse=True))
-        end= {value: key for key,value in zip(result.keys(), result.values())}
-        return end
     
     def show_images(self, image_path = None, segmentation = None):
         segm = ProcessImages.SEGMENTATION

@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from features import ImageEmbedding
 from process_images import ProcessImages
+from similarity import Similarity
 
 process = ProcessImages()
 class ImageFeature:
@@ -14,6 +15,16 @@ class ImageFeature:
             self.set_neighbords()
 
     def set_ranking(self):
+        result = {}
+        for image in self.images:
+            if image == self.origin: continue
+            
+            similarity = Similarity.cosine(image, image_origin)
+            result[similarity] = image
+
+        result = dict(sorted(result.items(),reverse=True))
+        end= {value: key for key,value in zip(result.keys(), result.values())}
+        return end
         self.ranking = process.raking_from_images(self.images)
 
     def get_rank(self, image:ImageEmbedding):
@@ -104,9 +115,6 @@ class ImageFeature:
         image.plot_region(ax)
         plt.title(f'{image}   pos: {image.position}')
         plt.show()
-
-    def set_ranking(self, ranking):
-        self.ranking = ranking
 
 class ImagesDataset:
     def __init__(self) -> None:

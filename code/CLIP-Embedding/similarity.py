@@ -1,5 +1,5 @@
 from features import Feature, Text, ImageEmbedding
-from image_manager import ImageFeature
+# from image_manager import ImageFeature
 from text_manager import TextFeature
 from enviroment import ImageEmbeddingEnv as image_env
 from scipy.spatial.distance import cosine
@@ -101,7 +101,8 @@ class Similarity:
             sim *= (1+Similarity.region(text,image,print_))
         return sim
 
-    def full(texts:TextFeature, images: ImageFeature):
+    # def full(texts:TextFeature, images: ImageFeature):
+    def full(texts:TextFeature, images):
         origin_sim = Similarity.cosine(texts.text, images.origin)
         acumulate = 0
         for text in texts:
