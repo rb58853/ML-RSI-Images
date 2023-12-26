@@ -46,7 +46,7 @@ class Similarity:
                     max_sim = -1
 
                 if print_:
-                    print(f'TEXT: {temp_text}')
+                    print(f'\nTEXT: {temp_text}')
                     print(f'images in {key} region:'.upper())
 
 
@@ -63,7 +63,6 @@ class Similarity:
                             max_sim = max(sim_for_neigh, max_sim)
                     if print_:
                         print(f'   ⦿ {temp_image[0]}: {similarity}')        
-                        print()
                 
                 if max_sim == -1:
                     max_sim = 0
