@@ -12,6 +12,7 @@ MIN_SIMILARTY_FOR_REGIONS = 0.26 #Si la similitud es menor que esto se considera
 MIN_NICE_SIMILARITY = 0.22 #Esta es la similitud a partir de a cual puede considerarse util algo
 MIN_NICE_SIMILARITY_ORIGIN = 0.2 #Esta es la similitud a partir de a cual puede considerarse util algo en la imagen original y texto original
 USE_NEGATIVE_REGIONS = True #Define si las regiones pueden aportar efecto negativo a la similitud, en el caso de hablar de cercania entre un objeto y otro
+IMPORTANCE_NEGATIVE_REGIONS = 1 #Esto defne que tan importante es una region negativa, mientras mas alto, mas baja la similitud una region mala
 
 class Similarity:
     def cosine(vec1:Text, vec2:ImageEmbedding):
@@ -78,7 +79,7 @@ class Similarity:
                         max_sim = max(sim_for_neigh, max_sim)
                     else:
                         if USE_NEGATIVE_REGIONS:
-                            sim_for_neigh = sim_dist * (similarity - MIN_SIMILARTY_FOR_REGIONS)
+                            sim_for_neigh = sim_dist * (pow(similarity,IMPORTANCE_NEGATIVE_REGIONS) - MIN_SIMILARTY_FOR_REGIONS)
                             max_sim = max(sim_for_neigh, max_sim)
                     if print_:
                         print(f'   ⦿ {temp_image[0]}: {similarity}')        
