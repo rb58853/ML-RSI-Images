@@ -1,7 +1,7 @@
 from PIL import Image
 from features import ImageEmbedding
 import torch
-
+from enviroment import SamEnv as env
 class SAM:
     '''
     ## SAM
@@ -30,12 +30,12 @@ class SAM:
         
         SAM.MASK_GENERATOR = SamAutomaticMaskGenerator(
             model=sam,
-            points_per_side=32,
-            pred_iou_thresh=0.86,
-            stability_score_thresh=0.92,
-            crop_n_layers=1,
-            crop_n_points_downscale_factor=2,
-            min_mask_region_area= 20*20,  # Requires open-cv to run post-processing
+            points_per_side=env.points_per_side,#32,
+            pred_iou_thresh=env.pred_iou_thresh,#0.86,
+            stability_score_thresh=env.stability_score_thresh,#0.92,
+            crop_n_layers=env.crop_n_layers,#1,
+            crop_n_points_downscale_factor=env.crop_n_points_downscale_factor, #2,
+            min_mask_region_area=env.min_mask_region_area,# 20*20,  # Requires open-cv to run post-processing
         )
 
     def mask_image(mask, raw_image, bbox):

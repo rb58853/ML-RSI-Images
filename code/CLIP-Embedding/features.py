@@ -23,6 +23,7 @@ class ImageEmbedding(Feature):
         self.image = image
         self.image_path = None
         self.embedding = None
+        self.caption_embedding = None
         self.position = position
         self.id = 0
         self.left, self.right, self.top, self.buttom = (0,0,0,0)
