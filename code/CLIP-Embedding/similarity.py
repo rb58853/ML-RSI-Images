@@ -15,7 +15,7 @@ USE_NEGATIVE_REGIONS = True #Define si las regiones pueden aportar efecto negati
 IMPORTANCE_NEGATIVE_REGIONS = 1 #Esto defne que tan importante es una region negativa, mientras mas alto, mas baja la similitud una region mala
 
 class Similarity:
-    def cosine(vec1:Text, vec2:ImageEmbedding):
+    def cosine(vec1:Feature, vec2:ImageEmbedding):
         if vec2.caption is not None and image_env.USE_CAPION_MODEL:
             v1 = vec1.embedding
             v2 = vec2.embedding

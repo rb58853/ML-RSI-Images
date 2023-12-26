@@ -237,8 +237,7 @@ class Text:
     def __init__(self, text, position = None) -> None:
         self.text = text
         self.embedding = None
-        if is_installed_lib('torch'):
-            self.set_embedding() 
+        self.set_embedding() 
         self.position = position
         self.neighbords:dict[str:Text] = {
             'left':[],    
@@ -250,8 +249,10 @@ class Text:
         }
 
     def set_embedding(self):
-        self.embedding = clip.get_text_embedding(self.text)[0]
-    
+        if is_installed_lib('torch'):
+            self.embedding = clip.get_text_embedding(self.text)[0]
+        else:
+            raise Exception("miss torch librarie")    
     def set_position(self):
         raise NotImplementedError()
     

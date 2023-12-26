@@ -39,7 +39,7 @@ class ImageEmbeddingEnv:
 
 class MatPlotLib:
     INDEX = -1
-    COLORS = [ 'black', 'blue', 'red', 'green', 'blueviolet', 'cornflowerblue', 'darkblue', 'darkcyan', 'darkgreen', 'darkkhaki', 'darkmagenta', 'darkolivegreen', 'darkorange', 'darkred', 'darkseagreen', 'darkslateblue', 'darkturquoise', 'darkviolet' 'green', 'magenta','pink', 'purple', 'royalblue', 'slateblue', 'tomato', 'turquoise', 'violet']
+    COLORS = [ 'black', 'blue', 'red', 'green', 'blueviolet', 'cornflowerblue', 'darkblue', 'darkcyan', 'darkgreen', 'darkkhaki', 'darkmagenta', 'darkorange', 'darkred', 'darkseagreen', 'darkslateblue', 'darkturquoise', 'darkviolet', 'green', 'magenta','pink', 'purple', 'royalblue', 'slateblue', 'tomato', 'turquoise', 'violet']
     
     def get_color():
         MatPlotLib.INDEX = (1+MatPlotLib.INDEX) % len(MatPlotLib.COLORS)

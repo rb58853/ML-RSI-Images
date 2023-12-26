@@ -1,8 +1,8 @@
 from features import Text
 
 class TextFeature:
-    def __init__(self, text) -> None:
-        self.text:Text = text
+    def __init__(self, text:str) -> None:
+        self.text:Text = Text(text)
         self.texts:list[Text] = []#[self.text]
 
     def analize_text(self):
