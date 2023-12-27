@@ -19,6 +19,7 @@ class ImageEmbeddingEnv:
     - `PRIMARY_POW`: Elevacion a la ptencia del eje principal a la hora de calcular distancias
     - `SECUNDARY_POW`: Elevacion a la ptencia del eje no principal a la hora de calcular distancias
     - `MAX_DISTANCE`: Distancia maxima que puede haber entre dos imagenes para ser consideradas vecinas
+    - `KEY_IMAGES`: Esto es el tipo de imagen que usara como principal. (box or mask).
     ### Funciones
     - `max_similarity()`: Devuelve la maxima similitud que se puede alcanzar en la distancia entre dos imagenes. 
     '''
@@ -34,6 +35,8 @@ class ImageEmbeddingEnv:
     SECUNDARY_POW = 0.7 #Elevacion a la ptencia del eje no principal a la hora de calcular distancias
     MAX_DISTANCE = 1 #Distancia maxima que puede haber entre dos imagenes para ser consideradas vecinas
     POS_UMBRAL = 1
+
+    KEY_IMAGES = 'box'
 
     def max_similarity():
         return ImageEmbeddingEnv.MAX_DISTANCE/ImageEmbeddingEnv.POS_UMBRAL
@@ -62,6 +65,6 @@ class SamEnv:
     stability_score_thresh=0.92
     crop_n_layers=1
     crop_n_points_downscale_factor=2
-    min_mask_region_area= 10*10
+    min_mask_region_area= 20*20
 
 from data_texts.env import DistanteTextsRelevace #use as import

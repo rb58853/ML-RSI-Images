@@ -3,6 +3,7 @@ from features import ImageEmbedding, Text
 from process_images import ProcessImages
 from similarity import Similarity
 from enviroment import DistanteTextsRelevace as env
+from enviroment import ImageEmbeddingEnv as image_env
 unsimilates_texts = [Text(text) for text in env.get_texts()]
 
 process = ProcessImages()
@@ -72,7 +73,7 @@ class ImageFeature:
     def set_images(self, path):
         # images = process.get_images(path)
         segmentations = process.get_segmentations(path)
-        images = segmentations['mask']#['box']
+        images = segmentations[image_env.KEY_IMAGES]
         masks = segmentations['mask']
         
         self.origin = ImageEmbedding(process.load_cv2_image(path),None)

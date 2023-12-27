@@ -193,7 +193,16 @@ class DistanteTextsRelevace:
         ]
     
     def get_texts():
+        #Cambiar umbral en caso de estar usandose mask segmentation
+        if ImageEmbeddingEnv.KEY_IMAGES == 'mask':
+            DistanteTextsRelevace.umbral *= 1.1
+            
         #Cambiar umbral en caso de estar usandose captionmodel
+        if ImageEmbeddingEnv.USE_CAPION_MODEL:
+            DistanteTextsRelevace.umbral =  (DistanteTextsRelevace.umbral+0.6)/2
+
         if len(DistanteTextsRelevace.texts)> DistanteTextsRelevace.max_compare:
             random.shuffle(DistanteTextsRelevace.texts)
         return DistanteTextsRelevace.texts[:DistanteTextsRelevace.max_compare]
+    
+from enviroment import ImageEmbeddingEnv
