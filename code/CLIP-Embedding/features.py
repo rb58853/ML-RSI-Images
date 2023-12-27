@@ -2,6 +2,7 @@ from enviroment import is_installed_lib
 from enviroment import ImageEmbeddingEnv as env
 from enviroment import MatPlotLib as Color
 from matplotlib.patches import Rectangle
+import matplotlib.pyplot as plt
 
 
 clip = None
@@ -26,6 +27,7 @@ class ImageEmbedding(Feature):
         self.image_path = None
         
         self.id = 0
+        self.name = 'image'
         self.embedding = None
         self.caption = None
         self.position = position
@@ -228,11 +230,21 @@ class ImageEmbedding(Feature):
         ax.add_patch(Rectangle((x1, y1), width, height, fill=False, edgecolor=color))
 
     def __str__(self) -> str:
-        return f'image {self.id}'
+        return f'{self.name} {self.id}'
     
     def __repr__(self) -> str:
         return f'image {self.id}'
 
+    def plot(self):
+        if self.image is not None:
+            plt.figure(figsize=(2,2))
+            plt.title(f'{self} | pos: {self.position}')
+            plt.imshow(self.image)
+            plt.axis('off')
+            plt.show()
+        else:
+            print("Image is None")    
+            
 class Text:
     def __init__(self, text, position = None) -> None:
         self.text = text

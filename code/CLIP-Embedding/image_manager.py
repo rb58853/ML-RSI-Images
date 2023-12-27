@@ -10,6 +10,7 @@ class ImageFeature:
     def __init__(self, image_path = None, data_path = None) -> None:
         self.origin:ImageEmbedding = None
         self.images:list[ImageEmbedding] = []
+        self.masks:list[ImageEmbedding] = []
         self.ranking:dict[ImageEmbedding:float] = {}
         if image_path is not None:
             self.set_images(image_path)
@@ -62,11 +63,26 @@ class ImageFeature:
         image.set_id(self.__len__())
         self.images.append(image)
     
+    def add_mask(self, image:ImageEmbedding):
+        image.set_id(self.masks.__len__())
+        image.name = 'mask'
+        self.masks.append(image)
+  
     def set_images(self, path):
-        images = process.get_images(path)
-        self.origin = images[0]
+        # images = process.get_images(path)
+        segmentations = process.get_segmentations(path)
+        images = segmentations['box']
+        masks = segmentations['mask']
+        
+        self.origin = ImageEmbedding(process.load_cv2_image(path),None)
+        self.images = [self.origin]
         for image in images:
             self.add_image(image)
+        
+        self.images = [self.masks]
+        for mask in masks:
+            self.add_mask(image)
+            
             
     def get_image_from_id(self, id):
         return self.images[id]

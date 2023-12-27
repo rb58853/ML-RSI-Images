@@ -40,6 +40,18 @@ class ProcessImages:
             self.image_features.append(image)
         
         return self.image_features
+    
+    def get_segmentations(self, image_path):
+        image = self.load_cv2_image(image_path)
+        raw_image =self.load_pil_image(image_path)
+        
+        images = self.sam.all_areas_from_image(
+            image= image, 
+            raw_image = raw_image, 
+            min_box_area = self.AREA, 
+            min_area = self.AREA/2, 
+            use_mask_as_return = True)
+        return images
 
     def load_pil_image(self,image_path):
         image = Image.open(image_path).convert("RGB")
