@@ -1,12 +1,18 @@
 class DistanteTextsRelevace:
     '''
-    ### Usado para desechar imagenes relevantes para muchos conceptos muy distantes
-    `texts`: Lista de textos distantes conceptualmente
-    `umbral`: El umbral a partir del cual se considera de semejanza alta una similitud, para estos casos
-    `percentaje`: El Porciento a partir del cual se considera que una imagen es semejante a muchos casos
+    ## DistanteTextsRelevace
+    Usado para desechar imagenes relevantes para muchos conceptos muy distantes
+    ### Variables
+    - `texts`: Lista de textos distantes conceptualmente
+    - `umbral`: El umbral a partir del cual se considera de semejanza alta una similitud, para estos casos
+    - `percentaje`: El Porciento a partir del cual se considera que una imagen es semejante a muchos casos
+    - `max_compare`: Cantidad de casos maximos que se compararan para determinar relevancia
+    ### Funciones
+    - `get_texts()`: Devuelve los textos hasta el limite pasado en max_compare
     '''
     umbral = 0.2
     percentaje = 0.8
+    max_compare = 1000
 
     texts= [
         "A cat sleeping on a sofa", 
@@ -116,3 +122,5 @@ class DistanteTextsRelevace:
         "A recipe for homemade bread",
         "A guidebook to hiking in the mountains",
         ]
+    def get_texts():
+        return DistanteTextsRelevace.texts[:DistanteTextsRelevace.max_compare]
