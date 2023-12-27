@@ -132,7 +132,7 @@ class ImageFeature:
                 percentaje = env.percentaje
             return count_relevance/len(unsimilates_texts) > percentaje
         
-        images = [image for image in self.images]
+        images = [image for image in self.images if image != self.origin]
         for image in images:
             if is_image_relevant_for_all(image, value=value, percentaje=percentaje):
                 self.images.remove(image)
