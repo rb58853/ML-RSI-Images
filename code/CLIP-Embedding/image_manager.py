@@ -118,11 +118,13 @@ class ImageFeature:
         plt.title(f'{image}   pos: {image.position}')
         plt.show()
 
-    def delete_relevant_images(self, print_ = False):
+    def delete_relevant_images(self, print_ = False, value = None):
         def is_image_relevant_for_all(image):
             count_relevance = 0
             for text in unsimilates_texts:
-                if Similarity.cosine(text, image) > env.umbral:
+                if value is None:
+                    value = env.umbral
+                if Similarity.cosine(text, image) > value:
                     count_relevance +=1
             if print_:
                 print(f'{image}: {count_relevance/len(unsimilates_texts)}')
