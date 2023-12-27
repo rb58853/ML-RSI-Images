@@ -62,6 +62,6 @@ class SamEnv:
     stability_score_thresh=0.92
     crop_n_layers=1
     crop_n_points_downscale_factor=2
-    min_mask_region_area= 20*20
+    min_mask_region_area= 10*10
 
 from data_texts.env import DistanteTextsRelevace #use as import
