@@ -3,7 +3,7 @@ from features import ImageEmbedding, Text
 from process_images import ProcessImages
 from similarity import Similarity
 from enviroment import DistanteTextsRelevace as env
-unsimilates_texts = [Text(text) for text in env.texts]
+unsimilates_texts = [Text(text) for text in env.get_texts()]
 
 process = ProcessImages()
 class ImageFeature:
