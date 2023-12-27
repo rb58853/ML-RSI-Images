@@ -134,11 +134,8 @@ class ImageFeature:
         
         images = [image for image in self.images]
         for image in images:
-            if is_image_relevant_for_all(image, value, percentaje):
+            if is_image_relevant_for_all(image, value=value, percentaje=percentaje):
                 self.images.remove(image)
-
-
-
 
 class ImagesDataset:
     def __init__(self) -> None:
