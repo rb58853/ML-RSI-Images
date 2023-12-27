@@ -71,7 +71,7 @@ class ImageFeature:
     def set_images(self, path):
         # images = process.get_images(path)
         segmentations = process.get_segmentations(path)
-        images = segmentations['box']
+        images = segmentations['mask']#['box']
         masks = segmentations['mask']
         
         self.origin = ImageEmbedding(process.load_cv2_image(path),None)
@@ -82,7 +82,6 @@ class ImageFeature:
         self.images = [self.masks]
         for mask in masks:
             self.add_mask(image)
-            
             
     def get_image_from_id(self, id):
         return self.images[id]
