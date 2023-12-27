@@ -118,7 +118,7 @@ class ImageFeature:
         plt.title(f'{image}   pos: {image.position}')
         plt.show()
 
-    def delete_relevant_images(self, print_ = False, value = None):
+    def delete_relevant_images(self, print_ = False, value = None, percentaje = None):
         def is_image_relevant_for_all(image):
             count_relevance = 0
             for text in unsimilates_texts:
@@ -128,7 +128,9 @@ class ImageFeature:
                     count_relevance +=1
             if print_:
                 print(f'{image}: {count_relevance/len(unsimilates_texts)}')
-            return count_relevance/len(unsimilates_texts) > env.percentaje
+            if percentaje is None:
+                percentaje = env.percentaje
+            return count_relevance/len(unsimilates_texts) > percentaje
         
         images = [image for image in self.images]
         for image in images:
