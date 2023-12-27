@@ -123,4 +123,5 @@ class DistanteTextsRelevace:
         "A guidebook to hiking in the mountains",
         ]
     def get_texts():
+        #Cambiar umbral en caso de estar usandose captionmodel
         return DistanteTextsRelevace.texts[:DistanteTextsRelevace.max_compare]

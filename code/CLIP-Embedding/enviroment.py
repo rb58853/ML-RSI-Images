@@ -1,5 +1,4 @@
 import importlib
-from data_texts.env import DistanteTextsRelevace #use as import
 
 def is_installed_lib(name):
    try:
@@ -64,3 +63,5 @@ class SamEnv:
     crop_n_layers=1
     crop_n_points_downscale_factor=2
     min_mask_region_area= 20*20
+
+from data_texts.env import DistanteTextsRelevace #use as import

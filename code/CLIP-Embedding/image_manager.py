@@ -128,7 +128,7 @@ class ImageFeature:
                 print(f'{image}: count_relevance/len(unsimilates_texts)')
             return count_relevance/len(unsimilates_texts) > env.percentaje
         
-        images = [image for image in images]
+        images = [image for image in self.images]
         for image in images:
             if is_image_relevant_for_all(image):
                 self.images.remove(image)
