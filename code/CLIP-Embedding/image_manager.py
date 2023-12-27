@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
-from features import ImageEmbedding
+from features import ImageEmbedding, Text
 from process_images import ProcessImages
 from similarity import Similarity
+from enviroment import DistanteTextsRelevace as env
+unsimilates_texts = [Text(text) for text in env.texts]
 
 process = ProcessImages()
 class ImageFeature:
@@ -115,6 +117,24 @@ class ImageFeature:
         image.plot_region(ax)
         plt.title(f'{image}   pos: {image.position}')
         plt.show()
+
+    def delete_relevant_images(self, print_ = False):
+        def is_image_relevant_for_all(image):
+            count_relevance = 0
+            for text in unsimilates_texts:
+                if Similarity.cosine(text, image) > env.umbral:
+                    count_relevance +=1
+            if print_:
+                print(f'{image}: count_relevance/len(unsimilates_texts)')
+            return count_relevance/len(unsimilates_texts) > env.percentaje
+        
+        images = [image for image in images]
+        for image in images:
+            if is_image_relevant_for_all(image):
+                self.images.remove(image)
+
+
+
 
 class ImagesDataset:
     def __init__(self) -> None:

@@ -8,8 +8,8 @@ import math
 
 EUCLIDEAN_POW_UMBRAL = 1 #Elevar a la potencia la distancia euclieana
 EUCLIDEAN_DIV_UMBRAL = 10 #dividir la distancia euclideana.
-MIN_SIMILARTY_FOR_REGIONS = 0.26 #Si la similitud es menor que esto se considera insignificante y se deja de usar
-MIN_NICE_SIMILARITY = 0.22 #Esta es la similitud a partir de a cual puede considerarse util algo
+MIN_SIMILARTY_FOR_REGIONS = 0.24 #Si la similitud es menor que esto se considera insignificante y se deja de usar
+MIN_NICE_SIMILARITY = 0.24 #Esta es la similitud a partir de a cual puede considerarse util algo
 MIN_NICE_SIMILARITY_ORIGIN = 0.2 #Esta es la similitud a partir de a cual puede considerarse util algo en la imagen original y texto original
 MIN_NICE_USE_CAPTION_SIMILARITY = 0.65 #Esta es la similitud a partir de a cual puede considerarse util algo a nivel de texto contra texto
 USE_NEGATIVE_REGIONS = True #Define si las regiones pueden aportar efecto negativo a la similitud, en el caso de hablar de cercania entre un objeto y otro
@@ -75,6 +75,7 @@ class Similarity:
 
 
                 for temp_image in image.neighbords[key]:
+                    # similarity = Similarity.cosine(temp_text, temp_image[0])
                     similarity = Similarity.cosine_and_pos(temp_text, temp_image[0])
                     # similarity = Similarity.calculate(temp_text, temp_image[0]) #Esto es mejor pero hay que controlar la recursividad infinita
                     sim_dist = temp_image[1] #esta es la similitud por distancia que hay desde la imagen hacia su vecino
@@ -114,7 +115,6 @@ class Similarity:
             for image in images:
                 if image != images.origin:
                     sim_region = Similarity.calculate(text,image)
-                    # sim_region = Similarity.region(text,image)
                     if sim_region > MIN_NICE_SIMILARITY:
                         sim_for_text = max(sim_region, sim_region)
 
