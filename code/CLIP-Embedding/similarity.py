@@ -11,8 +11,12 @@ EUCLIDEAN_DIV_UMBRAL = 10 #dividir la distancia euclideana.
 MIN_SIMILARTY_FOR_REGIONS = 0.26 #Si la similitud es menor que esto se considera insignificante y se deja de usar
 MIN_NICE_SIMILARITY = 0.22 #Esta es la similitud a partir de a cual puede considerarse util algo
 MIN_NICE_SIMILARITY_ORIGIN = 0.2 #Esta es la similitud a partir de a cual puede considerarse util algo en la imagen original y texto original
+MIN_NICE_USE_CAPTION_SIMILARITY = 0.65 #Esta es la similitud a partir de a cual puede considerarse util algo a nivel de texto contra texto
 USE_NEGATIVE_REGIONS = True #Define si las regiones pueden aportar efecto negativo a la similitud, en el caso de hablar de cercania entre un objeto y otro
 IMPORTANCE_NEGATIVE_REGIONS = 1 #Esto defne que tan importante es una region negativa, mientras mas alto, mas baja la similitud una region mala
+if image_env.USE_CAPION_MODEL:
+    MIN_NICE_SIMILARITY = (MIN_NICE_SIMILARITY + MIN_NICE_USE_CAPTION_SIMILARITY)/2
+    MIN_NICE_SIMILARITY_ORIGIN = (MIN_NICE_SIMILARITY_ORIGIN + MIN_NICE_USE_CAPTION_SIMILARITY)/2
 
 class Similarity:
     def cosine(vec1:Feature, vec2:ImageEmbedding):
