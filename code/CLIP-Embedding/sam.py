@@ -101,7 +101,8 @@ class SAM:
                 images_box.append(image_emb)
             
             if use_mask_as_return:
-                if mask['area'] >= min_area:
+                # if mask['area'] >= min_area:
+                if box_area >= min_box_area:
                     image_pixels = SAM.mask_image(mask['segmentation'], raw_image, mask['bbox'])
                     pos = SAM.get_center(mask['bbox'],higth_len, weigth_len)
                     image_emb = ImageEmbedding(image_pixels, pos)
