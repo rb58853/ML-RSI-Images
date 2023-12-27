@@ -159,6 +159,9 @@ class ImageEmbedding(Feature):
             self.neighbords['in'].append((image, env.max_similarity()))
 
     def set_neighbords(self, images_list):
+        for key in self.neighbords:
+            self.neighbords[key] = []
+                    
         for image in images_list:
             if image != self:
                 self.set_as_neigh(image)
