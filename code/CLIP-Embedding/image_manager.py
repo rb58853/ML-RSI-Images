@@ -125,7 +125,7 @@ class ImageFeature:
                 if Similarity.cosine(text, image) > env.umbral:
                     count_relevance +=1
             if print_:
-                print(f'{image}: count_relevance/len(unsimilates_texts)')
+                print(f'{image}: {count_relevance/len(unsimilates_texts)}')
             return count_relevance/len(unsimilates_texts) > env.percentaje
         
         images = [image for image in self.images]
