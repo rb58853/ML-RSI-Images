@@ -194,4 +194,6 @@ class DistanteTextsRelevace:
     
     def get_texts():
         #Cambiar umbral en caso de estar usandose captionmodel
-        return random.shuffle(DistanteTextsRelevace.texts)[:DistanteTextsRelevace.max_compare]
+        if len(DistanteTextsRelevace.texts)> DistanteTextsRelevace.max_compare:
+            random.shuffle(DistanteTextsRelevace.texts)
+        return DistanteTextsRelevace.texts[:DistanteTextsRelevace.max_compare]
