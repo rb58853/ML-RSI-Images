@@ -119,7 +119,7 @@ class ImageFeature:
         plt.show()
 
     def delete_relevant_images(self, print_ = False, value = None, percentaje = None):
-        def is_image_relevant_for_all(image):
+        def is_image_relevant_for_all(image, value, percentaje):
             count_relevance = 0
             for text in unsimilates_texts:
                 if value is None:
@@ -134,7 +134,7 @@ class ImageFeature:
         
         images = [image for image in self.images]
         for image in images:
-            if is_image_relevant_for_all(image):
+            if is_image_relevant_for_all(image, value, percentaje):
                 self.images.remove(image)
 
 
