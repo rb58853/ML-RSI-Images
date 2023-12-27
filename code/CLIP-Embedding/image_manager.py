@@ -15,6 +15,7 @@ class ImageFeature:
         if image_path is not None:
             self.set_images(image_path)
             self.set_ranking()
+            # self.delete_relevant_images()
             self.set_neighbords()
 
     def set_ranking(self):
@@ -151,6 +152,8 @@ class ImageFeature:
         for image in images:
             if is_image_relevant_for_all(image, value=value, percentaje=percentaje):
                 self.images.remove(image)
+        
+        # self.set_neighbords()        
 
 class ImagesDataset:
     def __init__(self) -> None:

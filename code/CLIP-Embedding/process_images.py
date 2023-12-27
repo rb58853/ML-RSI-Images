@@ -15,9 +15,6 @@ class ProcessImages:
         self.Image = None
         self.image_features:list[ImageEmbedding] = []
     
-    def set_neighbords(self):
-        self.image_features.set_neighbords()
-
     def get_images(self, image_path, segmentation = None):
         image = self.load_cv2_image(image_path)
         raw_image =self.load_pil_image(image_path)
