@@ -1,4 +1,4 @@
-from image_manager import ImagesDataset
+from retrieval_system.data import ImagesDataset
 
 class Retrieval:
     def __init__(self, data_path) -> None:
@@ -15,4 +15,5 @@ class Retrieval:
     def hard_ranking(self, text):
         #tien en cuenta todas los calculos para establecer el ranking
         pass
-        
+
+

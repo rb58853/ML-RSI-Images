@@ -67,4 +67,4 @@ class SamEnv:
     crop_n_points_downscale_factor=2
     min_mask_region_area= 20*20
 
-from data_texts.env import DistanteTextsRelevace #use as import
+from environment.relevance_env import DistanteTextsRelevace #use as import

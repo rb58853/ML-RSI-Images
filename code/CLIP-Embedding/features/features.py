@@ -1,6 +1,6 @@
-from enviroment import is_installed_lib
-from enviroment import ImageEmbeddingEnv as env
-from enviroment import MatPlotLib as Color
+from environment.environment import is_installed_lib
+from environment.environment import ImageEmbeddingEnv as env
+from environment.environment import MatPlotLib as Color
 from matplotlib.patches import Rectangle
 import matplotlib.pyplot as plt
 

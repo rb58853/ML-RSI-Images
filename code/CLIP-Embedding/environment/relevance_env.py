@@ -205,4 +205,4 @@ class DistanteTextsRelevace:
             random.shuffle(DistanteTextsRelevace.texts)
         return DistanteTextsRelevace.texts[:DistanteTextsRelevace.max_compare]
     
-from enviroment import ImageEmbeddingEnv
+from environment.environment import ImageEmbeddingEnv

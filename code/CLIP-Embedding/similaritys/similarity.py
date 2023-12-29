@@ -1,7 +1,7 @@
-from features import Feature, Text, ImageEmbedding
+from features.features import Feature, Text, ImageEmbedding
 # from image_manager import ImageFeature
-from text_manager import TextFeature
-from enviroment import ImageEmbeddingEnv as image_env
+from features.text_manager import TextFeature
+from environment.environment import ImageEmbeddingEnv as image_env
 from scipy.spatial.distance import cosine
 from scipy.spatial import distance
 import math

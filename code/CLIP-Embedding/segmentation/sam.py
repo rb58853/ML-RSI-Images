@@ -1,7 +1,7 @@
 from PIL import Image
-from features import ImageEmbedding
+from features.features import ImageEmbedding
 import torch
-from enviroment import SamEnv as env
+from environment.environment import SamEnv as env
 class SAM:
     '''
     ## SAM
