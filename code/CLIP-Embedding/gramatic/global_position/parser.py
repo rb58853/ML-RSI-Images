@@ -43,12 +43,12 @@ class GlobalLocationParser(Parser):
     
     '''
     tokens = GlobalLocationLexer.tokens
-    start = 'text'  
+    start = 'sentence'  
     precedence = (
-        ('right', 'WORD'),
-        ('left', '"."', 'AND'),
+        ('right', 'ON', 'IS', 'OF', 'IMAGE', 'POSITION'),
+        ('left', 'WORD'),
+        ('left', '.', 'AND'),
         # ('left', '","', '"."', 'AND'),
-        # `('left', 'ON', 'IS'))`\n
         )
     
     def __init__(self) -> None:
@@ -64,8 +64,9 @@ class GlobalLocationParser(Parser):
     def error(self, token):
         pass
     
-    @_('text',
-       'relation')
+    @_('right_relation "."',
+    'right_relation',
+    )
     def sentence(self, p):
         print(p[0])
         return p[0]
@@ -83,7 +84,7 @@ class GlobalLocationParser(Parser):
         '''`<pos> ::= POS`'''
         return p.POS    
     
-    @_('POS POSITON')
+    @_('POS POSITION')
     def pos(self, p):
         '''`<pos> ::= POS`'''
         return p.POS
@@ -91,23 +92,32 @@ class GlobalLocationParser(Parser):
 #WORD________________________________________________    
     @_('WORD',
        '","',
-       'AND',
-       'OF',
-       'IS',
-       'ON', 
-       'POS', 
-       'POSITION', 
-       'IMAGE',
+    #    'AND',
+    #    'OF',
+    #    'IS',
+    #    'ON', 
+    #    'POS', 
+    #    'POSITION', 
+    #    'IMAGE',
        'NUM'
        )
     def word(self, p):
         return p[0]
+    
+    # @_('')
+    # def word(self, p):
+    #     return ''
 
 #TEXT________________________________________________    
+    # @_('word "."')
+    # def text(self, p):
+    #     '''`<text> ::= WORD`'''
+    #     return p.word
+    
     @_('word')
     def text(self, p):
         '''`<text> ::= WORD``'''
-        return p.WORD
+        return p.word
 
     @_('text text')
     def text(self, p):
@@ -138,6 +148,7 @@ class GlobalLocationParser(Parser):
     @_('ON pos OF IMAGE IS text')
     def right_relation(self, p):
         '''`<right_relation> ::= ON <pos> OF IMAGE IS <text>`'''
+        # self.add_subtext(p.word,p.pos)
         self.add_subtext(p.text,p.pos)
         return ' '.join([p.ON, p.pos, p.OF,p.IMAGE, p.IS, p.text])
     

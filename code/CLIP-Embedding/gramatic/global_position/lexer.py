@@ -5,9 +5,10 @@ class GlobalLocationLexer(Lexer):
     def __init__(self) -> None:
         super().__init__()
         self.category:dict[str:str] = {}
+        self.ignores = [r' ', r'\t', r'\n', 'there', 'the']
 
     tokens = {
-        ON, OF, AND, IS, POS, POSITION, IMAGE, WORD,  NUM
+        ON, OF, AND, IS, POS, POSITION, IMAGE, WORD,  NUM,
     }
 
     literals = { ',', '.'}
@@ -23,14 +24,17 @@ class GlobalLocationLexer(Lexer):
 
         }
     
-    ignores = [r' ', r'\t', r'\n', 'there', 'the']
-
+    ignore = r' '
+    ignore_tab = r'\t'
+    ignore_newline = r'\n'
+    
     word = r'[a-zA-Z][a-zA-Z0-9]*'
-    NUM = r'[0-9]*'
+    NUM = r'\d+'
     # NUM = r'[0-9]*[.][0-9]*'
 
     def word(self, token):
         if token.value.lower() in self.ignores:
+            self.index = token.end
             return
         
         for key in self.keywords:
