@@ -22,7 +22,7 @@ class GlobalLocationLexer(Lexer):
         'of': ['of'],
         'and' : ['and'],
         'is': ['is', 'are', "there's", 'find'],
-        'pos': ['left', 'right', "buttom","top","down","up","lower","center","middle"],
+        'pos': ['left', 'right', "buttom", "bottom","top","down","up","lower","center","middle","corner"],
         'position': ['position', 'pos', "side","location"],
         'image': ['image', 'picture', 'photo'],
         'near':['next', 'near']
@@ -32,7 +32,7 @@ class GlobalLocationLexer(Lexer):
     ignore_tab = r'\t'
     ignore_newline = r'\n'
     
-    word = r'[a-zA-Z][a-zA-Z0-9]*'
+    word = r"[a-zA-Z'][a-zA-Z0-9']*"
     NUM = r'\d+'
     # NUM = r'[0-9]*[.][0-9]*'
 
@@ -77,8 +77,9 @@ class GramaticalRules:
     '''
     `!TOKEN` indica que compara que sea distinto de TOKEN
     '''
+    use_preference = True #si ya se esta usando un token como token de posicion entonces no usar otros tokens con relacion a este ditinto de la relacion original, ergo segun el orden de las `relation`, si hay ambiguedad usa el primero, puede quedar ambiguo igual, pero menos
+    result = []
     relation = [
-
                 'IS text ON pos OF IMAGE',
                 'IS text ON pos !OF',
                 'text ON pos !OF',
@@ -88,6 +89,11 @@ class GramaticalRules:
                 'ON pos OF IMAGE IS WORD',
                 'ON pos OF IMAGE WORD',
                 'ON pos WORD',
+
+                'ON pos , IS WORD',
+                'ON pos OF IMAGE , IS WORD',
+                'ON pos OF IMAGE , WORD',
+                'ON pos , WORD',
                 ]
     
     def pos_case(sentence, text, i, j, temp):
@@ -166,7 +172,9 @@ class GramaticalRules:
                         break
                     else:    
                         i,j,temp = text_analiced
-                        result += temp
+                        is_temp_used = True in [ GramaticalRules.result[index] for index in temp] 
+                        if not GramaticalRules.use_preference or not is_temp_used:
+                            result += temp
                         break
 
                 if sentence[j] =='pos':        
@@ -175,8 +183,10 @@ class GramaticalRules:
                         break
                     i,j,temp = pos_analiced
                     if j == len(sentence)-1:
-                        result += temp
-                        break
+                        is_temp_used = True in [ GramaticalRules.result[index] for index in temp] 
+                        if not GramaticalRules.use_preference or not is_temp_used:
+                            result += temp
+                            break
                     continue    
 
                 if text[i] == sentence[j] or (sentence[j][0] == '!' and sentence[j][1:] != text[i]):
@@ -186,13 +196,15 @@ class GramaticalRules:
                 else:
                     break
                 if j == len(sentence)-1:
-                    result += temp
+                    is_temp_used = True in [ GramaticalRules.result[index] for index in temp] 
+                    if not GramaticalRules.use_preference or not is_temp_used:
+                        result += temp
         return result
 
     def get_tokens(text):
-        result = [False]*len(text)
+        GramaticalRules.result = [False]*len(text)
         for sentence in GramaticalRules.relation:
             indexs = GramaticalRules.match(sentence.split(" "),text)
             for index in indexs:
-                result[index] = True
-        return result
+                GramaticalRules.result[index] = True
+        return GramaticalRules.result

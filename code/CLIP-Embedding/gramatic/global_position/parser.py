@@ -122,6 +122,7 @@ class GlobalLocationParser(Parser):
     def pos(self, p):
         '''`<pos> ::= POS`'''
         return p.POS
+        return ' '.join([p[0], p[1]])
         
 #WORD________________________________________________    
     # @_('WORD','","')
@@ -165,35 +166,43 @@ class GlobalLocationParser(Parser):
     #                     | <pos> OF IMAGE <text>
     #                     | <right_relation> <text>
     
-    @_('ON pos IS text')
+    @_('ON pos IS text',
+       'ON pos "," IS text'
+       )
     def right_relation(self, p):
         '''`<right_relation> ::= ON <pos> IS <text>`'''
         self.add_subtext(p.text,p.pos)
         return (p.text,p.pos)
         return ' '.join([p.ON, p.pos, p.IS, p.text])
     
-    @_('ON pos OF IMAGE IS text')
+    @_('ON pos OF IMAGE IS text',
+       'ON pos OF IMAGE "," IS text'
+       )
     def right_relation(self, p):
         '''`<right_relation> ::= ON <pos> OF IMAGE IS <text>`'''
         self.add_subtext(p.text,p.pos)
         return (p.text,p.pos)
-        return ' '.join([p.ON, p.pos, p.OF, p.IMAGE, p.IS, p.text])
     
     #ANALIZAR si en el ingles se usa esto de alguna forma, con coma si
-    @_('ON pos text')
+    @_('ON pos text',
+    #    'ON pos "," text'
+       )
     def right_relation(self, p):
         '''`<right_relation> ::= ON <pos> IS <text>`'''
         self.add_subtext(p.text,p.pos)
         return (p.text,p.pos)
-        return ' '.join([p.ON, p.pos, p.text])
     
-    @_('ON pos OF IMAGE text')
+    @_('ON pos OF IMAGE text',
+    #    'ON pos OF IMAGE "," text'
+       )
     def right_relation(self, p):
         '''`<right_relation> ::= ON <pos> OF IMAGE IS <text>`'''
         self.add_subtext(p.text,p.pos)
         return (p.text,p.pos)
     
-    @_('pos OF IMAGE IS text')
+    @_('pos OF IMAGE IS text',
+       'pos OF IMAGE "," IS text'
+       )
     def right_relation(self, p):
         '''`<right_relation> ::= <pos> OF IMAGE <text>`'''
         self.add_subtext(p.text,p.pos)
