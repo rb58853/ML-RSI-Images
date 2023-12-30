@@ -65,10 +65,10 @@ class GlobalLocationParser(Parser):
         pass
     
     @_('relation',
-    'relation "|"',
-    'relation ","',
-    'relation AND',
-    'relation "."',
+    'sentence "|"',
+    'sentence ","',
+    'sentence AND',
+    'sentence "."',
     'sentence sentence',
     )
     def sentence(self, p):
@@ -120,10 +120,10 @@ class GlobalLocationParser(Parser):
         '''`<text> ::= <text> <text>`'''
         return ' '.join([p[0], p[1]])
     
-    @_('text "," text')
+    @_('text ","')
     def text(self, p):
         '''`<text> ::= <text> , <text>`'''
-        return ' '.join([p[0], p[1], p[2]])
+        return ' '.join([p[0], p[1]])
 
 
 #RIGHT_RELATION____________________________________________
@@ -177,14 +177,15 @@ class GlobalLocationParser(Parser):
         return (text, pos)
         return ' '.join([p.right_relation, p.text])
 
-    @_('right_relation "," text')
-    def right_relation(self, p):
-        '''`<right_relation> ::= <pos> OF IMAGE <text>`'''
-        pos = p.right_relation[1]
-        text = p.right_relation[0] + ", " + p.text
-        self.add_subtext(text,pos)
-        return (text, pos)
-        return ' '.join([p.right_relation, p.text])
+    # @_('right_relation "," text')
+    # def right_relation(self, p):
+    #     '''`<right_relation> ::= <pos> OF IMAGE <text>`'''
+    #     pos = p.right_relation[1]
+    #     text = p.right_relation[0] + ", " + p.text
+    #     self.add_subtext(text,pos)
+    #     self.subtexts[pos].remove(p.right_relation[0])
+    #     return (text, pos)
+    #     return ' '.join([p.right_relation, p.text])
 
 #LEFT RELATION___________________________________________________
     @_('IS text ON pos')

@@ -76,10 +76,26 @@ class GramaticalRules:
     `!TOKEN` indica que compara que sea distinto de TOKEN
     '''
     relation = [
+
                 'IS text ON POS !OF',
+                'IS text ON POS OF IMAGE',
+                'text ON POS !OF',
+                'text ON POS OF IMAGE',
+                'IS text ON POS POSITION !OF',
+                'IS text ON POS POSITION OF IMAGE',
+                'text ON POS POSITION !OF',
+                'text ON POS POSITION OF IMAGE',
+                
+                'IS text ON POS POS !OF',
+                'IS text ON POS POS OF IMAGE',
+                'text ON POS POS !OF',
+                'text ON POS POS OF IMAGE',
+                'IS text ON POS POS POSITION !OF',
+                'IS text ON POS POS POSITION OF IMAGE',
+                'text ON POS POS POSITION !OF',
+                'text ON POS POS POSITION OF IMAGE',
 
-
-
+                
 
                 'ON POS IS WORD',
                 'ON POS OF IMAGE IS WORD',
@@ -112,12 +128,23 @@ class GramaticalRules:
     def text_case(sentence, text, i, j, temp):
         #caso especial que hay que tratar
         j+=1
+        break_next = False
         while i<len(text):
             i+=1
-          
+            if i>=len(text): break
+
+            if break_next:
+                i -= 1
+                return (True,i)
+            
+            if text[i] == '.' or text[i] =='|':
+                break_next = True
+
+
             temp_i = i
             temp_j = j
             temp_temp = [value for value in temp]
+
             while text[i] == sentence[j] or (sentence[j][0] == '!' and sentence[j][1:] != text[i]):
                 if text[i] != 'WORD':
                     temp +=[i]
@@ -136,14 +163,22 @@ class GramaticalRules:
     
     def match(sentence, text):
         result = []
-        for i in range(len(text)):
+        i= -1
+
+        while i < len(text)-1:
+            i+=1
             temp = []
-            for j in range(len(sentence)):
+            j= -1
+            while j < len(sentence)-1:
+                j+=1
                 if sentence[j] == 'text' and len(sentence) > j+1:
                     text_analiced = GramaticalRules.text_case(sentence,text,i,j,temp)
                     if text_analiced == False:
                         return result
-                    else:
+                    elif text_analiced[0] == True:
+                        i = text_analiced[1]
+                        break
+                    else:    
                         i,j,temp = text_analiced
                         result += temp
                         break
