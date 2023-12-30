@@ -1,6 +1,7 @@
 from gramatic.global_position.parser import GlobalLocationLexer, GlobalLocationParser
 
-text = 'A cat and a dog playing, at the left side of the image there is a dog, there are a cat hunting on top of dog.\
+text = 'A cat and a dog playing.\
+    at the left side of the image there is a dog, there are a cat hunting on top of dog.\
     texto texto on right, on right are a couch.\
     Random text, asd qqq. \
     on the top right there is a lamp.\
@@ -9,7 +10,7 @@ text = 'A cat and a dog playing, at the left side of the image there is a dog, t
     there is a cat sleeping in the left of a dog on a couch at the left of the photo, is a gray cat.\
     there is a cat roaring on a table at the left of the photo, a lion playing on the buttom.'
 
-text = 'A cat , on the left side of the image are a dog playing.'
+# text = 'A cat , on the left side of the image are a dog playing.'
 # text = 'there is a cat roaring on a table at the left of the photo, is a gray cat on the right of photo.'
 
 lexer = GlobalLocationLexer()

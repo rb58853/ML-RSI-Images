@@ -9,6 +9,7 @@ class GlobalLocationLexer(Lexer):
         self.my_tokens = []
         self.is_token_not_word = []
         self.count = -1
+        self.is_tokenized = False
 
     tokens = {
         ON, OF, AND, IS, POS, POSITION, IMAGE, WORD,  NUM,
@@ -41,7 +42,7 @@ class GlobalLocationLexer(Lexer):
             return
 
         self.count+=1
-        if len(self.my_tokens) > 0:
+        if self.is_tokenized:
             while self.my_tokens[self.count] in self.literals:
                 self.count +=1
             if not self.is_token_not_word[self.count]:
@@ -65,9 +66,10 @@ class GlobalLocationLexer(Lexer):
         pass    
 
     def tokenize(self, text, lineno=1, index=0):
-        if self.my_tokens == []:        
-            self.my_tokens = [token.type for token in super().tokenize(text)]
-            self.is_token_not_word = GramaticalRules.get_tokens(self.my_tokens)
+        self.is_tokenized = False
+        self.my_tokens = [token.type for token in super().tokenize(text)]
+        self.is_token_not_word = GramaticalRules.get_tokens(self.my_tokens)
+        self.is_tokenized = True
         self.count = -1    
         return super().tokenize(text, lineno, index)
 
