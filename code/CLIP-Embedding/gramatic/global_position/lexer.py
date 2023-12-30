@@ -14,17 +14,17 @@ class GlobalLocationLexer(Lexer):
         ON, OF, AND, IS, POS, POSITION, IMAGE, WORD,  NUM,
     }
 
-    literals = { ',', '.', '|'}
+    literals = { ',', '.', '|', ';'}
 
     keywords = {
         'on': ['in', 'on', 'at', 'near', 'to'],
-        'of': ['of'],
+        'of': ['of', 'to'],
         'and' : ['and'],
         'is': ['is', 'are', "there's", 'find'],
         'pos': ['left', 'right', "buttom","top","down","up","lower","center","middle"],
         'position': ['position', 'pos', "side","location"],
         'image': ['image', 'picture', 'photo'],
-
+        'near':['next', 'near']
         }
     
     ignore = r' '
@@ -77,54 +77,27 @@ class GramaticalRules:
     '''
     relation = [
 
-                'IS text ON POS !OF',
-                'IS text ON POS OF IMAGE',
-                'text ON POS !OF',
-                'text ON POS OF IMAGE',
-                'IS text ON POS POSITION !OF',
-                'IS text ON POS POSITION OF IMAGE',
-                'text ON POS POSITION !OF',
-                'text ON POS POSITION OF IMAGE',
+                'IS text ON pos OF IMAGE',
+                'IS text ON pos !OF',
+                'text ON pos !OF',
+                'text ON pos OF IMAGE',
                 
-                'IS text ON POS POS !OF',
-                'IS text ON POS POS OF IMAGE',
-                'text ON POS POS !OF',
-                'text ON POS POS OF IMAGE',
-                'IS text ON POS POS POSITION !OF',
-                'IS text ON POS POS POSITION OF IMAGE',
-                'text ON POS POS POSITION !OF',
-                'text ON POS POS POSITION OF IMAGE',
-
-                
-
-                'ON POS IS WORD',
-                'ON POS OF IMAGE IS WORD',
-                'ON POS OF IMAGE WORD',
-                'ON POS WORD',
-                'ON POS POSITION IS WORD',
-                'ON POS POSITION OF IMAGE IS WORD',
-                'ON POS POSITION OF IMAGE WORD',
-                'ON POS POSITION WORD',
-
-                'ON POS POS IS WORD',
-                'ON POS POS OF IMAGE IS WORD',
-                'ON POS POS OF IMAGE WORD',
-                'ON POS POS WORD',
-                'ON POS POS POSITION IS WORD',
-                'ON POS POS POSITION OF IMAGE IS WORD',
-                'ON POS POS POSITION OF IMAGE WORD',
-                'ON POS POS POSITION WORD',
-                
-                'ON POS POS POS IS WORD',
-                'ON POS POS POS OF IMAGE IS WORD',
-                'ON POS POS POS OF IMAGE WORD',
-                'ON POS POS POS WORD',
-                'ON POS POS POS POSITION IS WORD',
-                'ON POS POS POS POSITION OF IMAGE IS WORD',
-                'ON POS POS POS POSITION OF IMAGE WORD',
-                'ON POS POS POS POSITION WORD',
+                'ON pos IS WORD',
+                'ON pos OF IMAGE IS WORD',
+                'ON pos OF IMAGE WORD',
+                'ON pos WORD',
                 ]
     
+    def pos_case(sentence, text, i, j, temp):
+        result  = [value for value in temp]
+        if text[i] != "POS" and text[i] != "POSITION":
+            return False
+
+        while text[i] == "POS" or text[i] == "POSITION":
+            result+=[i]
+            i+=1
+        return i,j,result
+        
     def text_case(sentence, text, i, j, temp):
         #caso especial que hay que tratar
         j+=1
@@ -145,7 +118,18 @@ class GramaticalRules:
             temp_j = j
             temp_temp = [value for value in temp]
 
-            while text[i] == sentence[j] or (sentence[j][0] == '!' and sentence[j][1:] != text[i]):
+            while text[i] == sentence[j] or \
+                (sentence[j][0] == '!' and sentence[j][1:] != text[i]) \
+                or sentence[j] == 'pos' and GramaticalRules.pos_case(sentence,text,i,j,temp) != False:
+                
+                if sentence [j] == 'pos':
+                    i,j,temp = GramaticalRules.pos_case(sentence,text,i,j,temp)
+
+                    if j == len(sentence)-1:
+                        return (i,j,temp)
+                    j+=1
+                    continue
+
                 if text[i] != 'WORD':
                     temp +=[i]
                 
@@ -182,6 +166,16 @@ class GramaticalRules:
                         i,j,temp = text_analiced
                         result += temp
                         break
+
+                if sentence[j] =='pos':        
+                    pos_analiced = GramaticalRules.pos_case(sentence,text,i,j,temp)
+                    if pos_analiced == False:
+                        break
+                    i,j,temp = pos_analiced
+                    if j == len(sentence)-1:
+                        result += temp
+                        break
+                    continue    
 
                 if text[i] == sentence[j] or (sentence[j][0] == '!' and sentence[j][1:] != text[i]):
                     if text[i] != 'WORD':
