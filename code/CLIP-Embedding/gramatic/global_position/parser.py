@@ -64,20 +64,43 @@ class GlobalLocationParser(Parser):
     def error(self, token):
         pass
     
+    # 'relation "," relation',
+    # 'relation AND relation',
+    @_(
+        'sentence "|" sentence',
+        'sentence "." sentence',
+        'sentence "," sentence',
+        'sentence AND sentence',
+    )
+    def sentence (self,p):
+        if isinstance(p[0],list): p0 = p[0] 
+        else: p0= [p[0]]
+        if isinstance(p[2],list): p2 = p[2]
+        else: p2= [p[2]]
+        return p0 + p2
+     
+    @_('sentence sentence')
+    def sentence (self,p):
+        if isinstance(p[0],list): p0 = p[0] 
+        else: p0= [p[0]]
+        if isinstance(p[1],list): p1 = p[1]
+        else: p1= [p[1]]
+        return p0 + p1
+    
     @_('relation',
-    'relation "," relation',
-    'relation AND relation',
-    'sentence "|"',
-    'sentence "."',
-    'sentence sentence',
+    # 'sentence "|"',
+    # 'sentence "."',
+    # 'sentence ","',
+    # 'sentence AND',
     )
     def sentence(self, p):
-        # print(p[0])
         return p[0]
     
     @_('text "."',
-       'text "|"',
-       'text')
+    #    'text "|"',
+    #    'text ","',
+    #    'text'
+       )
     def sentence(self, p):
         self.add_subtext(p.text, None)    
         return p[0]
@@ -120,13 +143,15 @@ class GlobalLocationParser(Parser):
     @_('text text')
     def text(self, p):
         '''`<text> ::= <text> <text>`'''
+        text = ' '.join([p[0], p[1]])
         return ' '.join([p[0], p[1]])
     
     # @_('text ","', '"," text')
-    @_('text ","')
+    @_('text "," text')
     def text(self, p):
         '''`<text> ::= <text> , <text>`'''
-        return ' '.join([p[0], p[1]])
+        text = ' '.join([p[0], p[1]])
+        return ' '.join([p[0], p[1],p[2]])
 
 
 #RIGHT_RELATION____________________________________________
@@ -171,13 +196,29 @@ class GlobalLocationParser(Parser):
         self.add_subtext(p.text,p.pos)
         return (p.text,p.pos)
     
-    @_('right_relation text')
+    @_('right_relation "," text')
     def right_relation(self, p):
         '''`<right_relation> ::= <pos> OF IMAGE <text>`'''
         pos = p.right_relation[1]
         text = p.right_relation[0] + " "+p.text
         self.add_subtext(text,pos)
         return (text, pos)
+    
+    # @_('text "," right_relation')
+    # def right_relation(self, p):
+    #     '''`<right_relation> ::= <pos> OF IMAGE <text>`'''
+    #     pos = p.right_relation[1]
+    #     text = p.right_relation[0] + " "+p.text
+    #     self.add_subtext(text,pos)
+    #     return (text, pos)
+    
+    # @_('right_relation "," text')
+    # def right_relation(self, p):
+    #     '''`<right_relation> ::= <pos> OF IMAGE <text>`'''
+    #     pos = p.right_relation[1]
+    #     text = p.right_relation[0] + " "+p.text
+    #     self.add_subtext(text,pos)
+    #     return (text, pos)
 
 
 #LEFT RELATION___________________________________________________
@@ -192,7 +233,7 @@ class GlobalLocationParser(Parser):
         '''`<right_relation> ::= ON <pos> IS <text>`'''
         self.add_subtext(p.text,p.pos)
         return (p.text,p.pos)
-    
+
     @_('text ON pos OF IMAGE')
     def left_relation(self, p):
         '''`<right_relation> ::= ON <pos> IS <text>`'''
@@ -205,8 +246,42 @@ class GlobalLocationParser(Parser):
         self.add_subtext(p.text,p.pos)
         return (p.text,p.pos)
     
+    # @_('left_relation "," text')
+    # def right_relation(self, p):
+    #     '''`<right_relation> ::= <pos> OF IMAGE <text>`'''
+    #     pos = p.left_relation[1]
+    #     text = p.left_relation[0] + ", "+p.text
+    #     self.add_subtext(text,pos)
+    #     return (text, pos)
+    
 #RELATION
     @_('right_relation',
        'left_relation')
     def relation(self, p):
         return p[0]
+    
+    @_('relation "," sentence',
+       'sentence "," relation',
+       )
+    def relation(self,p):
+        if isinstance(p.sentence, str):
+            pos = p.relation[1]
+            text = p.relation[0] + ", " +p.sentence
+            self.add_subtext(text,pos)
+            self.subtexts[None].remove(p.sentence)
+            self.subtexts[pos].remove(p.relation[0])
+            return (text,pos)
+        return[p.sentence, p.relation]
+    
+    @_('relation sentence',
+       'sentence relation',
+       )
+    def relation(self,p):
+        if isinstance(p.sentence, str):
+            pos = p.relation[1]
+            text = p.relation[0] + " " +p.sentence
+            self.add_subtext(text,pos)
+            self.subtexts[None].remove(p.sentence)
+            self.subtexts[pos].remove(p.relation[0])
+            return (text,pos)
+        return[p.sentence, p.relation]
