@@ -110,20 +110,20 @@ class GlobalLocationParser(Parser):
         return p[0]
     
 #TEXT________________________________________________    
-    # @_('word "."')
-    # def text(self, p):
-    #     '''`<text> ::= WORD`'''
-    #     return p.word
-    
     @_('word')
     def text(self, p):
-        '''`<text> ::= WORD``'''
+        '''`<text> ::= WORD`'''
         return p.word
 
     @_('text text')
     def text(self, p):
         '''`<text> ::= <text> <text>`'''
         return ' '.join([p[0], p[1]])
+    
+    @_('text "," text')
+    def text(self, p):
+        '''`<text> ::= <text> , <text>`'''
+        return ' '.join([p[0], p[1], p[2]])
 
 
 #RIGHT_RELATION____________________________________________
@@ -134,68 +134,85 @@ class GlobalLocationParser(Parser):
     #                     | <pos> OF IMAGE <text>
     #                     | <right_relation> <text>
     
-    # @_('text ON pos IS text')
-    # def right_relation(self, p):
-    #     '''`<right_relation> ::= ON <pos> IS <text>`'''
-    #     self.add_subtext(p[4],p.pos)
-    #     self.add_subtext(p[0],None)
-    #     return ' '.join([p.ON, p.pos, p.IS, p[4]])
-    
     @_('ON pos IS text')
     def right_relation(self, p):
         '''`<right_relation> ::= ON <pos> IS <text>`'''
         self.add_subtext(p.text,p.pos)
+        return (p.text,p.pos)
         return ' '.join([p.ON, p.pos, p.IS, p.text])
     
     @_('ON pos OF IMAGE IS text')
     def right_relation(self, p):
         '''`<right_relation> ::= ON <pos> OF IMAGE IS <text>`'''
-        # self.add_subtext(p.word,p.pos)
         self.add_subtext(p.text,p.pos)
+        return (p.text,p.pos)
         return ' '.join([p.ON, p.pos, p.OF, p.IMAGE, p.IS, p.text])
     
+    #ANALIZAR si en el ingles se usa esto de alguna forma, me parece que no
     @_('ON pos text')
     def right_relation(self, p):
         '''`<right_relation> ::= ON <pos> IS <text>`'''
         self.add_subtext(p.text,p.pos)
+        return (p.text,p.pos)
         return ' '.join([p.ON, p.pos, p.text])
     
     @_('ON pos OF IMAGE text')
     def right_relation(self, p):
         '''`<right_relation> ::= ON <pos> OF IMAGE IS <text>`'''
-        # self.add_subtext(p.word,p.pos)
         self.add_subtext(p.text,p.pos)
-        return ' '.join([p.ON, p.pos, p.OF, p.IMAGE, p.text])
-    
-
-    # @_('pos IS text')
-    # def right_relation(self, p):
-    #     '''`<right_relation> ::= <pos> IS <text>`'''
-    #     self.add_subtext(p.text,p.pos)
-    #     return ' '.join([ p.pos, p.IS, p.text])
-    
-    # @_('pos text')
-    # def right_relation(self, p):
-    #     '''`<right_relation> ::= <pos> <text>`'''
-    #     self.add_subtext(p.text,p.pos)
-    #     return ' '.join([p.pos, p.text])
+        return (p.text,p.pos)
     
     @_('pos OF IMAGE IS text')
     def right_relation(self, p):
         '''`<right_relation> ::= <pos> OF IMAGE <text>`'''
         self.add_subtext(p.text,p.pos)
-        return ' '.join([p.pos, p.text])
+        return (p.text,p.pos)
     
     @_('right_relation text')
     def right_relation(self, p):
         '''`<right_relation> ::= <pos> OF IMAGE <text>`'''
-        pos = p.right_relation.split(' ')[0]
-        text = p.right_relation[len(pos)+1:] + p.text
+        pos = p.right_relation[1]
+        text = p.right_relation[0] + " "+p.text
         self.add_subtext(text,pos)
-
+        return (text, pos)
         return ' '.join([p.right_relation, p.text])
 
+    @_('right_relation "," text')
+    def right_relation(self, p):
+        '''`<right_relation> ::= <pos> OF IMAGE <text>`'''
+        pos = p.right_relation[1]
+        text = p.right_relation[0] + ", " + p.text
+        self.add_subtext(text,pos)
+        return (text, pos)
+        return ' '.join([p.right_relation, p.text])
+
+#LEFT RELATION___________________________________________________
+    @_('IS text ON pos')
+    def left_relation(self, p):
+        '''`<right_relation> ::= ON <pos> IS <text>`'''
+        self.add_subtext(p.text,p.pos)
+        return (p.text,p.pos)
+    
+    @_('IS text ON pos OF IMAGE')
+    def left_relation(self, p):
+        '''`<right_relation> ::= ON <pos> IS <text>`'''
+        self.add_subtext(p.text,p.pos)
+        return (p.text,p.pos)
+    
+    @_('text ON pos OF IMAGE')
+    def left_relation(self, p):
+        '''`<right_relation> ::= ON <pos> IS <text>`'''
+        self.add_subtext(p.text,p.pos)
+        return (p.text,p.pos)
+    
+    @_('text ON pos')
+    def left_relation(self, p):
+        '''`<right_relation> ::= ON <pos> IS <text>`'''
+        self.add_subtext(p.text,p.pos)
+        return (p.text,p.pos)
+    
 #RELATION
-    @_('right_relation')
+    @_('right_relation',
+       'left_relation')
     def relation(self, p):
         return p[0]

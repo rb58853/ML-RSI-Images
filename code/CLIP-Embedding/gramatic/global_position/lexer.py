@@ -72,42 +72,85 @@ class GlobalLocationLexer(Lexer):
         return super().tokenize(text, lineno, index)
 
 class GramaticalRules:
+    '''
+    `!TOKEN` indica que compara que sea distinto de TOKEN
+    '''
     relation = [
-                'ON POS IS',
-                'ON POS OF IMAGE IS',
-                'ON POS OF IMAGE',
-                'ON POS',
-                'ON POS POSITION IS',
-                'ON POS POSITION OF IMAGE IS',
-                'ON POS POSITION OF IMAGE',
-                'ON POS POSITION',
+                'IS text ON POS !OF',
 
-                'ON POS POS IS',
-                'ON POS POS OF IMAGE IS',
-                'ON POS POS OF IMAGE',
-                'ON POS POS',
-                'ON POS POS POSITION IS',
-                'ON POS POS POSITION OF IMAGE IS',
-                'ON POS POS POSITION OF IMAGE',
-                'ON POS POS POSITION',
+
+
+
+                'ON POS IS WORD',
+                'ON POS OF IMAGE IS WORD',
+                'ON POS OF IMAGE WORD',
+                'ON POS WORD',
+                'ON POS POSITION IS WORD',
+                'ON POS POSITION OF IMAGE IS WORD',
+                'ON POS POSITION OF IMAGE WORD',
+                'ON POS POSITION WORD',
+
+                'ON POS POS IS WORD',
+                'ON POS POS OF IMAGE IS WORD',
+                'ON POS POS OF IMAGE WORD',
+                'ON POS POS WORD',
+                'ON POS POS POSITION IS WORD',
+                'ON POS POS POSITION OF IMAGE IS WORD',
+                'ON POS POS POSITION OF IMAGE WORD',
+                'ON POS POS POSITION WORD',
                 
-                'ON POS POS POS IS',
-                'ON POS POS POS OF IMAGE IS',
-                'ON POS POS POS OF IMAGE',
-                'ON POS POS POS',
-                'ON POS POS POS POSITION IS',
-                'ON POS POS POS POSITION OF IMAGE IS',
-                'ON POS POS POS POSITION OF IMAGE',
-                'ON POS POS POS POSITION',
+                'ON POS POS POS IS WORD',
+                'ON POS POS POS OF IMAGE IS WORD',
+                'ON POS POS POS OF IMAGE WORD',
+                'ON POS POS POS WORD',
+                'ON POS POS POS POSITION IS WORD',
+                'ON POS POS POS POSITION OF IMAGE IS WORD',
+                'ON POS POS POS POSITION OF IMAGE WORD',
+                'ON POS POS POS POSITION WORD',
                 ]
+    
+    def text_case(sentence, text, i, j, temp):
+        #caso especial que hay que tratar
+        j+=1
+        while i<len(text):
+            i+=1
+          
+            temp_i = i
+            temp_j = j
+            temp_temp = [value for value in temp]
+            while text[i] == sentence[j] or (sentence[j][0] == '!' and sentence[j][1:] != text[i]):
+                if text[i] != 'WORD':
+                    temp +=[i]
+                
+                if j == len(sentence)-1:
+                    return (i,j,temp)
+                i+=1
+                j+=1
+                
+            #Si llega a aqui no matcheo. Luego hay que buscar otro x donde comience a matchaer
+            i = temp_i
+            j = temp_j
+            temp = temp_temp
+
+        return False    
     
     def match(sentence, text):
         result = []
         for i in range(len(text)):
             temp = []
             for j in range(len(sentence)):
-                if text[i] == sentence[j]:
-                    temp +=[i]
+                if sentence[j] == 'text' and len(sentence) > j+1:
+                    text_analiced = GramaticalRules.text_case(sentence,text,i,j,temp)
+                    if text_analiced == False:
+                        return result
+                    else:
+                        i,j,temp = text_analiced
+                        result += temp
+                        break
+
+                if text[i] == sentence[j] or (sentence[j][0] == '!' and sentence[j][1:] != text[i]):
+                    if text[i] != 'WORD':
+                        temp += [i]
                     i+=1
                 else:
                     break
