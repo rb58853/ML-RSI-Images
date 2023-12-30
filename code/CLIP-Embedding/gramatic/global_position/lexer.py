@@ -17,8 +17,8 @@ class GlobalLocationLexer(Lexer):
     literals = { ',', '.', '|', ';'}
 
     keywords = {
-        'on': ['in', 'on', 'at', 'near', 'to'],
-        'of': ['of', 'to'],
+        'on': ['in', 'on', 'at', 'near', 'to','find'],
+        'of': ['of'],
         'and' : ['and'],
         'is': ['is', 'are', "there's", 'find'],
         'pos': ['left', 'right', "buttom","top","down","up","lower","center","middle"],

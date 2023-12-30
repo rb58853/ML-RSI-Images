@@ -44,11 +44,12 @@ class GlobalLocationParser(Parser):
     '''
     tokens = GlobalLocationLexer.tokens
     start = 'sentence'  
+    # start = 'sentence'  
     precedence = (
         # ('right', 'POS'),
         ('right', 'ON', 'IS', 'OF', 'IMAGE', 'POS', 'POSITION'),
-        ('left', ',', '.','|','AND'),
-        ('left', 'WORD'),
+        ('left', ',', '.','|','AND','WORD'),
+        # ('left', ',', '.','|','AND','WORD'),
         )
     
     def __init__(self) -> None:
@@ -64,13 +65,10 @@ class GlobalLocationParser(Parser):
     def error(self, token):
         pass
     
-    # 'relation "," relation',
-    # 'relation AND relation',
     @_(
         'sentence "|" sentence',
         'sentence "." sentence',
         'sentence "," sentence',
-        'sentence AND sentence',
     )
     def sentence (self,p):
         if isinstance(p[0],list): p0 = p[0] 
@@ -87,19 +85,16 @@ class GlobalLocationParser(Parser):
         else: p1= [p[1]]
         return p0 + p1
     
+    
     @_('relation',
-    # 'sentence "|"',
-    # 'sentence "."',
-    # 'sentence ","',
-    # 'sentence AND',
     )
     def sentence(self, p):
         return p[0]
     
-    @_('text "."',
+    @_('text',
+    #    'text "."',
     #    'text "|"',
     #    'text ","',
-    #    'text'
        )
     def sentence(self, p):
         self.add_subtext(p.text, None)    
@@ -140,17 +135,25 @@ class GlobalLocationParser(Parser):
         '''`<text> ::= WORD`'''
         return p.word
 
-    @_('text text')
+    @_( 'text text',
+        # 'text word',
+        # 'word word',
+        # 'word text',
+       )
     def text(self, p):
         '''`<text> ::= <text> <text>`'''
         text = ' '.join([p[0], p[1]])
         return ' '.join([p[0], p[1]])
     
     # @_('text ","', '"," text')
+    # def text(self, p):
+    #     '''`<text> ::= <text> , <text>`'''
+    #     text = ' '.join([p[0], p[1]])
+    #     return ' '.join([p[0], p[1]])
+
     @_('text "," text')
     def text(self, p):
         '''`<text> ::= <text> , <text>`'''
-        text = ' '.join([p[0], p[1]])
         return ' '.join([p[0], p[1],p[2]])
 
 
@@ -176,7 +179,7 @@ class GlobalLocationParser(Parser):
         return (p.text,p.pos)
         return ' '.join([p.ON, p.pos, p.OF, p.IMAGE, p.IS, p.text])
     
-    #ANALIZAR si en el ingles se usa esto de alguna forma, me parece que no
+    #ANALIZAR si en el ingles se usa esto de alguna forma, con coma si
     @_('ON pos text')
     def right_relation(self, p):
         '''`<right_relation> ::= ON <pos> IS <text>`'''
@@ -203,23 +206,6 @@ class GlobalLocationParser(Parser):
         text = p.right_relation[0] + " "+p.text
         self.add_subtext(text,pos)
         return (text, pos)
-    
-    # @_('text "," right_relation')
-    # def right_relation(self, p):
-    #     '''`<right_relation> ::= <pos> OF IMAGE <text>`'''
-    #     pos = p.right_relation[1]
-    #     text = p.right_relation[0] + " "+p.text
-    #     self.add_subtext(text,pos)
-    #     return (text, pos)
-    
-    # @_('right_relation "," text')
-    # def right_relation(self, p):
-    #     '''`<right_relation> ::= <pos> OF IMAGE <text>`'''
-    #     pos = p.right_relation[1]
-    #     text = p.right_relation[0] + " "+p.text
-    #     self.add_subtext(text,pos)
-    #     return (text, pos)
-
 
 #LEFT RELATION___________________________________________________
     @_('IS text ON pos')
@@ -245,15 +231,7 @@ class GlobalLocationParser(Parser):
         '''`<right_relation> ::= ON <pos> IS <text>`'''
         self.add_subtext(p.text,p.pos)
         return (p.text,p.pos)
-    
-    # @_('left_relation "," text')
-    # def right_relation(self, p):
-    #     '''`<right_relation> ::= <pos> OF IMAGE <text>`'''
-    #     pos = p.left_relation[1]
-    #     text = p.left_relation[0] + ", "+p.text
-    #     self.add_subtext(text,pos)
-    #     return (text, pos)
-    
+   
 #RELATION
     @_('right_relation',
        'left_relation')
