@@ -12,7 +12,10 @@ texts = [
 
 "In the middle of the image, there is a large painting hanging on the wall. Beside the painting, there is a wooden chair. On the right side of the chair, there is a small table with a vase of flowers. In front of the painting, there is a woman sitting at a desk writing in a journal. On the left side of the woman, there is a window with curtains drawn.",
 
-"there is a cat sleeping in the left of a dog on a couch at the left of the photo, is a gray cat."
+"there is a cat sleeping in the left of a dog on a couch at the left of the photo, is a gray cat.",
+
+
+
 ]
 
 

@@ -98,7 +98,8 @@ class Gramatic:
                         break
                     else:    
                         i,j,temp = text_analiced
-                        is_temp_used = True in [ self.result[index] for index in temp] 
+                        is_temp_used = self.is_temp_used(temp,text)
+                        # is_temp_used = True in [ self.result[index] for index in temp] 
                         if not self.use_preference or not is_temp_used:
                             result += temp
                         break
@@ -109,7 +110,8 @@ class Gramatic:
                         break
                     i,j,temp = pos_analiced
                     if j == len(sentence)-1:
-                        is_temp_used = True in [ self.result[index] for index in temp] 
+                        is_temp_used = self.is_temp_used(temp,text)
+                        # is_temp_used = True in [ self.result[index] for index in temp] 
                         if not self.use_preference or not is_temp_used:
                             result += temp
                             break
@@ -122,10 +124,21 @@ class Gramatic:
                 else:
                     break
                 if j == len(sentence)-1:
-                    is_temp_used = True in [ self.result[index] for index in temp] 
+                    is_temp_used = self.is_temp_used(temp,text)
+                    # is_temp_used = True in [ self.result[index] for index in temp] 
                     if not self.use_preference or not is_temp_used:
                         result += temp
         return result
+
+    def is_temp_used(self,temp,text):
+        useds = [ self.result[index] for index in temp]
+        if len(useds) >=3:
+            is_used = True in useds[1:-1]
+            if not is_used:
+                is_used = (self.result[temp[0]] and text[temp[0]] != ',') or (self.result[temp[-1]] and text[temp[-1]] != ',') 
+        else:
+            is_used = True in useds
+        return is_used    
 
     def get_tokens(self, text):
         self.result = [False]*len(text)

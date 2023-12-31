@@ -97,17 +97,17 @@ class GramaticalRules(Gramatic):
     use_preference = True #si ya se esta usando un token como token de posicion entonces no usar otros tokens con relacion a este ditinto de la relacion original, ergo segun el orden de las `relation`, si hay ambiguedad usa el primero, puede quedar ambiguo igual, pero menos
     relation = [
                 'ON pos IS WORD',
-                ', ON pos OF IMAGE IS WORD',
+                'ON pos OF IMAGE IS WORD',
                 'ON pos OF IMAGE IS WORD',
                 # 'ON pos OF IMAGE WORD',
                 'ON pos WORD',
                 
-                'IS text ON pos OF IMAGE ,',
                 'IS text ON pos OF IMAGE',
+                'IS text ON pos ,',
                 'IS text ON pos !OF',
+                'text ON pos ,',
                 'text ON pos !OF',
                 'text ON pos OF IMAGE',
-                
 
                 'ON pos , IS WORD',
                 'ON pos OF IMAGE , IS WORD',
@@ -117,3 +117,19 @@ class GramaticalRules(Gramatic):
     def __init__(self, relation=None) -> None:
         super().__init__(relation)
         self.relation = GramaticalRules.relation
+        self.relation_coma()
+        self.coma_relation()
+        
+    def relation_coma(self):
+        temp = [relation for relation in self.relation]
+        for relation in temp:
+            if '!' in relation: continue
+            if relation.split(" ")[-1] ==',': continue
+            self.relation.insert(0,relation +' ,')
+
+    def coma_relation(self):
+        temp = [relation for relation in self.relation]
+        for relation in temp:
+            if '!' in relation: continue
+            if relation.split(" ")[0] ==',': continue
+            self.relation.insert(0,', ' + relation)
