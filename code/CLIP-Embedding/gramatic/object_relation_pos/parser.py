@@ -1,7 +1,7 @@
-from gramatic.global_position.lexer import GlobalLocationLexer
+from gramatic.object_relation_pos.lexer import PosRelationLexer
 from sly import Parser
 
-class GlobalLocationParser(Parser):
+class PosRelationParser(Parser):
     '''
     ## <pos>
     `<pos> ::= pos`\n
@@ -42,25 +42,29 @@ class GlobalLocationParser(Parser):
         # `('left', 'ON', 'IS')`\n
     
     '''
-    tokens = GlobalLocationLexer.tokens
+    tokens = PosRelationLexer.tokens
     start = 'sentence'  
     # start = 'sentence'  
     precedence = (
         # ('right', 'POS'),
-        ('right', 'ON', 'IS', 'OF', 'IMAGE', 'POS', 'POSITION'),
-        ('left', ',', '.','|','AND','WORD'),
+        ('right', 'ON', 'IS', 'OF', 'POS', 'POSITION', 'TO'),
+        ('right', ',', '.','|','AND','WORD'),
         # ('left', ',', '.','|','AND','WORD'),
         )
     
     def __init__(self) -> None:
         super().__init__()
-        self.subtexts:dict[str,list] = {}
+        self.subtexts:dict[str,dict] = {}
 
-    def add_subtext(self,text, pos):
-        if pos not in self.subtexts:
+    def add_subtext(self,text_key, pos, text):
+        if text_key not in self.subtexts:
+            self.subtexts[text_key]={pos:[text]}
+        
+        if pos not in self.subtexts[text_key]:
             self.subtexts[pos]=[text]
         else:
-            self.subtexts[pos].append(text)
+            if not text in self.subtexts[text_key][pos]:
+                self.subtexts[text_key][pos].append(text)
 
     def error(self, token):
         pass
@@ -85,7 +89,6 @@ class GlobalLocationParser(Parser):
         else: p1= [p[1]]
         return p0 + p1
     
-    
     @_('relation',
     )
     def sentence(self, p):
@@ -97,7 +100,7 @@ class GlobalLocationParser(Parser):
     #    'text ","',
        )
     def sentence(self, p):
-        self.add_subtext(p.text, None)    
+        self.add_subtext( None, None,p.text)    
         return p[0]
 #POS___________________________________________________
     #<pos> ::=
@@ -152,10 +155,10 @@ class GlobalLocationParser(Parser):
     #     text = ' '.join([p[0], p[1]])
     #     return ' '.join([p[0], p[1]])
 
-    @_('text "," text')
-    def text(self, p):
-        '''`<text> ::= <text> , <text>`'''
-        return ' '.join([p[0], p[1],p[2]])
+    # @_('text "," text')
+    # def text(self, p):
+    #     '''`<text> ::= <text> , <text>`'''
+    #     return ' '.join([p[0], p[1],p[2]])
 
 
 #RIGHT_RELATION____________________________________________
@@ -166,42 +169,45 @@ class GlobalLocationParser(Parser):
     #                     | <pos> OF IMAGE <text>
     #                     | <right_relation> <text>
     
-    @_('ON pos IS text',
-       'ON pos "," IS text'
+    @_('text ON pos OF text',
+       'text TO pos OF text',
+       'IS text ON pos OF text',
+       'IS text TO pos OF text',
        )
     def right_relation(self, p):
         '''`<right_relation> ::= ON <pos> IS <text>`'''
-        self.add_subtext(p.text,p.pos)
-        return (p.text,p.pos)
-        return ' '.join([p.ON, p.pos, p.IS, p.text])
+        self.add_subtext(p.text1,p.pos, p.text0)
+        return (p.text1, p.pos, p.text0)
     
-    @_('ON pos OF IMAGE IS text',
-       'ON pos OF IMAGE "," IS text'
+    @_('ON text pos IS text',
+       'ON text pos "," IS text',
+       'ON text pos "," text'
+       )
+    def right_relation(self, p):
+        '''`<right_relation> ::= ON <pos> IS <text>`'''
+        self.add_subtext(p.text0,p.pos, p.text1)
+        return (p.text0,p.pos, p.text1)
+    
+    @_('ON pos OF text IS text',
+       'ON pos OF text "," IS text',
+       'TO pos OF text IS text',
+       'TO pos OF text "," IS text',
+
+       )
+    def right_relation(self, p):
+        '''`<right_relation> ::= ON <pos> OF IMAGE IS <text>`'''
+        self.add_subtext(p.text0,p.pos, p.text1)
+        return (p.text0,p.pos, p.text1)
+    
+    @_('ON pos OF text "," text',
        )
     def right_relation(self, p):
         '''`<right_relation> ::= ON <pos> OF IMAGE IS <text>`'''
         self.add_subtext(p.text,p.pos)
         return (p.text,p.pos)
     
-    #ANALIZAR si en el ingles se usa esto de alguna forma, con coma si
-    @_('ON pos text',
-    #    'ON pos "," text'
-       )
-    def right_relation(self, p):
-        '''`<right_relation> ::= ON <pos> IS <text>`'''
-        self.add_subtext(p.text,p.pos)
-        return (p.text,p.pos)
-    
-    @_('ON pos OF IMAGE text',
-    #    'ON pos OF IMAGE "," text'
-       )
-    def right_relation(self, p):
-        '''`<right_relation> ::= ON <pos> OF IMAGE IS <text>`'''
-        self.add_subtext(p.text,p.pos)
-        return (p.text,p.pos)
-    
-    @_('pos OF IMAGE IS text',
-       'pos OF IMAGE "," IS text'
+    @_('pos OF text IS text',
+       'pos OF text "," IS text'
        )
     def right_relation(self, p):
         '''`<right_relation> ::= <pos> OF IMAGE <text>`'''
@@ -223,13 +229,13 @@ class GlobalLocationParser(Parser):
         self.add_subtext(p.text,p.pos)
         return (p.text,p.pos)
     
-    @_('IS text ON pos OF IMAGE')
+    @_('IS text ON pos OF text')
     def left_relation(self, p):
         '''`<right_relation> ::= ON <pos> IS <text>`'''
         self.add_subtext(p.text,p.pos)
         return (p.text,p.pos)
 
-    @_('text ON pos OF IMAGE')
+    @_('text ON pos OF text')
     def left_relation(self, p):
         '''`<right_relation> ::= ON <pos> IS <text>`'''
         self.add_subtext(p.text,p.pos)

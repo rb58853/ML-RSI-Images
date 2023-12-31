@@ -13,7 +13,7 @@ class TextFeature:
         for key in global_texts:
             for text in global_texts[key]:
                 global_Texts.append(Positions.text_to_Text(key_text=(key,text)))
-        raise NotImplementedError()
+        raise NotImplementedError("Not Implemented")
     
     def __getitem__(self, index)-> Text:
        return self.texts[index]

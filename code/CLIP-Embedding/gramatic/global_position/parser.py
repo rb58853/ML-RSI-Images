@@ -49,7 +49,7 @@ class GlobalLocationParser(Parser):
         # ('right', 'POS'),
         ('right', 'ON', 'IS', 'OF', 'IMAGE', 'POS', 'POSITION'),
         ('left', ',', '.','|','AND','WORD'),
-        # ('left', ',', '.','|','AND','WORD'),
+        # ('right', ',', '.','|','AND','WORD'),
         )
     
     def __init__(self) -> None:
@@ -152,10 +152,10 @@ class GlobalLocationParser(Parser):
     #     text = ' '.join([p[0], p[1]])
     #     return ' '.join([p[0], p[1]])
 
-    @_('text "," text')
-    def text(self, p):
-        '''`<text> ::= <text> , <text>`'''
-        return ' '.join([p[0], p[1],p[2]])
+    # @_('text "," text')
+    # def text(self, p):
+    #     '''`<text> ::= <text> , <text>`'''
+    #     return ' '.join([p[0], p[1],p[2]])
 
 
 #RIGHT_RELATION____________________________________________
