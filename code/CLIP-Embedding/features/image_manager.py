@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
 from features import ImageEmbedding, Text
 from process_images import ProcessImages
-from similarity import Similarity
-from enviroment import DistanteTextsRelevace as env
-from enviroment import ImageEmbeddingEnv as image_env
+from similaritys.similarity import Similarity
+from environment.environment import DistanteTextsRelevace as env
+from environment.environment import ImageEmbeddingEnv as image_env
 unsimilates_texts = [Text(text) for text in env.get_texts()]
 
 process = ProcessImages()

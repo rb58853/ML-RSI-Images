@@ -1,6 +1,5 @@
 from sly import Lexer
 
-
 class GlobalLocationLexer(Lexer):
     def __init__(self) -> None:
         super().__init__()
@@ -12,20 +11,20 @@ class GlobalLocationLexer(Lexer):
         self.is_tokenized = False
 
     tokens = {
-        ON, OF, AND, IS, POS, POSITION, IMAGE, WORD,  NUM,
+        ON, OF, AND, IS, POS, POSITION, WORD,  NUM, TO, NEAR
     }
 
     literals = { ',', '.', '|', ';'}
 
     keywords = {
-        'on': ['in', 'on', 'at', 'near', 'to','find'],
+        'on': ['in', 'on', 'at', 'find'],
         'of': ['of'],
         'and' : ['and'],
         'is': ['is', 'are', "there's", 'find'],
         'pos': ['left', 'right', "buttom", "bottom","top","down","up","lower","center","middle","corner"],
         'position': ['position', 'pos', "side","location"],
-        'image': ['image', 'picture', 'photo'],
-        'near':['next', 'near']
+        'near':['next', 'near'],
+        'to':['to']
         }
     
     ignore = r' '
@@ -80,21 +79,18 @@ class GramaticalRules:
     use_preference = True #si ya se esta usando un token como token de posicion entonces no usar otros tokens con relacion a este ditinto de la relacion original, ergo segun el orden de las `relation`, si hay ambiguedad usa el primero, puede quedar ambiguo igual, pero menos
     result = []
     relation = [
-                'ON pos IS WORD',
-                'ON pos OF IMAGE IS WORD',
-                'ON pos OF IMAGE WORD',
-                'ON pos WORD',
+                'IS text ON pos OF WORD',
+                'IS text ON text pos',
                 
-                'IS text ON pos OF IMAGE',
-                'IS text ON pos !OF',
-                'text ON pos !OF',
-                'text ON pos OF IMAGE',
+                'IS text TO pos OF WORD',
+                'text ON pos OF WORD',
+                'text TO pos OF WORD',
                 
+                'ON pos OF text IS WORD',
+                'ON pos TO text IS WORD',
 
-                'ON pos , IS WORD',
-                'ON pos OF IMAGE , IS WORD',
-                'ON pos OF IMAGE , WORD',
-                'ON pos , WORD',
+                'ON pos OF text, IS WORD',
+                'ON pos OF text , WORD',
                 ]
     
     def pos_case(sentence, text, i, j, temp):

@@ -267,7 +267,9 @@ class Text:
         if is_installed_lib('torch'):
             self.embedding = clip.get_text_embedding(self.text)[0]
         else:
-            raise Exception("miss torch librarie")    
+            print(f"Not use embeding in TEXT, missed torch")
+            # raise Exception("miss torch librarie")
+            
     def set_position(self):
         raise NotImplementedError()
     

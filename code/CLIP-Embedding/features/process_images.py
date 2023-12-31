@@ -1,8 +1,8 @@
+from segmentation.sam import SAM
+from features.features import ImageEmbedding#, ImageFeature
 from PIL import Image
-from sam import SAM
 import cv2
 import matplotlib.pyplot as plt
-from features import ImageEmbedding#, ImageFeature
 
 class ProcessImages:
     IMAGE_PARTITION = 80 #tamaño mínimo(en píxeles) de un cuadro de segmentación = tamaño(imagen)/IMAGE_PARTITION
