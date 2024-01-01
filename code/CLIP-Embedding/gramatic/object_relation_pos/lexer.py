@@ -23,7 +23,7 @@ class PosRelationLexer(Lexer):
         'of': ['of'],
         'and' : ['and'],
         'is': ['is', 'are', "there's", 'find'],
-        'pos': ['left', 'right', "buttom", "bottom","top","down","up","lower","center","middle","corner",'near'],
+        'pos': ['left', 'right', "buttom", "bottom","top","down","up","lower","center","middle","corner",'near','bellow'],
         'position': ['position', 'pos', "side","location"],
         'next':['next'],
         'to':['to']

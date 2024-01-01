@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 
 
 clip = None
-if is_installed_lib('torch'):
-    from clip_embeding import ClipEmbedding
+if is_installed_lib('transformers'):
+    from embedding.clip_embeding import ClipEmbedding
     clip = ClipEmbedding()
     if env.USE_CAPION_MODEL:
         env.CAPTION_MODEL.import_model()
@@ -275,6 +275,10 @@ class Text:
     
     def set_neighbords(self):
         raise NotImplementedError()
+    
+    def add_neighbord(self, text, pos_label):
+        self.neighbords[pos_label] = text
+
     
     def set_pos(self, pos):
         self.position = pos

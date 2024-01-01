@@ -29,9 +29,9 @@ texts = [
 # # # temp = TextFeature(texts[0])
 
 texts = [
- 'A dog on left of a cat in a sofa',
-"In blue dog's on a couch left there is a cat in a sofa",
-"In blue dog's left is a cat, in a sofa",
+#  'A dog on left of a cat in a sofa',
+# "In blue dog's on a couch left there is a cat in a sofa",
+"In blue dog's left is a cat in a sofa, in the flor's top are a fish",
 ]
 for text in texts:
     subtexts = relation_pos(text)
