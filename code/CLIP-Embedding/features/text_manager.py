@@ -17,7 +17,7 @@ class TextFeature:
                 global_Texts.append(Positions.text_to_Text(key_text=(key,text)))
 
         end_texts=[]
-        for text in global_texts:
+        for text in global_Texts:
             end_texts += Positions.separe_text(text)
 
         return end_texts 
@@ -121,17 +121,47 @@ class Positions:
 
         return Text(key_text[1],Positions.global_positions[label])
     
-    def separe_text(self,text:Text):
+    def separe_text(text:Text):
         texts = relation_pos(text.text)
         return Positions.get_text_from_dict(texts,text.position)        
 
-    def get_text_from_dict(self, text_dic,position):
+    def get_text_from_dict(text_dic,position):
         result = []
+        
+        count_none = 0
         for text_key in text_dic:
-            text = Text(text_key,position)
+            if text_key is not None:
+                text = Text(text_key,position)
+            else:
+                if len(text_dic[text_key][None])>0:
+                    result.append(Text(text_dic[text_key][None][count_none],position))
+                    count_none+=1
+                    continue
+                    
             for pos in text_dic[text_key]:
-                text_pos = text_dic[text_key][pos]
-                temp = Text(text_pos,position)
-                text.set_neighbords(temp,Positions.relational_labels(pos))
-                result.append(text)
+                texts_pos = text_dic[text_key][pos]
+                for text_pos in texts_pos:
+                    temp = Text(text_pos,position)
+                    text.add_neighbord(temp, Positions.combine_labels_for_locals(pos))
+                    result.append(text)
         return result        
+    
+    def combine_labels_for_locals(labels):
+        if labels is None:
+            return None
+        labels = [Positions.relational_labels[label] for label in labels.split(" ")] 
+        if len(labels) == 1:
+            return labels[0]            
+        
+        label = ''
+        if 's' in labels:
+            label+='s'
+        elif 'n' in labels:    
+            label+='n'
+        
+        if 'e' in labels:
+            label+='e'
+        elif 'w' in labels:    
+            label+='w'
+        
+        return label

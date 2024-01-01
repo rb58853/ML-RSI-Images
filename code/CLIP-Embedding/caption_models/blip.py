@@ -1,7 +1,5 @@
 from caption_models.imodel import IModel
-from environment.environment import is_installed_lib
-if is_installed_lib('torch'):
-    import torch
+import torch
 
 class BLIP(IModel):
     '''

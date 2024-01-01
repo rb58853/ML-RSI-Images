@@ -4,19 +4,31 @@ from environment.environment import MatPlotLib as Color
 from matplotlib.patches import Rectangle
 import matplotlib.pyplot as plt
 
+from embedding.clip_embeding import ClipEmbedding
+clip = ClipEmbedding()
 
-clip = None
-if is_installed_lib('transformers'):
-    from embedding.clip_embeding import ClipEmbedding
-    clip = ClipEmbedding()
-    if env.USE_CAPION_MODEL:
-        env.CAPTION_MODEL.import_model()
+if env.USE_CAPION_MODEL:
+    env.CAPTION_MODEL.import_model()
 
 class Feature:
     def __init__(self) -> None:
         self.items = []
         self.embedding = None
         self.position = None
+        self.neighbords:dict[str:Text] = {
+            'w':[],    
+            'e':[],    
+            'n':[],    
+            's':[],    
+            
+            'no':[],    
+            'ne':[],    
+            'sw':[],    
+            'se':[],    
+            
+            'in':[],
+            'next': [] #near. indica cercania tan solo sin posicion especifica    
+        }
        
     def __getitem__(self, index):
        return self.items[index]
@@ -248,27 +260,27 @@ class ImageEmbedding(Feature):
         else:
             print("Image is None")    
             
-class Text:
+class Text(Feature):
     def __init__(self, text, position = None) -> None:
+        super().__init__()
         self.text = text
         self.embedding = None
         self.set_embedding() 
         self.position = position
-        self.neighbords:dict[str:Text] = {
-            'left':[],    
-            'right':[],    
-            'top':[],    
-            'buttom':[],    
-            'in':[],
-            'near': [] #nex to. indica cercania tan solo sin posicion especifica    
-        }
+        # self.neighbords:dict[str:Text] = {
+        #     'left':[],    
+        #     'right':[],    
+        #     'top':[],    
+        #     'buttom':[],    
+        #     'in':[],
+        #     'near': [] #nex to. indica cercania tan solo sin posicion especifica    
+        # }
 
     def set_embedding(self):
-        if is_installed_lib('torch'):
+        if clip.model is not None:
             self.embedding = clip.get_text_embedding(self.text)[0]
         else:
-            print(f"Not use embeding in TEXT, missed torch")
-            # raise Exception("miss torch librarie")
+            print(f"Not use embeding in TEXT, missed GPU")
             
     def set_position(self):
         raise NotImplementedError()
@@ -277,7 +289,9 @@ class Text:
         raise NotImplementedError()
     
     def add_neighbord(self, text, pos_label):
-        self.neighbords[pos_label] = text
+        #TODO es 1 hay que cambiarlo a dinamico
+        if pos_label is not None:
+            self.neighbords[pos_label].append((text, 1))
 
     
     def set_pos(self, pos):

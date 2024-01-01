@@ -13,7 +13,7 @@ class PosRelationLexer(Lexer):
         self.is_tokenized = False
 
     tokens = {
-        ON, OF, AND, IS, POS, POSITION, WORD,  NUM, TO, NEAR, NEXT
+        ON, OF, AND, IS, POS, POSITION, WORD,  NUM, TO, NEXT
     }
 
     literals = { '.', '|', ';'}
@@ -23,10 +23,13 @@ class PosRelationLexer(Lexer):
         'of': ['of'],
         'and' : ['and'],
         'is': ['is', 'are', "there's", 'find'],
-        'pos': ['left', 'right', "buttom", "bottom","top","down","up","lower","center","middle","corner",'near','bellow'],
         'position': ['position', 'pos', "side","location"],
         'next':['next'],
-        'to':['to']
+        'to':['to'],
+
+        'pos': ['left', 'right', "buttom", "bottom","top",
+                "down","up","lower","center","middle","corner",
+                'near','bellow','front'],
         }
     
     ignore = r' '
@@ -90,25 +93,80 @@ class RelationalGramatic(Gramatic):
     `!TOKEN` indica que compara que sea distinto de TOKEN
     '''
     use_preference = True #si ya se esta usando un token como token de posicion entonces no usar otros tokens con relacion a este ditinto de la relacion original, ergo segun el orden de las `relation`, si hay ambiguedad usa el primero, puede quedar ambiguo igual, pero menos
-    relation = [
-                'ON text pos , text',
-                'ON text pos IS text',
-
-                'IS text ON pos OF WORD',
-                'IS text ON text pos',
-                
-                
-                'IS text TO pos OF WORD',
-                'text ON pos OF WORD',
-                'text TO pos OF WORD',
-                
-                'ON pos OF text IS WORD',
-                'ON pos TO text IS WORD',
-
-                'ON pos OF text , IS WORD',
-                'ON pos OF text , WORD',
-                ]
     
+    left_relation = [
+        #############################
+        #Esta parte define que esta estructura es valida, aunque no sea una regla directa del parser
+        'IS text , ON pos OF text',
+        'IS text , TO pos OF text',
+        'IS text , ON pos TO text',
+        'IS text , TO pos TO text',
+        'text , ON pos OF text',
+        'text , TO pos OF text',
+        'text , ON pos TO text',
+        'text , TO pos TO text',
+        #############################
+
+        'IS text ON pos OF text',######
+        'IS text TO pos OF text',
+        'IS text ON pos TO text',
+        'IS text TO pos TO text',
+        'text ON pos TO text',
+        'text ON pos OF text',
+        
+        'IS text , pos TO text',
+        'IS text , pos OF text',
+        'IS text pos TO text',
+        'IS text pos OF text',
+        'text , pos TO text',
+        'text , pos OF text',
+        
+        'IS text NEXT TO text',
+        'IS text NEXT OF text',
+        'text NEXT OF text',
+        'text NEXT TO text',
+        'text , NEXT TO text',
+        'text , NEXT OF text',
+    ]
+    right_relation = [
+        'ON text pos , IS text',
+        'ON text pos , text',
+        'ON text pos IS text',
+
+        'ON pos OF text , IS text',
+        'ON pos OF text , text',
+        'TO pos OF text , IS text',
+        'TO pos OF text , text',
+        'ON pos TO text , IS text',
+        'ON pos TO text , text',
+        'TO pos TO text , IS text',
+        'TO pos TO text , text',
+        'ON pos OF text IS text',
+        'TO pos OF text IS text',
+        'ON pos TO text IS text',
+        'TO pos TO text IS text',
+
+        'pos TO text , IS text',
+        'pos TO text , text',
+        'pos OF text , IS text',
+        'pos OF text , text',
+        'pos TO text IS text',
+        'pos OF text IS text',
+        
+        'NEXT TO text , text',
+        'NEXT OF text , text',
+        'NEXT TO text IS text',
+        'NEXT OF text IS text',
+    ]
+
     def __init__(self, relation=None) -> None:
         super().__init__(relation)
-        self.relation = RelationalGramatic.relation
+        self.relation = RelationalGramatic.right_relation + RelationalGramatic.left_relation
+        self.coma_relation()
+        self.relation_coma()
+
+class Convert:
+    labels={
+        'beside' : 'next', #Esto realmente es a la izquierda o a la derecha(valorar tener beside como una posicion en si, ya que el funcion de similitud de esta es igual para la izquierda que para la derecha)
+
+    }

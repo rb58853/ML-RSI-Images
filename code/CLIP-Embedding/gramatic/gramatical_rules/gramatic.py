@@ -30,7 +30,7 @@ class Gramatic:
                 i -= 1
                 return (True,i)
             
-            if text[i] == '.' or text[i] =='|':
+            if text[i] == '.' or text[i] =='|' or text[i] ==';':
                 break_next = True
 
 
@@ -147,3 +147,21 @@ class Gramatic:
             for index in indexs:
                 self.result[index] = True
         return self.result
+    
+    def relation_coma(self):
+        temp = [relation for relation in self.relation]
+        temp_relation = []
+        for relation in temp:
+            if '!' in relation: continue
+            if relation.split(" ")[-1] ==',': continue
+            temp_relation.append(relation +' ,')
+        self.relation = temp_relation+self.relation
+
+    def coma_relation(self):
+        temp = [relation for relation in self.relation]
+        temp_relation = []
+        for relation in temp:
+            if '!' in relation: continue
+            if relation.split(" ")[0] ==',': continue
+            temp_relation.append(', ' + relation)
+        self.relation = temp_relation+self.relation

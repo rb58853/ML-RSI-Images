@@ -69,25 +69,20 @@ class PosRelationParser(Parser):
     def error(self, token):
         pass
     
-    @_(
+    @_( 
+        'sentence sentence',
         'sentence "|" sentence',
         'sentence "." sentence',
         'sentence "," sentence',
+        'sentence ";" sentence',
     )
     def sentence (self,p):
-        if isinstance(p[0],list): p0 = p[0] 
-        else: p0= [p[0]]
-        if isinstance(p[2],list): p2 = p[2]
-        else: p2= [p[2]]
-        return p0 + p2
+        if isinstance(p.sentence0,list): sentence0 = p.sentence0 
+        else: sentence0= [p.sentence0]
+        if isinstance(p.sentence1,list): sentence1 = p.sentence1
+        else: sentence1= [p.sentence1]
+        return sentence0 + sentence1
      
-    @_('sentence sentence')
-    def sentence (self,p):
-        if isinstance(p[0],list): p0 = p[0] 
-        else: p0= [p[0]]
-        if isinstance(p[1],list): p1 = p[1]
-        else: p1= [p[1]]
-        return p0 + p1
     
     @_('relation',
     )
@@ -95,9 +90,9 @@ class PosRelationParser(Parser):
         return p[0]
     
     @_('text',
+        'text ","',
     #    'text "."',
     #    'text "|"',
-    #    'text ","',
        )
     def sentence(self, p):
         self.add_subtext( None, None,p.text)    
@@ -147,16 +142,6 @@ class PosRelationParser(Parser):
     
 #RIGHT_RELATION____________________________________________
     
-    # @_('text ON pos OF text',
-    #    'text TO pos OF text',
-    #    'IS text ON pos OF text',
-    #    'IS text TO pos OF text',
-    #    )
-    # def right_relation(self, p):
-    #     '''`<right_relation> ::= ON <pos> IS <text>`'''
-    #     self.add_subtext(p.text1,p.pos, p.text0)
-    #     return (p.text1, p.pos, p.text0)
-    
     @_('ON text pos IS text',
        'ON text pos "," IS text',
        'ON text pos "," text'
@@ -180,10 +165,13 @@ class PosRelationParser(Parser):
        'TO pos TO text "," IS text',
        'TO pos TO text "," text',
        
-    #    'pos TO text IS text',
-    #    'pos TO text "," IS text'
-    #    'pos Of text IS text',
-    #    'pos Of text "," IS text'
+       'pos TO text IS text',
+       'pos TO text "," IS text',
+       'pos TO text "," text',
+       
+       'pos OF text IS text',
+       'pos OF text "," IS text',
+       'pos OF text "," text',
        )
     def right_relation(self, p):
         '''`<right_relation> ::= ON <pos> OF IMAGE IS <text>`'''
@@ -210,26 +198,28 @@ class PosRelationParser(Parser):
 
 #LEFT RELATION___________________________________________________
     @_('IS text ON pos OF text',
-       'IS text "," ON pos OF text',
-       'text "," ON pos OF text',
        'text ON pos OF text',
+    #    'IS text "," ON pos OF text',
+    #    'text "," ON pos OF text',
        'IS text TO pos OF text',
-       'IS text "," TO pos OF text',
-       'text "," TO pos OF text',
+    #    'IS text "," TO pos OF text',
+    #    'text "," TO pos OF text',
        
        'IS text ON pos TO text',
-       'IS text "," ON pos TO text',
-       'text "," ON pos TO text',
+    #    'IS text "," ON pos TO text',
+    #    'text "," ON pos TO text',
        'text ON pos TO text',
        'IS text TO pos TO text',
-       'IS text "," TO pos TO text',
-       'text "," TO pos TO text',
+    #    'IS text "," TO pos TO text',
+    #    'text "," TO pos TO text',
        
-    #    'IS text pos TO text',
-    #    'IS text "," pos TO text'
-    #    'IS text pos OF text',
-    #    'IS text "," pos OF text'
-       
+       'IS text pos TO text',
+    #    'IS text "," pos TO text',
+    #    'text "," pos TO text',
+
+       'IS text pos OF text',
+    #    'IS text "," pos OF text',
+    #    'text "," pos OF text',
        )
     def left_relation(self, p):
         '''`<right_relation> ::= ON <pos> IS <text>`'''
@@ -237,8 +227,11 @@ class PosRelationParser(Parser):
         return (p.text1,p.pos,p.text0)
     
     @_( 'IS text NEXT TO text',
+        'text NEXT TO text',
         'text "," NEXT TO text',
+        
         'IS text NEXT OF text',
+        'text NEXT OF text',
         'text "," NEXT OF text',
        )
     def right_relation(self, p):
@@ -258,11 +251,15 @@ class PosRelationParser(Parser):
     def relation(self,p):
         if isinstance(p.sentence, str):
             pos = p.relation[1]
-            text = p.relation[0] + ", " +p.sentence
-            self.add_subtext(text,pos)
-            self.subtexts[None].remove(p.sentence)
-            self.subtexts[pos].remove(p.relation[0])
-            return (text,pos)
+            text_key = p.relation[0]
+            text = p.relation[2] + ", " +p.sentence
+            
+            self.add_subtext(text_key,pos,text)
+            self.subtexts[None][None].remove(p.sentence)
+            self.subtexts[text_key][pos].remove(text)
+            return (text_key,pos,text)
+        
+        return (text_key,pos,text)
         return[p.sentence, p.relation]
     
     @_('relation sentence',
@@ -271,9 +268,13 @@ class PosRelationParser(Parser):
     def relation(self,p):
         if isinstance(p.sentence, str):
             pos = p.relation[1]
-            text = p.relation[0] + " " +p.sentence
-            self.add_subtext(text,pos)
-            self.subtexts[None].remove(p.sentence)
-            self.subtexts[pos].remove(p.relation[0])
-            return (text,pos)
+            text_key = p.relation[0]
+            text = p.relation[2] + p.sentence
+            
+            self.add_subtext(text_key,pos,text)
+            self.subtexts[None][None].remove(p.sentence)
+            self.subtexts[text_key][pos].remove(text)
+            return (text_key,pos,text)
+         
+        return (text_key,pos,text)
         return[p.sentence, p.relation]

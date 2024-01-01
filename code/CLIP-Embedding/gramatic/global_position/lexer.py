@@ -120,16 +120,4 @@ class GramaticalRules(Gramatic):
         self.relation_coma()
         self.coma_relation()
         
-    def relation_coma(self):
-        temp = [relation for relation in self.relation]
-        for relation in temp:
-            if '!' in relation: continue
-            if relation.split(" ")[-1] ==',': continue
-            self.relation.insert(0,relation +' ,')
-
-    def coma_relation(self):
-        temp = [relation for relation in self.relation]
-        for relation in temp:
-            if '!' in relation: continue
-            if relation.split(" ")[0] ==',': continue
-            self.relation.insert(0,', ' + relation)
+    

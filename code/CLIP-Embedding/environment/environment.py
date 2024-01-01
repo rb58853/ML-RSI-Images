@@ -1,4 +1,5 @@
 import importlib
+import sys
 
 def is_installed_lib(name):
    try:
@@ -6,6 +7,13 @@ def is_installed_lib(name):
        return True
    except ImportError:
        return False
+   
+class Colab:
+    RUN_ONLY_IN_COLAB = True
+    def use_in_local():
+        if not Colab.RUN_ONLY_IN_COLAB:
+            return True
+        return 'google.colab' in sys.modules
    
 class ImageEmbeddingEnv:
     ''' 

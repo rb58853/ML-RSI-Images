@@ -1,10 +1,13 @@
 import torch
 from PIL import Image
 from transformers import CLIPProcessor, CLIPModel
+from environment.environment import Colab
 
 class ClipEmbedding:
     def __init__(self) -> None:
-        self.model, self.processor, self.device = self.get_model()
+        self.model, self.processor, self.device = (None,None,None)
+        if Colab.use_in_local():
+            self.model, self.processor, self.device = self.get_model()
         
     def get_model(self):    
         device = "cuda" if torch.cuda.is_available() else "cpu"
