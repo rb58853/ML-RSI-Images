@@ -13,7 +13,7 @@ class PosRelationLexer(Lexer):
         self.is_tokenized = False
 
     tokens = {
-        ON, OF, AND, IS, POS, POSITION, WORD,  NUM, TO, NEAR
+        ON, OF, AND, IS, POS, POSITION, WORD,  NUM, TO, NEAR, NEXT
     }
 
     literals = { '.', '|', ';'}
@@ -23,9 +23,9 @@ class PosRelationLexer(Lexer):
         'of': ['of'],
         'and' : ['and'],
         'is': ['is', 'are', "there's", 'find'],
-        'pos': ['left', 'right', "buttom", "bottom","top","down","up","lower","center","middle","corner"],
+        'pos': ['left', 'right', "buttom", "bottom","top","down","up","lower","center","middle","corner",'near'],
         'position': ['position', 'pos', "side","location"],
-        'near':['next', 'near'],
+        'next':['next'],
         'to':['to']
         }
     

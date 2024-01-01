@@ -19,23 +19,24 @@ texts = [
 ]
 
 
+# for text in texts:
+#     print (f'\n{text[:10]}... {text[-10:]}')
+#     subtexts = globals_pos(text)
+#     for key in subtexts:
+#         for item in subtexts[key]:
+#             print(f'  - {key}: {item}')
+
+# # # temp = TextFeature(texts[0])
+
+texts = [
+ 'A dog on left of a cat in a sofa',
+"In blue dog's on a couch left there is a cat in a sofa",
+"In blue dog's left is a cat, in a sofa",
+]
 for text in texts:
-    print (f'\n{text[:10]}... {text[-10:]}')
-    subtexts = globals_pos(text)
+    subtexts = relation_pos(text)
     for key in subtexts:
-        for item in subtexts[key]:
-            print(f'  - {key}: {item}')
-
-# # temp = TextFeature(texts[0])
-
-# text = 'A dog on left of a cat in a sofa'
-# text = "In blue dog's on a couch left there is a cat in a sofa"
-# text = "In blue dog's left is a cat, in a sofa"
-# text = "In blue dog's left , a cat in a sofa."
-# subtexts = globals_pos(text)
-# subtexts = relation_pos(text)
-# for key in subtexts:
-#     print(f'{key}')
-#     for item_key in subtexts[key]:
-#         for item in subtexts[key][item_key]:
-#             print(f'   - {item_key}: {item}')
+        print(f'{key}')
+        for item_key in subtexts[key]:
+            for item in subtexts[key][item_key]:
+                print(f'   - {item_key}: {item}')
