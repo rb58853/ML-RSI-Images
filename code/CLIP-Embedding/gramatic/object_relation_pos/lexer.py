@@ -119,15 +119,15 @@ class RelationalGramatic(Gramatic):
         'IS text , pos OF text',
         'IS text pos TO text',
         'IS text pos OF text',
-        'text , pos TO text',
-        'text , pos OF text',
+        'text pos TO text',
+        'text pos OF text',
         
         'IS text NEXT TO text',
         'IS text NEXT OF text',
         'text NEXT OF text',
         'text NEXT TO text',
-        'text , NEXT TO text',
-        'text , NEXT OF text',
+        # 'text , NEXT TO text',
+        # 'text , NEXT OF text',
     ]
     right_relation = [
         'ON text pos , IS text',
@@ -168,7 +168,8 @@ class RelationalGramatic(Gramatic):
 
 class Convert:
     labels={
-        'below' : 'on bottom of'
+        'below' : 'on bottom of',
+        # 'below' : 'on bottom',
     }
     signs = [
         ' ',

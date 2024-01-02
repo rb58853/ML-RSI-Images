@@ -217,10 +217,12 @@ class PosRelationParser(Parser):
     #    'text "," TO pos TO text',
        
        'IS text pos TO text',
+       'text pos TO text',
     #    'IS text "," pos TO text',
     #    'text "," pos TO text',
 
        'IS text pos OF text',
+       'text pos OF text',
     #    'IS text "," pos OF text',
     #    'text "," pos OF text',
        )

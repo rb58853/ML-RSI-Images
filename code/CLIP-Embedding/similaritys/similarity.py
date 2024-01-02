@@ -63,7 +63,7 @@ class Similarity:
 
     def region(text:Text, image:ImageEmbedding, print_ = False):
         end_sim = 0
-        for key in ['left','right', 'top', 'buttom','in']:
+        for key in Feature().neighbords.keys():
             end_sim_region = 0
             for temp_text in text.neighbords[key]:
                 max_sim = 0
