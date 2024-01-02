@@ -256,7 +256,7 @@ class ImageEmbedding(Feature):
 
     def plot(self):
         if self.image is not None:
-            plt.figure(figsize=(2,2))
+            plt.figure(figsize=(8,8))
             plt.title(f'{self} | pos: {self.position}')
             plt.imshow(self.image)
             plt.axis('off')

@@ -25,7 +25,7 @@ class ImagesDataset:
             self.append(file)
 
     def append(self, path_image):
-        name = path_image.split(os.path.sep) 
+        name = path_image.split(os.path.sep)[-1] 
         if name in self.names:
             name +='_0'
         i = 1
