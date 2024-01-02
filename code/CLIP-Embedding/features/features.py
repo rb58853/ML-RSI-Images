@@ -27,6 +27,7 @@ class Feature:
             'se':[],    
             
             'in':[],
+            'beside':[],
             'next': [] #near. indica cercania tan solo sin posicion especifica    
         }
        
@@ -47,13 +48,13 @@ class ImageEmbedding(Feature):
         self.multiple_captions = []
         
         self.left, self.right, self.top, self.buttom = (0,0,0,0)
-        self.neighbords = {
-            'left':[],    
-            'right':[],    
-            'top':[],    
-            'buttom':[],    
-            'in':[],    
-        }
+        # self.neighbords = {
+        #     'left':[],    
+        #     'right':[],    
+        #     'top':[],    
+        #     'buttom':[],    
+        #     'in':[],    
+        # }
         
         self.items = [self.embedding, self.position, self.neighbords]
         
@@ -153,19 +154,26 @@ class ImageEmbedding(Feature):
         
         x = None
         y = None
-        if left: x = 'left'
-        if right: x = 'right'
-        if top: y = 'top'
-        if buttom: y = 'buttom'
+        if left: x = 'w'
+        if right: x = 'e'
+        if top: y = 'n'
+        if buttom: y = 's'
 
         if x is not None:
             near = self.calculate_x_distance(x_dist, x_y_dist)
             if near > 0:
                 self.neighbords[x].append((image, near))
+                self.neighbords['beside'].append((image, near))
         if y is not None:
             near = self.calculate_y_distance(y_x_dist, y_dist)
             if near > 0:
                 self.neighbords[y].append((image, near))
+                self.neighbords['beside'].append((image, near))
+
+        if x is not None and y is not None:
+            #Esto hay que mejorarlo. Multiplicar por angulo o algo. Queda decidir una metrica
+            near = self.calculate_x_distance(x_dist, x_y_dist) + self.calculate_y_distance(y_x_dist, y_dist)
+            self.neighbords[y+x].append((image, near))
 
         if in_x and in_y:
             self.neighbords['in'].append((image, env.max_similarity()))

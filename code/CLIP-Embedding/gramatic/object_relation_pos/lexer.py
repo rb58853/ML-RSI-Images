@@ -29,7 +29,7 @@ class PosRelationLexer(Lexer):
 
         'pos': ['left', 'right', "buttom", "bottom","top",
                 "down","up","lower","center","middle","corner",
-                'near','bellow','front'],
+                'near','bellow','front','beside'],
         }
     
     ignore = r' '
@@ -168,7 +168,6 @@ class RelationalGramatic(Gramatic):
 
 class Convert:
     labels={
-        'beside' : 'next', #Esto realmente es a la izquierda o a la derecha(valorar tener beside como una posicion en si, ya que el funcion de similitud de esta es igual para la izquierda que para la derecha)
         'below' : 'on bottom of'
     }
     signs = [

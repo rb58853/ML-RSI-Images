@@ -74,6 +74,7 @@ class Positions:
     }
     relational_labels = {
         
+        "beside": 'beside',
         "next": 'next',
 
         "center": 'in',

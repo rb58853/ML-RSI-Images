@@ -71,13 +71,13 @@ class Similarity:
                     max_sim = -1
 
                 if print_:
-                    print(f'\nTEXT: {temp_text}')
+                    print(f'\nTEXT: {temp_text[0]}')
                     print(f'images in {key} region:'.upper())
 
 
                 for temp_image in image.neighbords[key]:
                     # similarity = Similarity.cosine(temp_text, temp_image[0])
-                    similarity = Similarity.cosine_and_pos(temp_text, temp_image[0])
+                    similarity = Similarity.cosine_and_pos(temp_text[0], temp_image[0])
                     # similarity = Similarity.calculate(temp_text, temp_image[0]) #Esto es mejor pero hay que controlar la recursividad infinita
                     sim_dist = temp_image[1] #esta es la similitud por distancia que hay desde la imagen hacia su vecino
                     if similarity > MIN_SIMILARTY_FOR_REGIONS:
