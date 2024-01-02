@@ -123,7 +123,7 @@ class Positions:
         return Text(key_text[1],Positions.global_positions[label])
     
     def separe_text(text:Text):
-        texts = relation_pos(text.origin)
+        texts = relation_pos(text.text)
         return Positions.get_text_from_dict(texts,text.position)        
 
     def get_text_from_dict(text_dic,position):
