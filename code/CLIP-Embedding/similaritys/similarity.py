@@ -108,8 +108,8 @@ class Similarity:
         return sim
 
     # def full(texts:TextFeature, images: ImageFeature):
-    def full(texts:TextFeature, images):
-        origin_sim = Similarity.cosine(texts.text, images.origin)
+    def full(texts:Feature, images:Feature):
+        origin_sim = Similarity.cosine(texts.origin, images.origin)
         acumulate = 0
         for text in texts:
             sim_for_text = 0

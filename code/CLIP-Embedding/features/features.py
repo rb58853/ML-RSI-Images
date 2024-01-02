@@ -30,6 +30,7 @@ class Feature:
             'beside':[],
             'next': [] #near. indica cercania tan solo sin posicion especifica    
         }
+        self.caption = None
        
     def __getitem__(self, index):
        return self.items[index]

@@ -3,14 +3,14 @@ from gramatic.get import globals_pos, relation_pos
 
 class TextFeature:
     def __init__(self, text:str) -> None:
-        self.text:Text = Text(text)
+        self.origin:Text = Text(text)
         self.texts:list[Text] = []#[self.text]
         self.get_parsed_text()
         
     def get_parsed_text(self):
         self.texts = self.analize_text()    
     def analize_text(self):
-        global_texts = globals_pos(self.text.text)
+        global_texts = globals_pos(self.origin.text)
         global_Texts:list[Text] = []        
         for key in global_texts:
             for text in global_texts[key]:
@@ -123,7 +123,7 @@ class Positions:
         return Text(key_text[1],Positions.global_positions[label])
     
     def separe_text(text:Text):
-        texts = relation_pos(text.text)
+        texts = relation_pos(text.origin)
         return Positions.get_text_from_dict(texts,text.position)        
 
     def get_text_from_dict(text_dic,position):
