@@ -81,6 +81,7 @@ class PosRelationLexer(Lexer):
         pass    
 
     def tokenize(self, text, lineno=1, index=0):
+        text = Convert.text_to_text(text)
         self.is_tokenized = False
         self.my_tokens = [token.type for token in super().tokenize(text)]
         self.is_token_not_word = RelationalGramatic().get_tokens(self.my_tokens)
@@ -168,5 +169,22 @@ class RelationalGramatic(Gramatic):
 class Convert:
     labels={
         'beside' : 'next', #Esto realmente es a la izquierda o a la derecha(valorar tener beside como una posicion en si, ya que el funcion de similitud de esta es igual para la izquierda que para la derecha)
-
+        'below' : 'on bottom of'
     }
+    signs = [
+        ' ',
+        '.',
+        ',',
+        ';',
+        '|',
+    ]
+    def text_to_text(text:str):
+        signs = Convert.signs
+        text = ' '+ text.lower()
+        for label in Convert.labels:
+            for sign0 in signs:
+                for sign1 in signs:
+                    label_key = sign0+label+sign1
+                    label_value = sign0+Convert.labels[label]+sign1
+                    text = text.replace(label_key, label_value )
+        return text        

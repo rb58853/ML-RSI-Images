@@ -16,6 +16,8 @@ class Gramatic:
         while text[i] == "POS" or text[i] == "POSITION":
             result+=[i]
             i+=1
+            if i>=len(text): break
+            
         return i,j,result
         
     def text_case(self,sentence, text, i, j, temp):
@@ -48,6 +50,8 @@ class Gramatic:
                     if j == len(sentence)-1:
                         return (i,j,temp)
                     j+=1
+
+                    if i>=len(text): break
                     continue
                 
                 if sentence[j] == 'text' and len(sentence) > j+1:
@@ -117,6 +121,7 @@ class Gramatic:
                             break
                     continue    
 
+                if i>=len(text): break #Esto puede romperse por las funciones de arriba pos y text, por eso esta aqui
                 if text[i] == sentence[j] or (sentence[j][0] == '!' and sentence[j][1:] != text[i]):
                     if text[i] != 'WORD':
                         temp += [i]

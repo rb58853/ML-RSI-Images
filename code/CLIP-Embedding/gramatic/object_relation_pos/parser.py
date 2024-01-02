@@ -84,13 +84,16 @@ class PosRelationParser(Parser):
         return sentence0 + sentence1
      
     
-    @_('relation',
+    @_(
+        'relation',
+        'relation ","',
     )
     def sentence(self, p):
         return p[0]
     
     @_('text',
         'text ","',
+        # '"," text',
     #    'text "."',
     #    'text "|"',
        )
