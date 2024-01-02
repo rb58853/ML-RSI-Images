@@ -210,16 +210,11 @@ class ImageEmbedding(Feature):
         return [(item[0].id, item[1]) for item in self.neighbords[key]]
 
     def to_list(self):
+        neighbords = {key: self.neight_to_list(key) for key in self.neighbords.keys()}
         return [
             self.embedding,
             self.position,
-            (   #Neighbords
-                self.neight_to_list('left'), 
-                self.neight_to_list('right'), 
-                self.neight_to_list('top'), 
-                self.neight_to_list('buttom'), 
-                self.neight_to_list('in') 
-            ) 
+            neighbords
         ]
     
     def info(self):

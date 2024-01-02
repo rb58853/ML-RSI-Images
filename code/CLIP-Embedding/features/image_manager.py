@@ -4,19 +4,22 @@ from process_images import ProcessImages
 from similaritys.similarity import Similarity
 from environment.environment import DistanteTextsRelevace as env
 from environment.environment import ImageEmbeddingEnv as image_env
+
 unsimilates_texts = [Text(text) for text in env.get_texts()]
 
 process = ProcessImages()
 class ImageFeature:
-    def __init__(self, image_path = None, data_path = None) -> None:
+    def __init__(self, image_path:str = None,name = None, data_path = None, delete_relevants = True) -> None:
+        self.name = name
         self.origin:ImageEmbedding = None
         self.images:list[ImageEmbedding] = []
         self.masks:list[ImageEmbedding] = []
         self.ranking:dict[ImageEmbedding:float] = {}
         if image_path is not None:
             self.set_images(image_path)
-            self.set_ranking()
-            # self.delete_relevant_images()
+            # self.set_ranking()
+            if delete_relevants:
+                self.delete_relevant_images()
             self.set_neighbords()
 
     def set_ranking(self):
@@ -49,11 +52,9 @@ class ImageFeature:
         
         for i, feature in zip(range(self.__len__()),list_images):
             image = self.images[i]
-            for neigh in feature[2][0]: image.neighbords['left'].append(self.convert_to_neighbord(neigh))
-            for neigh in feature[2][1]: image.neighbords['right'].append(self.convert_to_neighbord(neigh))
-            for neigh in feature[2][2]: image.neighbords['top'].append(self.convert_to_neighbord(neigh))
-            for neigh in feature[2][3]: image.neighbords['buttom'].append(self.convert_to_neighbord(neigh))
-            for neigh in feature[2][4]: image.neighbords['in'].append(self.convert_to_neighbord(neigh))
+            for key in image.neighbords.keys():
+                for neigh in feature[2][key]: 
+                    image.neighbords[key].append(self.convert_to_neighbord(neigh))
 
     def clear(self):
         self.images = []
