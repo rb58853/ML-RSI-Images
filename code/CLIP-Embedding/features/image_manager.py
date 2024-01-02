@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from features.features import ImageEmbedding, Text
-from process_images import ProcessImages
+from features.process_images import ProcessImages
 from similaritys.similarity import Similarity
 from environment.environment import DistanteTextsRelevace as env
 from environment.environment import ImageEmbeddingEnv as image_env
