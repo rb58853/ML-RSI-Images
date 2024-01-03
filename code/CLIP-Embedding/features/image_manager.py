@@ -4,8 +4,10 @@ from features.process_images import ProcessImages
 from similaritys.similarity import Similarity
 from environment.environment import DistanteTextsRelevace as env
 from environment.environment import ImageEmbeddingEnv as image_env
+from environment.environment import Colab as colab
 
-unsimilates_texts = [Text(text) for text in env.get_texts()]
+if colab.use_in_local():
+    unsimilates_texts = [Text(text) for text in env.get_texts()]
 
 process = ProcessImages()
 class ImageFeature:

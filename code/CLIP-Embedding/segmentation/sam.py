@@ -2,6 +2,7 @@ from PIL import Image
 from features.features import ImageEmbedding
 import torch
 from environment.environment import SamEnv as env
+from environment.environment import Colab as colab
 class SAM:
     '''
     ## SAM
@@ -11,6 +12,8 @@ class SAM:
     MASK_GENERATOR = None
     
     def import_model():
+        if not colab.use_in_local():
+            return
         import torchvision
         print("PyTorch version:", torch.__version__)
         print("Torchvision version:", torchvision.__version__)
