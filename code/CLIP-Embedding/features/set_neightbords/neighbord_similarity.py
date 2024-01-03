@@ -1,3 +1,8 @@
+def center_angle(self,image):
+    self.position
+    pass
+
+
 def set_as_neigh(self, image):
     y_dist = 0
     x_dist = 0

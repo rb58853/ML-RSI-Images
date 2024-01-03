@@ -3,6 +3,7 @@ from environment.environment import ImageEmbeddingEnv as env
 from environment.environment import MatPlotLib as Color
 from matplotlib.patches import Rectangle
 import matplotlib.pyplot as plt
+import math
 
 from embedding.clip_embeding import ClipEmbedding
 clip = ClipEmbedding()
@@ -266,7 +267,193 @@ class ImageEmbedding(Feature):
             plt.show()
         else:
             print("Image is None")    
-            
+
+class NeigbordsVariants(ImageEmbedding):         
+    def angles_sim(self,image:ImageEmbedding):
+        if image.position[0] > self.position[0]:
+            if image.left > self.left:
+                #estamos en presencia de un vecino derecho:
+                x1,x2 = self.position[0],image.position[0]
+                y1,y2 = self.position[1],image.position[1]
+                y1,y2 = 1-y1,1-y2 #invertir eje y
+               
+                dx = x2 - x1
+                dy = y2 - y1
+                angle = math.atan2(dy, dx)
+                sim_angle_right = angle/(math.pi*2)
+                sim_angle_right = abs(sim_angle_right)
+                sim_angle_right = 1/4-sim_angle_right #Calculos hechos
+                sim_angle_right *= 4
+                
+                sim_angle_top_right = angle - math.pi/4
+                sim_angle_top_right = abs(sim_angle_top_right)
+                sim_angle_top_right /= (math.pi*2)
+                sim_angle_top_right = 1/8 - sim_angle_top_right
+                sim_angle_top_right *= 1/8 #Calculos hechos
+
+                sim_angle_bottom_right = angle - (-math.pi/4)
+                sim_angle_bottom_right = abs(sim_angle_bottom_right)
+                sim_angle_bottom_right /= (math.pi*2)
+                sim_angle_bottom_right = 1/8- sim_angle_bottom_right
+                sim_angle_bottom_right *= 8
+
+                x_dist = max(0,image.left - self.right)
+                y_dist = 0
+                if image.buttom < self.top:
+                    #esta abajo
+                    y_dist = max(self.top-image.buttom,0)
+                    dist = math.sqrt(x_dist*x_dist + y_dist*y_dist) 
+                    sim_dist = (env.MAX_DISTANCE-(dist))/env.POS_UMBRAL
+                    if sim_dist > 0:
+                        self.neighbords['e'].append((image, sim_dist * sim_angle_right))
+                        self.neighbords['se'].append((image, sim_dist * sim_angle_bottom_right))
+
+                elif image.top > self.buttom:
+                    #esta arriba
+                    y_dist = max(image.top-self.buttom,0)
+                    dist = math.sqrt(x_dist*x_dist + y_dist*y_dist)
+                    sim_dist = (env.MAX_DISTANCE-(dist))/env.POS_UMBRAL
+                    if sim_dist > 0:
+                        self.neighbords['e'].append((image, sim_dist * sim_angle_right))
+                        self.neighbords['ne'].append((image, sim_dist * sim_angle_top_right))
+
+                else:
+                    #Esta contenido en el eje y  
+                    dist = math.sqrt(x_dist*x_dist + y_dist*y_dist) 
+                    sim_dist = (env.MAX_DISTANCE-(dist))/env.POS_UMBRAL
+                    if sim_dist > 0:
+                        self.neighbords['e'].append((image, sim_dist * sim_angle_right))
+                        if image.position < self.position:
+                            #esta arriba relativo al centro
+                            self.neighbords['ne'].append((image, sim_dist * sim_angle_top_right))
+                        if image.position > self.position:
+                            #esta debajo relativo al centro
+                            self.neighbords['se'].append((image, sim_dist * sim_angle_top_right))
+
+        if image.position[0] < self.position[0]:
+            if image.right < self.right:
+                #estamos en presencia de un vecino izquierdo:
+                x1,x2 = self.position[0],image.position[0]
+                y1,y2 = self.position[1],image.position[1]
+                y1,y2 = 1-y1,1-y2 #invertir eje y
+                dx = x2 - x1
+                dy = y2 - y1
+                
+                angle = math.atan2(dy, dx)
+                if angle<0 : angle += 2*math.pi #hacerlo positivo
+
+                sim_angle_left = angle - math.pi
+                sim_angle_left = abs(sim_angle_left)
+                sim_angle_left = sim_angle_left/(math.pi*2)
+                sim_angle_left = 1/4-sim_angle_left #Calculos hechos
+                sim_angle_left *= 4
+                
+                sim_angle_top_left = angle - 3*math.pi/4
+                sim_angle_top_left = abs(sim_angle_top_left)
+                sim_angle_top_left /= (math.pi*2)
+                sim_angle_top_left = 1/8 - sim_angle_top_left
+                sim_angle_top_left *= 1/8 #Calculos hechos
+
+                sim_angle_bottom_left = angle - (5*math.pi/4)
+                sim_angle_bottom_left = abs(sim_angle_bottom_left)
+                sim_angle_bottom_left /= (math.pi*2)
+                sim_angle_bottom_left = 1/8- sim_angle_bottom_left
+                sim_angle_bottom_left *= 8
+
+                x_dist = max(0,image.right - self.left)
+                y_dist = 0
+                if image.buttom < self.top:
+                    #esta abajo
+                    y_dist = max(self.top - image.buttom,0)
+                    dist = math.sqrt(x_dist*x_dist + y_dist*y_dist) 
+                    sim_dist = (env.MAX_DISTANCE-(dist))/env.POS_UMBRAL
+                    if sim_dist > 0:
+                        self.neighbords['w'].append((image, sim_dist * sim_angle_left))
+                        self.neighbords['sw'].append((image, sim_dist * sim_angle_bottom_left))
+
+                elif image.top > self.buttom:
+                    #esta arriba
+                    y_dist = max(image.top -self.buttom,0)
+                    dist = math.sqrt(x_dist*x_dist + y_dist*y_dist) 
+                    sim_dist = (env.MAX_DISTANCE-(dist))/env.POS_UMBRAL
+                    if sim_dist > 0:
+                        self.neighbords['w'].append((image, sim_dist * sim_angle_left))
+                        self.neighbords['nw'].append((image, sim_dist * sim_angle_top_left))
+
+                else:
+                    #Esta contenido en el eje y  
+                    dist = math.sqrt(x_dist*x_dist + y_dist*y_dist) 
+                    sim_dist = (env.MAX_DISTANCE-(dist))/env.POS_UMBRAL
+                    if sim_dist > 0:
+                        self.neighbords['w'].append((image, sim_dist * sim_angle_left))
+                        if image.position < self.position:
+                            #esta arriba relativo al centro
+                            self.neighbords['nw'].append((image, sim_dist * sim_angle_top_left))
+                        if image.position > self.position:
+                            #esta debajo relativo al centro
+                            self.neighbords['sw'].append((image, sim_dist * sim_angle_top_left))
+        
+        if image.position[1] >self.position[1]:
+            if image.top > self.top:
+                #esta debajo     
+                x1,x2 = self.position[0],image.position[0]
+                y1,y2 = self.position[1],image.position[1]
+                y1,y2 = 1-y1,1-y2 #invertir eje y
+
+                dx = x2 - x1
+                dy = y2 - y1
+                angle = math.atan2(dy, dx)
+                
+                sim_angle_bottom = angle - (-3*math.pi/2)
+                sim_angle_bottom = abs(sim_angle_bottom)
+                sim_angle_bottom = sim_angle_bottom/(math.pi*2)
+                sim_angle_bottom = 1/4-sim_angle_bottom #Calculos hechos
+                sim_angle_bottom *= 4
+
+                y_dist = max(0,image.top - self.buttom)
+                x_dist = max((self.left - image.right, image.left - image.right),0)
+                
+                dist = math.sqrt(x_dist*x_dist + y_dist*y_dist) 
+                sim_dist = (env.MAX_DISTANCE-(dist))/env.POS_UMBRAL
+                if sim_dist > 0:
+                    self.neighbords['s'].append((image, sim_dist * sim_angle_bottom))
+
+        if image.position[1] < self.position[1]:
+            if image.top < self.top:
+                #esta arriba     
+                x1,x2 = self.position[0],image.position[0]
+                y1,y2 = self.position[1],image.position[1]
+                y1,y2 = 1-y1,1-y2 #invertir eje y
+
+                dx = x2 - x1
+                dy = y2 - y1
+                angle = math.atan2(dy, dx)
+                
+                sim_angle_top = angle - (math.pi/2)
+                sim_angle_top = abs(sim_angle_top)
+                sim_angle_top = sim_angle_top/(math.pi*2)
+                sim_angle_top = 1/4-sim_angle_top #Calculos hechos
+                sim_angle_top *= 4
+
+                y_dist = max(0,self.top - image.buttom)
+                x_dist = max((self.left - image.right, image.left - image.right),0)
+                
+                dist = math.sqrt(x_dist*x_dist + y_dist*y_dist) 
+                sim_dist = (env.MAX_DISTANCE-(dist))/env.POS_UMBRAL
+                if sim_dist > 0:
+                    self.neighbords['s'].append((image, sim_dist * sim_angle_top))    
+                        
+
+        for neigh in self.neighbords['w']:
+            self.neighbords['beside'].append((neigh[0],neigh[1]*0.9))
+        for neigh in self.neighbords['e']:
+            self.neighbords['beside'].append((neigh[0],neigh[1]*0.9))
+        
+        keys = ['e','w','s','n','ne','nw','se','sw']
+        for key in keys:
+            for neigh in self.neighbords[key]:
+                self.neighbords['next'].append((neigh[0],neigh[1]*0.85))
+
 class Text(Feature):
     def __init__(self, text, position = None) -> None:
         super().__init__()

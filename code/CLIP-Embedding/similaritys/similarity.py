@@ -135,3 +135,6 @@ class Similarity:
         
         return max(acumulate, origin_sim)    
   
+    def image_to_image(image0, image1):
+        value = Similarity.full(image0, image1)
+        return value/len(image0)
