@@ -32,6 +32,9 @@ images.set_neighbords()
 # for image, new_images in zip(images, new_images.images):
 for image in images:
     # print(image.info())
-    image.print_neighbords()
+    print(image)
+    # image.print_neighbords()
+    for neigh in image.neighbords:
+        print (f'{neigh}: {image.neighbords[neigh]}')
     print('------------------------------------------')
 images.plot_regions()
