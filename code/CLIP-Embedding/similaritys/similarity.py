@@ -88,8 +88,9 @@ class Similarity:
                             sim_for_neigh = sim_dist * (pow(similarity,IMPORTANCE_NEGATIVE_REGIONS) - MIN_SIMILARTY_FOR_REGIONS)
                             max_sim = max(sim_for_neigh, max_sim)
                     if print_:
-                        print(f'   ⦿ {temp_image[0]}: {similarity}')        
-                
+                        try:print(f'   ⦿ {temp_image[0]}: {sim_for_neigh}')        
+                        except:pass
+                        
                 if max_sim == -1:
                     max_sim = 0
                 if print_:
@@ -117,15 +118,23 @@ class Similarity:
                     #Si todos los vecinos son vacios y no se indica posicion, entonces no buscar similitud
                     continue
             sim_for_text = 0
+            im = None
             for image in images:
                 if image != images.origin:
-                    sim_region = Similarity.calculate(text,image)
+                    sim_region = Similarity.calculate(text,image, False)
+                    if sim_region <= Similarity.cosine_and_pos(text,image) and text.position is None:
+                        continue
+
+                    # sim_region = Similarity.calculate(text,image, True)
                     if sim_region > MIN_NICE_SIMILARITY:
                         sim_for_text = max(sim_for_text, sim_region)
-
+                        if sim_region > sim_for_text:
+                            im = image
+                            
             acumulate += sim_for_text        
 
         if origin_sim > MIN_NICE_SIMILARITY:
             return acumulate + origin_sim
         
-        return max(acumulate, origin_sim)     
+        return max(acumulate, origin_sim)    
+  
