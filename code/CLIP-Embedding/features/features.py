@@ -451,12 +451,12 @@ class NeigbordsVariants(ImageEmbedding):
             if near > 0:
                 self.neighbords[x].append((image, near))
                 self.neighbords['beside'].append((image, near))
-                self.neighbords['next'].append((image, near*0.9))
+                # self.neighbords['next'].append((image, near*0.9))
         if y is not None:
             near = self.calculate_y_distance(y_x_dist, y_dist)
             if near > 0:
                 self.neighbords[y].append((image, near))
-                self.neighbords['next'].append((image, near*0.9))
+                # self.neighbords['next'].append((image, near*0.9))
                 # self.neighbords['beside'].append((image, near))
 
         if x is not None and y is not None:
