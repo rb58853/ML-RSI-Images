@@ -112,7 +112,7 @@ class Similarity:
         origin_sim = Similarity.cosine(texts.origin, images.origin)
         acumulate = 0
         for text in texts:
-            if text.pos is None:
+            if text.position is None:
                 if not True in [ item != [] for item in text.neighbords.values()]:
                     #Si todos los vecinos son vacios y no se indica posicion, entonces no buscar similitud
                     continue
