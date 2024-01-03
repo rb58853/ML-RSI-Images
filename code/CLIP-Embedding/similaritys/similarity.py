@@ -108,16 +108,20 @@ class Similarity:
         return sim
 
     # def full(texts:TextFeature, images: ImageFeature):
-    def full(texts:Feature, images:Feature):
+    def full(texts:TextFeature, images):
         origin_sim = Similarity.cosine(texts.origin, images.origin)
         acumulate = 0
         for text in texts:
+            if text.pos is None:
+                if not True in [ item != [] for item in text.neighbords.values()]:
+                    #Si todos los vecinos son vacios y no se indica posicion, entonces no buscar similitud
+                    continue
             sim_for_text = 0
             for image in images:
                 if image != images.origin:
                     sim_region = Similarity.calculate(text,image)
                     if sim_region > MIN_NICE_SIMILARITY:
-                        sim_for_text = max(sim_region, sim_region)
+                        sim_for_text = max(sim_for_text, sim_region)
 
             acumulate += sim_for_text        
 
