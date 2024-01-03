@@ -118,7 +118,6 @@ class Similarity:
                     #Si todos los vecinos son vacios y no se indica posicion, entonces no buscar similitud
                     continue
             sim_for_text = 0
-            im = None
             for image in images:
                 if image != images.origin:
                     sim_region = Similarity.calculate(text,image, False)
@@ -128,8 +127,6 @@ class Similarity:
                     # sim_region = Similarity.calculate(text,image, True)
                     if sim_region > MIN_NICE_SIMILARITY:
                         sim_for_text = max(sim_for_text, sim_region)
-                        if sim_region > sim_for_text:
-                            im = image
                             
             acumulate += sim_for_text        
 
