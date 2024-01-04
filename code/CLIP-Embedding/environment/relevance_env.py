@@ -12,7 +12,7 @@ class DistanteTextsRelevace:
     - `get_texts()`: Devuelve los textos hasta el limite pasado en max_compare
     '''
     umbral = 0.2
-    caption_umbral = 0.8
+    caption_umbral = 0.66
     percentaje = 0.45
     max_compare = 1000
 
