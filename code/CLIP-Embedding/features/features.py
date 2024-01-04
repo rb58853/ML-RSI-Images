@@ -202,7 +202,7 @@ class ImageEmbedding(Feature):
 class NeigbordsVariants(ImageEmbedding):         
     def angles_sim(self,image:ImageEmbedding):
         if image.position[0] > self.position[0]:
-            if image.right > self.right:
+            if image.left > self.left:
                 #estamos en presencia de un vecino derecho:
                 x1,x2 = self.position[0],image.position[0]
                 y1,y2 = self.position[1],image.position[1]
@@ -262,7 +262,7 @@ class NeigbordsVariants(ImageEmbedding):
                             self.neighbords['se'].append((image, sim_dist * sim_angle_top_right))
 
         if image.position[0] < self.position[0]:
-            if image.left < self.left:
+            if image.right < self.right:
                 #estamos en presencia de un vecino izquierdo:
                 x1,x2 = self.position[0],image.position[0]
                 y1,y2 = self.position[1],image.position[1]
