@@ -12,6 +12,7 @@ class DistanteTextsRelevace:
     - `get_texts()`: Devuelve los textos hasta el limite pasado en max_compare
     '''
     umbral = 0.2
+    caption_umbral = 0.8
     percentaje = 0.45
     max_compare = 1000
 
@@ -199,7 +200,7 @@ class DistanteTextsRelevace:
             
         #Cambiar umbral en caso de estar usandose captionmodel
         if ImageEmbeddingEnv.USE_CAPION_MODEL:
-            DistanteTextsRelevace.umbral =  (DistanteTextsRelevace.umbral+0.6)/2
+            DistanteTextsRelevace.umbral =  (DistanteTextsRelevace.umbral+DistanteTextsRelevace.caption_umbral)/2
 
         if len(DistanteTextsRelevace.texts)> DistanteTextsRelevace.max_compare:
             random.shuffle(DistanteTextsRelevace.texts)
