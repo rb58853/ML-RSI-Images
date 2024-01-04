@@ -122,7 +122,8 @@ class Similarity:
                 if image != images.origin:
                     sim_region = Similarity.calculate(text,image, False)
                     if sim_region <= Similarity.cosine_and_pos(text,image) and text.position is None:
-                        continue
+                        sim_region -= Similarity.cosine_and_pos(text,image)#Elimnar despues
+                        # continue
 
                     # sim_region = Similarity.calculate(text,image, True)
                     if sim_region > MIN_NICE_SIMILARITY:
