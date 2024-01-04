@@ -42,7 +42,7 @@ class ImageEmbeddingEnv:
     PRIMARY_POW = 1.2 #Elevacion a la ptencia del eje principal a la hora de calcular distancias
     SECUNDARY_POW = 0.7 #Elevacion a la ptencia del eje no principal a la hora de calcular distancias
     MAX_DISTANCE = 1 #Distancia maxima que puede haber entre dos imagenes para ser consideradas vecinas
-    POS_UMBRAL = 1
+    POS_UMBRAL = 0.85
 
     KEY_IMAGES = 'box'
 
