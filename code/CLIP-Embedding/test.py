@@ -1,5 +1,6 @@
 from features.features import ImageEmbedding
 from features.image_manager import ImageFeature
+from retrieval_system.data import ImagesDataset 
 
 image_0 = ImageEmbedding(None, (0.2,0.1))
 image_0.set_limits((0.1,0.3,0,0.2))
@@ -24,6 +25,13 @@ images.add_image(image_3)
 images.add_image(image_4)
 
 images.set_neighbords()
+images.path = '/1/2/3/4/image1.jpg'
+
+data = ImagesDataset()
+data.append_image_set(images)
+data.save_to_path()
+data = ImagesDataset()
+data.load_from_dataset_path()
 
 # temp = images.to_list()
 # new_images = ImageFeature()

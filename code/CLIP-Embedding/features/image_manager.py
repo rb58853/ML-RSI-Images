@@ -5,6 +5,7 @@ from similaritys.similarity import Similarity
 from environment.environment import DistanteTextsRelevace as env
 from environment.environment import ImageEmbeddingEnv as image_env
 from environment.environment import Colab as colab
+import os
 
 if colab.use_in_local():
     unsimilates_texts = [Text(text) for text in env.get_texts()]
@@ -13,6 +14,7 @@ process = ProcessImages()
 class ImageFeature:
     def __init__(self, image_path:str = None,name = None, data_path = None, delete_relevants = True) -> None:
         self.name = name
+        self.path = image_path
         self.origin:ImageEmbedding = None
         self.images:list[ImageEmbedding] = []
         self.masks:list[ImageEmbedding] = []
@@ -46,23 +48,26 @@ class ImageFeature:
     def from_list(self, list_images):
         self.images = []
 
-        for feature in list_images:
+        for feature in list_images['images']:
             image = ImageEmbedding(None, feature[1])    
             image.set_embedding(feature[0])
             image.set_id(self.__len__())
             self.images.append(image)
         
-        for i, feature in zip(range(self.__len__()),list_images):
+        for i, feature in zip(range(self.__len__()),list_images['images']):
             image = self.images[i]
             for key in image.neighbords.keys():
                 for neigh in feature[2][key]: 
                     image.neighbords[key].append(self.convert_to_neighbord(neigh))
+        
+        self.path = list_images['path']
+        self.name = self.path.split(os.path.sep)[-1]
 
     def clear(self):
         self.images = []
 
     def to_list(self):
-        return [image.to_list() for image in self.images]
+        return {'images':[image.to_list() for image in self.images], 'path': self.path}
     
     def add_image(self, image:ImageEmbedding):
         image.set_id(self.__len__())
